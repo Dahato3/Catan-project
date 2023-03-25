@@ -1,0 +1,28 @@
+﻿<Properties StartupConfiguration="{6385C527-9FC8-4B3C-495D-3D0F626280D3}|">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/PlayerStateManager.cs">
+    <Files>
+      <File FileName="Assets/PlayerStateManager.cs" Line="32" Column="19" />
+      <File FileName="Assets/Player1.cs" />
+      <File FileName="Assets/CurrentPlayer.cs" />
+      <File FileName="Assets/TimerScript.cs" />
+    </Files>
+    <Pads>
+      <Pad Id="ProjectPad">
+        <State name="__root__">
+          <Node name="Player States" expanded="True">
+            <Node name="Assets" expanded="True">
+              <Node name="PlayerStateManager.cs" selected="True" />
+            </Node>
+          </Node>
+        </State>
+      </Pad>
+    </Pads>
+  </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <MonoDevelop.Ide.ItemProperties.Assembly-CSharp PreferredExecutionTarget="e1fc48f8-b278-431a-bc0c-077d55ee5299" />
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore />
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
+  <MultiItemStartupConfigurations />
+</Properties>
