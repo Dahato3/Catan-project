@@ -86,112 +86,361 @@ public class DiceRoller : MonoBehaviour
                 this.transform.GetChild(i).GetComponent<Image>().sprite =
                     diceImageSix;
             }
-
-            
-
         }
+        checkIncrease();
 
+        // Outputs to the console out most recent roll of the 2 dice and displays the total
+        //Debug.Log("Rolled: " + diceValues[0] + " , " +  diceValues[1] + " (Total: " + diceTotal + ")");
+    }
+    public void checkIncrease()
+    {
         foreach (Node n in board.boardNodes)
         {
-            if (diceTotal == n.rHex || diceTotal == n.lHex || diceTotal == n.oHex)
+            if (diceTotal == n.oHex)
             {
-                if (n.houseType == 1)
+                if (n.houseColour == 1)
                 {
                     if (n.oHexResource == "lumber")
                     {
-                        playerStateManager.player1.currencyLumber = +1;
+                        playerStateManager.player1.addResources(1);
+                        //playerStateManager.player1.currencyLumber = +1;
                     }
                     else if (n.oHexResource == "grain")
                     {
-                        playerStateManager.player1.currencyGrain = +1;
+                        playerStateManager.player1.addResources(2);
+                        //playerStateManager.player1.currencyGrain = +1;
                     }
                     else if (n.oHexResource == "brick")
                     {
-                        playerStateManager.player1.currencyBrick = +1;
-                    }
-                    else if (n.oHexResource == "wool")
-                    {
-                        playerStateManager.player1.currencyWool = +1;
+                        playerStateManager.player1.addResources(3);
+                        //playerStateManager.player1.currencyBrick = +1;
                     }
                     else if (n.oHexResource == "ore")
                     {
-                        playerStateManager.player1.currencyOre = +1;
+                        playerStateManager.player1.addResources(4);
+                        //playerStateManager.player1.currencyWool = +1;
+                    }
+                    else if (n.oHexResource == "wool")
+                    {
+                        playerStateManager.player1.addResources(5);
+                        //playerStateManager.player1.currencyOre = +1;
                     }
                 }
-                else if (n.houseType == 2)
+                else if (n.houseColour == 2)
                 {
                     if (n.oHexResource == "lumber")
                     {
-                        playerStateManager.player2.currencyLumber = +1;
+                        playerStateManager.player2.addResources(1);
+                        //playerStateManager.player2.currencyLumber = +1;
                     }
                     else if (n.oHexResource == "grain")
                     {
-                        playerStateManager.player2.currencyGrain = +1;
+                        playerStateManager.player2.addResources(2);
+                        //playerStateManager.player2.currencyGrain = +1;
                     }
                     else if (n.oHexResource == "brick")
                     {
-                        playerStateManager.player2.currencyBrick = +1;
+                        playerStateManager.player2.addResources(3);
+                        //playerStateManager.player2.currencyBrick = +1;
                     }
                     else if (n.oHexResource == "wool")
                     {
-                        playerStateManager.player2.currencyWool = +1;
+                        playerStateManager.player2.addResources(4);
+                        //playerStateManager.player2.currencyWool = +1;
                     }
                     else if (n.oHexResource == "ore")
                     {
-                        playerStateManager.player2.currencyOre = +1;
+                        playerStateManager.player2.addResources(5);
+                        //playerStateManager.player2.currencyOre = +1;
                     }
                 }
-                else if (n.houseType == 3)
+                else if (n.houseColour == 3)
                 {
                     if (n.oHexResource == "lumber")
                     {
-                        playerStateManager.player3.currencyLumber = +1;
+                        playerStateManager.player3.addResources(1);
+                        //playerStateManager.player2.currencyLumber = +1;
                     }
                     else if (n.oHexResource == "grain")
                     {
-                        playerStateManager.player3.currencyGrain = +1;
+                        playerStateManager.player3.addResources(2);
+                        //playerStateManager.player2.currencyGrain = +1;
                     }
                     else if (n.oHexResource == "brick")
                     {
-                        playerStateManager.player3.currencyBrick = +1;
+                        playerStateManager.player3.addResources(3);
+                        //playerStateManager.player2.currencyBrick = +1;
                     }
                     else if (n.oHexResource == "wool")
                     {
-                        playerStateManager.player3.currencyWool = +1;
+                        playerStateManager.player3.addResources(4);
+                        //playerStateManager.player2.currencyWool = +1;
                     }
                     else if (n.oHexResource == "ore")
                     {
-                        playerStateManager.player3.currencyOre = +1;
+                        playerStateManager.player3.addResources(5);
+                        //playerStateManager.player2.currencyOre = +1;
                     }
                 }
-                else if (n.houseType == 4)
+                else if (n.houseColour == 4)
                 {
                     if (n.oHexResource == "lumber")
                     {
-                        playerStateManager.player4.currencyLumber = +1;
+                        playerStateManager.player4.addResources(1);
+                        //playerStateManager.player2.currencyLumber = +1;
                     }
                     else if (n.oHexResource == "grain")
                     {
-                        playerStateManager.player4.currencyGrain = +1;
+                        playerStateManager.player4.addResources(2);
+                        //playerStateManager.player2.currencyGrain = +1;
                     }
                     else if (n.oHexResource == "brick")
                     {
-                        playerStateManager.player4.currencyBrick = +1;
+                        playerStateManager.player4.addResources(3);
+                        //playerStateManager.player2.currencyBrick = +1;
                     }
                     else if (n.oHexResource == "wool")
                     {
-                        playerStateManager.player4.currencyWool = +1;
+                        playerStateManager.player4.addResources(4);
+                        //playerStateManager.player2.currencyWool = +1;
                     }
                     else if (n.oHexResource == "ore")
                     {
-                        playerStateManager.player4.currencyOre = +1;
+                        playerStateManager.player4.addResources(5);
+                        //playerStateManager.player2.currencyOre = +1;
+                    }
+                }
+            }
+            else if (diceTotal == n.rHex)
+            {
+                if (n.houseColour == 1)
+                {
+                    if (n.oHexResource == "lumber")
+                    {
+                        playerStateManager.player1.addResources(1);
+                        //playerStateManager.player1.currencyLumber = +1;
+                    }
+                    else if (n.oHexResource == "grain")
+                    {
+                        playerStateManager.player1.addResources(2);
+                        //playerStateManager.player1.currencyGrain = +1;
+                    }
+                    else if (n.oHexResource == "brick")
+                    {
+                        playerStateManager.player1.addResources(3);
+                        //playerStateManager.player1.currencyBrick = +1;
+                    }
+                    else if (n.oHexResource == "ore")
+                    {
+                        playerStateManager.player1.addResources(4);
+                        //playerStateManager.player1.currencyWool = +1;
+                    }
+                    else if (n.oHexResource == "wool")
+                    {
+                        playerStateManager.player1.addResources(5);
+                        //playerStateManager.player1.currencyOre = +1;
+                    }
+                }
+                else if (n.houseColour == 2)
+                {
+                    if (n.oHexResource == "lumber")
+                    {
+                        playerStateManager.player2.addResources(1);
+                        //playerStateManager.player2.currencyLumber = +1;
+                    }
+                    else if (n.oHexResource == "grain")
+                    {
+                        playerStateManager.player2.addResources(2);
+                        //playerStateManager.player2.currencyGrain = +1;
+                    }
+                    else if (n.oHexResource == "brick")
+                    {
+                        playerStateManager.player2.addResources(3);
+                        //playerStateManager.player2.currencyBrick = +1;
+                    }
+                    else if (n.oHexResource == "wool")
+                    {
+                        playerStateManager.player2.addResources(4);
+                        //playerStateManager.player2.currencyWool = +1;
+                    }
+                    else if (n.oHexResource == "ore")
+                    {
+                        playerStateManager.player2.addResources(5);
+                        //playerStateManager.player2.currencyOre = +1;
+                    }
+                }
+                else if (n.houseColour == 3)
+                {
+                    if (n.oHexResource == "lumber")
+                    {
+                        playerStateManager.player3.addResources(1);
+                        //playerStateManager.player2.currencyLumber = +1;
+                    }
+                    else if (n.oHexResource == "grain")
+                    {
+                        playerStateManager.player3.addResources(2);
+                        //playerStateManager.player2.currencyGrain = +1;
+                    }
+                    else if (n.oHexResource == "brick")
+                    {
+                        playerStateManager.player3.addResources(3);
+                        //playerStateManager.player2.currencyBrick = +1;
+                    }
+                    else if (n.oHexResource == "wool")
+                    {
+                        playerStateManager.player3.addResources(4);
+                        //playerStateManager.player2.currencyWool = +1;
+                    }
+                    else if (n.oHexResource == "ore")
+                    {
+                        playerStateManager.player3.addResources(5);
+                        //playerStateManager.player2.currencyOre = +1;
+                    }
+                }
+                else if (n.houseColour == 4)
+                {
+                    if (n.oHexResource == "lumber")
+                    {
+                        playerStateManager.player4.addResources(1);
+                        //playerStateManager.player2.currencyLumber = +1;
+                    }
+                    else if (n.oHexResource == "grain")
+                    {
+                        playerStateManager.player4.addResources(2);
+                        //playerStateManager.player2.currencyGrain = +1;
+                    }
+                    else if (n.oHexResource == "brick")
+                    {
+                        playerStateManager.player4.addResources(3);
+                        //playerStateManager.player2.currencyBrick = +1;
+                    }
+                    else if (n.oHexResource == "wool")
+                    {
+                        playerStateManager.player4.addResources(4);
+                        //playerStateManager.player2.currencyWool = +1;
+                    }
+                    else if (n.oHexResource == "ore")
+                    {
+                        playerStateManager.player4.addResources(5);
+                        //playerStateManager.player2.currencyOre = +1;
+                    }
+                }
+            }
+            else if (diceTotal == n.lHex)
+            {
+                if (n.houseColour == 1)
+                {
+                    if (n.oHexResource == "lumber")
+                    {
+                        playerStateManager.player1.addResources(1);
+                        //playerStateManager.player1.currencyLumber = +1;
+                    }
+                    else if (n.oHexResource == "grain")
+                    {
+                        playerStateManager.player1.addResources(2);
+                        //playerStateManager.player1.currencyGrain = +1;
+                    }
+                    else if (n.oHexResource == "brick")
+                    {
+                        playerStateManager.player1.addResources(3);
+                        //playerStateManager.player1.currencyBrick = +1;
+                    }
+                    else if (n.oHexResource == "ore")
+                    {
+                        playerStateManager.player1.addResources(4);
+                        //playerStateManager.player1.currencyWool = +1;
+                    }
+                    else if (n.oHexResource == "wool")
+                    {
+                        playerStateManager.player1.addResources(5);
+                        //playerStateManager.player1.currencyOre = +1;
+                    }
+                }
+                else if (n.houseColour == 2)
+                {
+                    if (n.oHexResource == "lumber")
+                    {
+                        playerStateManager.player2.addResources(1);
+                        //playerStateManager.player2.currencyLumber = +1;
+                    }
+                    else if (n.oHexResource == "grain")
+                    {
+                        playerStateManager.player2.addResources(2);
+                        //playerStateManager.player2.currencyGrain = +1;
+                    }
+                    else if (n.oHexResource == "brick")
+                    {
+                        playerStateManager.player2.addResources(3);
+                        //playerStateManager.player2.currencyBrick = +1;
+                    }
+                    else if (n.oHexResource == "wool")
+                    {
+                        playerStateManager.player2.addResources(4);
+                        //playerStateManager.player2.currencyWool = +1;
+                    }
+                    else if (n.oHexResource == "ore")
+                    {
+                        playerStateManager.player2.addResources(5);
+                        //playerStateManager.player2.currencyOre = +1;
+                    }
+                }
+                else if (n.houseColour == 3)
+                {
+                    if (n.oHexResource == "lumber")
+                    {
+                        playerStateManager.player3.addResources(1);
+                        //playerStateManager.player2.currencyLumber = +1;
+                    }
+                    else if (n.oHexResource == "grain")
+                    {
+                        playerStateManager.player3.addResources(2);
+                        //playerStateManager.player2.currencyGrain = +1;
+                    }
+                    else if (n.oHexResource == "brick")
+                    {
+                        playerStateManager.player3.addResources(3);
+                        //playerStateManager.player2.currencyBrick = +1;
+                    }
+                    else if (n.oHexResource == "wool")
+                    {
+                        playerStateManager.player3.addResources(4);
+                        //playerStateManager.player2.currencyWool = +1;
+                    }
+                    else if (n.oHexResource == "ore")
+                    {
+                        playerStateManager.player3.addResources(5);
+                        //playerStateManager.player2.currencyOre = +1;
+                    }
+                }
+                else if (n.houseColour == 4)
+                {
+                    if (n.oHexResource == "lumber")
+                    {
+                        playerStateManager.player4.addResources(1);
+                        //playerStateManager.player2.currencyLumber = +1;
+                    }
+                    else if (n.oHexResource == "grain")
+                    {
+                        playerStateManager.player4.addResources(2);
+                        //playerStateManager.player2.currencyGrain = +1;
+                    }
+                    else if (n.oHexResource == "brick")
+                    {
+                        playerStateManager.player4.addResources(3);
+                        //playerStateManager.player2.currencyBrick = +1;
+                    }
+                    else if (n.oHexResource == "wool")
+                    {
+                        playerStateManager.player4.addResources(4);
+                        //playerStateManager.player2.currencyWool = +1;
+                    }
+                    else if (n.oHexResource == "ore")
+                    {
+                        playerStateManager.player4.addResources(5);
+                        //playerStateManager.player2.currencyOre = +1;
                     }
                 }
             }
         }
-
-
-        // Outputs to the console out most recent roll of the 2 dice and displays the total
-        //Debug.Log("Rolled: " + diceValues[0] + " , " +  diceValues[1] + " (Total: " + diceTotal + ")");
     }
 }

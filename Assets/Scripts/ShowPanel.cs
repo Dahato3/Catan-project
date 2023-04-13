@@ -6,6 +6,11 @@ public class ShowPanel : MonoBehaviour
 {
     public GameObject panel;
 
+    private void Start()
+    {
+        panel.SetActive(false);
+    }
+
     public void openPanel()
     {
         if (panel != null)

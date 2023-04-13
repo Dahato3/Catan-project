@@ -1,21 +1,22 @@
 ﻿<Properties StartupConfiguration="{C4A68F9D-C7D4-0569-A38C-99AEBBCEDC38}|">
   <MonoDevelop.Ide.Workbench ActiveDocument="Assets/Scripts/Board.cs">
     <Files>
-      <File FileName="Assets/Scripts/Board.cs" Line="126" Column="94" IsPinned="True" />
-      <File FileName="Assets/Scripts/Node.cs" IsPinned="True" />
+      <File FileName="Assets/Scripts/Board.cs" Line="133" Column="106" IsPinned="True" />
+      <File FileName="Assets/Scripts/Node.cs" />
       <File FileName="Assets/Scripts/Player.cs" />
       <File FileName="Assets/Scripts/PlayerStateManager.cs" />
       <File FileName="Assets/Scripts/DiceRoller.cs" />
       <File FileName="Assets/Scripts/TimerScript.cs" />
+      <File FileName="Assets/Scripts/ShowPanel.cs" />
+      <File FileName="Assets/Scripts/Edge.cs" />
+      <File FileName="Assets/Scripts/buildScript.cs" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
         <State name="__root__">
           <Node name="Player - single p class" expanded="True">
-            <Node name="Assets" expanded="True">
-              <Node name="Scripts" expanded="True">
-                <Node name="Board.cs" selected="True" />
-              </Node>
+            <Node name="Assets" expanded="True" selected="True">
+              <Node name="Scripts" expanded="True" />
             </Node>
           </Node>
         </State>
@@ -24,7 +25,7 @@
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.PinnedWatches />
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.ItemProperties.Assembly-CSharp PreferredExecutionTarget="deb4bb14-3ad4-4d20-8123-19c3b87d5d17" />
+  <MonoDevelop.Ide.ItemProperties.Assembly-CSharp PreferredExecutionTarget="a1b59a1b-6a57-4967-add0-391556e2713d" />
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
     <BreakpointStore />
   </MonoDevelop.Ide.DebuggingService.Breakpoints>

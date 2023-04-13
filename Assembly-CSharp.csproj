@@ -58,11 +58,13 @@
   <ItemGroup>
     <Compile Include="Assets/Scripts/ShowPanel.cs" />
     <Compile Include="Assets/Scripts/Player.cs" />
+    <Compile Include="Assets/Scripts/Edge.cs" />
     <Compile Include="Assets/Scripts/Node.cs" />
     <Compile Include="Assets/Scripts/PlayerStateManager.cs" />
     <Compile Include="Assets/Scripts/CurrentPlayer.cs" />
     <Compile Include="Assets/Scripts/DiceRoller.cs" />
     <Compile Include="Assets/Scripts/Board.cs" />
+    <Compile Include="Assets/Scripts/buildScript.cs" />
     <Compile Include="Assets/Scripts/TimerScript.cs" />
     <Compile Include="Assets/Scripts/RollTotal.cs" />
   </ItemGroup>

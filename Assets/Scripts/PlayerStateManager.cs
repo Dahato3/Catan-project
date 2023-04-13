@@ -1,17 +1,14 @@
-using System.Collections;
-using System.Collections.Generic;
-using JetBrains.Annotations;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 
 
 public class PlayerStateManager : MonoBehaviour
 {
-
-    ShowPanel showPanel;
+    // Variables to access other relevent classes
     TimerScript timeScript;
     Board board;
+
+    Player player;
 
     //"SerializeField" means the variable is still private but is viewable in the unity editor
     // i had some problems with this however and did a slightly worse way but worked
@@ -20,13 +17,13 @@ public class PlayerStateManager : MonoBehaviour
     [SerializeField] GameObject myBoard;
 
 
+    // A variable to store each player object in the game
+    public Player player1; // White
+    public Player player2; // Red
+    public Player player3; // Yellow
+    public Player player4; // Blue
 
-    public Player player1;
-    public Player player2;
-    public Player player3;
-    public Player player4;
-
-
+    // A varaible of the current players number
     public int currentPlayerNumber;
 
 
@@ -35,51 +32,57 @@ public class PlayerStateManager : MonoBehaviour
     void Awake()
     {
         timeScript = timer.GetComponent<TimerScript>();
-        showPanel = panel.GetComponent<ShowPanel>();
+        //showPanel = panel.GetComponent<ShowPanel>();
         board = myBoard.GetComponent<Board>();
 
     }
 
     // Start is called before the first frame update
+    // Players instantiated here
+    // current player number is intialized to 1 as that will be the first player
     void Start()
     {
         player1 = new Player();
-        player1.setPlayerNumber(1);
-        player1.buildSettlement(board.boardNodes[0]);
-        //player1.currencyLumber = 1;
-        //player1.currencyGrain = 1;
-        //player1.currencyBrick = 1;
-        //player1.currencyOre = 1;
-        //player1.currencyWool = 1;
+        //player1.setPlayerNumber(1);
+        //player1.buildSettlement(board.boardNodes[12]);
+        player1.currencyLumber = 1;
+        player1.currencyGrain = 0;
+        player1.currencyBrick = 0;
+        player1.currencyOre = 1;
+        player1.currencyWool = 1;
+
+
         player2 = new Player();
-        player2.setPlayerNumber(2);
-        player2.buildSettlement(board.boardNodes[4]);
-        //player2.currencyLumber = 2;
-        //player2.currencyGrain = 2;
-        //player2.currencyBrick = 2;
-        //player2.currencyOre = 2;
-        //player2.currencyWool = 2;
+        //player2.setPlayerNumber(2);
+        //player2.buildSettlement(board.boardNodes[4]);
+        player2.currencyLumber = 1;
+        player2.currencyGrain = 1;
+        player2.currencyBrick = 0;
+        player2.currencyOre = 0;
+        player2.currencyWool = 1;
+
+
         player3 = new Player();
-        player3.setPlayerNumber(3);
-        player3.buildSettlement(board.boardNodes[7]);
-        //player3.currencyLumber = 3;
-        //player3.currencyGrain = 3;
-        //player3.currencyBrick = 3;
-        //player3.currencyOre = 3;
-        //player3.currencyWool = 3;
+        //player3.setPlayerNumber(3);
+        //player3.buildSettlement(board.boardNodes[7]);
+        player3.currencyLumber = 1;
+        player3.currencyGrain = 1;
+        player3.currencyBrick = 0;
+        player3.currencyOre = 0;
+        player3.currencyWool = 1;
+
+
         player4 = new Player();
-        player4.setPlayerNumber(4);
-        player4.buildSettlement(board.boardNodes[8]);
-        //player4.currencyLumber = 4;
-        //player4.currencyGrain = 4;
-        //player4.currencyBrick = 4;
-        //player4.currencyOre = 4;
-        //player4.currencyWool = 4;
+        //player4.setPlayerNumber(4);
+        //player4.buildSettlement(board.boardNodes[8]);
+        player4.currencyLumber = 0;
+        player4.currencyGrain = 0;
+        player4.currencyBrick = 1;
+        player4.currencyOre = 1;
+        player4.currencyWool = 1;
 
 
         currentPlayerNumber = 1;
-
-        
     }
 
     // Update is called once per frame
@@ -89,10 +92,16 @@ public class PlayerStateManager : MonoBehaviour
         updateOtherPlayersResources();
     }
 
+    // This method is called when the 'end turn' button on screen is clicked. It will update
+    // the current player variable to the next players number
     public void SwitchState()
     {
-
-        timeScript.timeLeft = 300;
+        if (board.introTurn == false)
+        {
+            // On screen time set to 300 seconds on every new players turn
+            timeScript.timeLeft = 300;
+        }
+        
 
         if (currentPlayerNumber == 1)
         {
@@ -120,6 +129,15 @@ public class PlayerStateManager : MonoBehaviour
         }
     }
 
+    //public void callBuildSettlementCity()
+    //{
+    //    b.gameObject
+
+    //    player.buildSettlementCity();
+    //}
+
+    // This method is called every frame to keep track of when a players resource value has changed and can
+    // therefore be also changed on screen
     public void updateResources()
     {
         if (currentPlayerNumber == 1)
@@ -156,6 +174,7 @@ public class PlayerStateManager : MonoBehaviour
         }
     }
 
+    // This method does the same as the one above but updates the panel which shows other players resources
     public void updateOtherPlayersResources()
     {
         if(panel.activeInHierarchy == true)
