@@ -1024,3 +1024,32 @@ AssetImportParameters requested are different than current active one (requested
   custom:container-demuxer-ogg: 62fdf1f143b41e24485cea50d1cbac27 -> 
   custom:video-decoder-webm-vp8: 9c59270c3fd7afecdb556c50c9e8de78 -> 
   custom:audio-decoder-ogg-vorbis: bf7c407c2cedff20999df2af8eb42d56 -> 
+AssetImportWorkerClient::OnTransportError - code=2 error=End of file
+AssetImportWorker is now disconnected from the server
+Obtained 26 stack frames.
+#0  0x000001a7d89e7c in dispatch_release.cold.1
+#1  0x7876800101fcffb0 in AssetImportWorkerClient::~AssetImportWorkerClient()
+#2  0x00000101f61a68 in core::unique_ptr<AssetImportWorkerClient>::~unique_ptr()
+#3  0x000001a7e03dd0 in __cxa_finalize_ranges
+#4  0x520f8001a7e03b74 in exit
+#5  0x3c37000102902200 in -[EditorApplication applicationShouldTerminate:]
+#6  0x000001aade0254 in -[NSApplication _docController:shouldTerminate:]
+#7  0x314e8001aade00dc in __91-[NSDocumentController(NSInternal) _closeAllDocumentsWithDelegate:shouldTerminateSelector:]_block_invoke
+#8  0xcb7f8001aaddfd60 in -[NSDocumentController(NSInternal) _closeAllDocumentsWithDelegate:shouldTerminateSelector:]
+#9  0xc7458001aaddf8e4 in -[NSDocumentController(NSInternal) __closeAllDocumentsWithDelegate:shouldTerminateSelector:]
+#10 0x99030001aaddf53c in -[NSApplication _shouldTerminate]
+#11 0x6b8001aaf2fb80 in -[NSApplication(NSAppleEventHandling) _handleAEQuit]
+#12 0x72750001aab505c0 in -[NSApplication(NSAppleEventHandling) _handleCoreEvent:withReplyEvent:]
+#13 0x6b1a0001a8e9a7d8 in -[NSAppleEventManager dispatchRawAppleEvent:withRawReply:handlerRefCon:]
+#14 0x46638001a8e9a610 in _NSAppleEventManagerGenericHandler
+#15 0x94180001ae78aab8 in _AppleEventsCheckInAppWithBlock
+#16 0x89770001ae78a410 in _AppleEventsCheckInAppWithBlock
+#17 0x6e2b0001ae7834a8 in aeProcessAppleEvent
+#18 0x7a768001b0c3795c in AEProcessAppleEvent
+#19 0x807f0001aab4a8f4 in _DPSNextEvent
+#20 0xc0568001aab48e14 in -[NSApplication(NSEvent) _nextEventMatchingEventMask:untilDate:inMode:dequeue:]
+#21 0xf0398001aab3afe0 in -[NSApplication run]
+#22 0xa23d8001aab0c6fc in NSApplicationMain
+#23 0x1051800102900b08 in EditorMain(int, char const**)
+#24 0x00000102900e40 in main
+#25 0x00000105f1108c in (Unknown)

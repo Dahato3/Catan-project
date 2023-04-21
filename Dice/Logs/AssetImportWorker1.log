@@ -1060,3 +1060,102 @@ AssetImportParameters requested are different than current active one (requested
   custom:container-demuxer-ogg: 62fdf1f143b41e24485cea50d1cbac27 -> 
   custom:video-decoder-webm-vp8: 9c59270c3fd7afecdb556c50c9e8de78 -> 
   custom:audio-decoder-ogg-vorbis: bf7c407c2cedff20999df2af8eb42d56 -> 
+AssetImportWorkerClient::OnTransportError - code=2 error=End of file
+AssetImportWorker is now disconnected from the server
+
+=================================================================
+	Native Crash Reporting
+=================================================================
+Got a segv while executing native code. This usually indicates
+a fatal error in the mono runtime or one of the native libraries 
+used by your application.
+=================================================================
+
+=================================================================
+	Native stacktrace:
+=================================================================
+	0x17ad0773c - /Applications/Unity/Hub/Editor/2021.3.18f1/Unity.app/Contents/Frameworks/MonoBleedingEdge/MonoEmbedRuntime/osx/libmonobdwgc-2.0.dylib : mono_dump_native_crash_info
+	0x17acc9cbc - /Applications/Unity/Hub/Editor/2021.3.18f1/Unity.app/Contents/Frameworks/MonoBleedingEdge/MonoEmbedRuntime/osx/libmonobdwgc-2.0.dylib : mono_handle_native_crash
+	0x17ac52584 - /Applications/Unity/Hub/Editor/2021.3.18f1/Unity.app/Contents/Frameworks/MonoBleedingEdge/MonoEmbedRuntime/osx/libmonobdwgc-2.0.dylib : mono_sigsegv_signal_handler_debug
+	0x1a7f2f4a4 - /usr/lib/system/libsystem_platform.dylib : _sigtramp
+	0x103fdffb0 - /Applications/Unity/Hub/Editor/2021.3.18f1/Unity.app/Contents/MacOS/Unity : _ZN23AssetImportWorkerClientD2Ev
+	0x103f71a68 - /Applications/Unity/Hub/Editor/2021.3.18f1/Unity.app/Contents/MacOS/Unity : _ZN4core10unique_ptrI23AssetImportWorkerClientED1Ev
+	0x1a7e03dd0 - /usr/lib/system/libsystem_c.dylib : __cxa_finalize_ranges
+	0x1a7e03b74 - /usr/lib/system/libsystem_c.dylib : exit
+	0x104912200 - /Applications/Unity/Hub/Editor/2021.3.18f1/Unity.app/Contents/MacOS/Unity : -[EditorApplication applicationShouldTerminate:]
+	0x1aade0254 - /System/Library/Frameworks/AppKit.framework/Versions/C/AppKit : -[NSApplication _docController:shouldTerminate:]
+	0x1aade00dc - /System/Library/Frameworks/AppKit.framework/Versions/C/AppKit : __91-[NSDocumentController(NSInternal) _closeAllDocumentsWithDelegate:shouldTerminateSelector:]_block_invoke
+	0x1aaddfd60 - /System/Library/Frameworks/AppKit.framework/Versions/C/AppKit : -[NSDocumentController(NSInternal) _closeAllDocumentsWithDelegate:shouldTerminateSelector:]
+	0x1aaddf8e4 - /System/Library/Frameworks/AppKit.framework/Versions/C/AppKit : -[NSDocumentController(NSInternal) __closeAllDocumentsWithDelegate:shouldTerminateSelector:]
+	0x1aaddf53c - /System/Library/Frameworks/AppKit.framework/Versions/C/AppKit : -[NSApplication _shouldTerminate]
+	0x1aaf2fb80 - /System/Library/Frameworks/AppKit.framework/Versions/C/AppKit : -[NSApplication(NSAppleEventHandling) _handleAEQuit]
+	0x1aab505c0 - /System/Library/Frameworks/AppKit.framework/Versions/C/AppKit : -[NSApplication(NSAppleEventHandling) _handleCoreEvent:withReplyEvent:]
+	0x1a8e9a7d8 - /System/Library/Frameworks/Foundation.framework/Versions/C/Foundation : -[NSAppleEventManager dispatchRawAppleEvent:withRawReply:handlerRefCon:]
+	0x1a8e9a610 - /System/Library/Frameworks/Foundation.framework/Versions/C/Foundation : _NSAppleEventManagerGenericHandler
+	0x1ae78aab8 - /System/Library/Frameworks/CoreServices.framework/Versions/A/Frameworks/AE.framework/Versions/A/AE : _AppleEventsCheckInAppWithBlock
+	0x1ae78a410 - /System/Library/Frameworks/CoreServices.framework/Versions/A/Frameworks/AE.framework/Versions/A/AE : _AppleEventsCheckInAppWithBlock
+	0x1ae7834a8 - /System/Library/Frameworks/CoreServices.framework/Versions/A/Frameworks/AE.framework/Versions/A/AE : aeProcessAppleEvent
+	0x1b0c3795c - /System/Library/Frameworks/Carbon.framework/Versions/A/Frameworks/HIToolbox.framework/Versions/A/HIToolbox : AEProcessAppleEvent
+	0x1aab4a8f4 - /System/Library/Frameworks/AppKit.framework/Versions/C/AppKit : _DPSNextEvent
+	0x1aab48e14 - /System/Library/Frameworks/AppKit.framework/Versions/C/AppKit : -[NSApplication(NSEvent) _nextEventMatchingEventMask:untilDate:inMode:dequeue:]
+	0x1aab3afe0 - /System/Library/Frameworks/AppKit.framework/Versions/C/AppKit : -[NSApplication run]
+	0x1aab0c6fc - /System/Library/Frameworks/AppKit.framework/Versions/C/AppKit : NSApplicationMain
+	0x104910b08 - /Applications/Unity/Hub/Editor/2021.3.18f1/Unity.app/Contents/MacOS/Unity : _Z10EditorMainiPPKc
+	0x104910e40 - /Applications/Unity/Hub/Editor/2021.3.18f1/Unity.app/Contents/MacOS/Unity : main
+	0x107d7d08c - Unknown
+
+=================================================================
+	Telemetry Dumper:
+=================================================================
+Pkilling 0x6363738112x from 0x4427023744x
+Pkilling 0x6138605568x from 0x4427023744x
+Pkilling 0x6365884416x from 0x4427023744x
+Entering thread summarizer pause from 0x4427023744x
+Finished thread summarizer pause from 0x4427023744x.
+Failed to create breadcrumb file (null)/crash_hash_0x0
+debugger-agent: Unable to listen on 40
+
+Waiting for dumping threads to resume
+
+=================================================================
+	External Debugger Dump:
+=================================================================
+
+=================================================================
+	Basic Fault Address Reporting
+=================================================================
+Memory around native instruction pointer (0x1a7da09c0):0x1a7da09b0  1f 04 00 f1 6b 03 00 54 08 00 40 f9 09 ad 7d 92  ....k..T..@...}.
+0x1a7da09c0  2a 11 40 f9 0a 03 10 36 e8 03 00 36 09 20 e0 d2  *.@....6...6. ..
+0x1a7da09d0  0a fd 77 d3 6a 02 00 b4 0a 01 09 eb 43 01 00 54  ..w.j.......C..T
+0x1a7da09e0  eb 03 08 aa 0a fc ab c8 7f 01 08 eb 60 01 00 54  ............`..T
+
+=================================================================
+	Managed Stacktrace:
+=================================================================
+=================================================================
+Obtained 25 stack frames.
+#0  0x000001a7da09c0 in objc_release
+#1  0x00000103f71a68 in core::unique_ptr<AssetImportWorkerClient>::~unique_ptr()
+#2  0x000001a7e03dd0 in __cxa_finalize_ranges
+#3  0x334d0001a7e03b74 in exit
+#4  0xa424800104912200 in -[EditorApplication applicationShouldTerminate:]
+#5  0x000001aade0254 in -[NSApplication _docController:shouldTerminate:]
+#6  0x973f0001aade00dc in __91-[NSDocumentController(NSInternal) _closeAllDocumentsWithDelegate:shouldTerminateSelector:]_block_invoke
+#7  0x507b8001aaddfd60 in -[NSDocumentController(NSInternal) _closeAllDocumentsWithDelegate:shouldTerminateSelector:]
+#8  0x6a368001aaddf8e4 in -[NSDocumentController(NSInternal) __closeAllDocumentsWithDelegate:shouldTerminateSelector:]
+#9  0xda688001aaddf53c in -[NSApplication _shouldTerminate]
+#10 0x37740001aaf2fb80 in -[NSApplication(NSAppleEventHandling) _handleAEQuit]
+#11 0x960b0001aab505c0 in -[NSApplication(NSAppleEventHandling) _handleCoreEvent:withReplyEvent:]
+#12 0x1c518001a8e9a7d8 in -[NSAppleEventManager dispatchRawAppleEvent:withRawReply:handlerRefCon:]
+#13 0xed328001a8e9a610 in _NSAppleEventManagerGenericHandler
+#14 0xf0278001ae78aab8 in _AppleEventsCheckInAppWithBlock
+#15 0x23268001ae78a410 in _AppleEventsCheckInAppWithBlock
+#16 0x61430001ae7834a8 in aeProcessAppleEvent
+#17 0x6d740001b0c3795c in AEProcessAppleEvent
+#18 0xcb170001aab4a8f4 in _DPSNextEvent
+#19 0xbf538001aab48e14 in -[NSApplication(NSEvent) _nextEventMatchingEventMask:untilDate:inMode:dequeue:]
+#20 0xe90c0001aab3afe0 in -[NSApplication run]
+#21 0xb5e0001aab0c6fc in NSApplicationMain
+#22 0x231b800104910b08 in EditorMain(int, char const**)
+#23 0x00000104910e40 in main
+#24 0x00000107d7d08c in (Unknown)
