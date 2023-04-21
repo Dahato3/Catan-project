@@ -34,8 +34,9 @@ public class TimerScript : MonoBehaviour
     // Decrements the timer timer internally
     void Update()
     {
-        if (myBoard.introTurn == true)
+        if (myBoard.introTurn == false)
         {
+            timerOn = true;
             if (timerOn)
             {
                 if (timeLeft > 0)

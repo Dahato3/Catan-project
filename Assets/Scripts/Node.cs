@@ -8,13 +8,15 @@ public class Node
 {
     public Board myboard = GameObject.Find("Board").GetComponent<Board>();
 
-    public GameObject node;
+    public GameObject settlementHex;
 
     public int boardLocation;
 
     public Player player;
 
-    public Button button;
+    public PlayerStateManager state;
+
+    //public Button button;
 
     public Node nodeNorthSouth; // oHex
     public Node nodeEast; // rHex
@@ -32,21 +34,28 @@ public class Node
     public int houseType; // 0 - none, 1 - settlement, 2 - city
     public int houseColour; // 1 - white, 2 - red, 3 - yellow, 4 - blue
 
+    public int lHexLocation;
     public int lHex;
     public String lHexResource;
 
+    public int rHexLocation;
     public int rHex;
     public String rHexResource;
 
+    public int oHexLocation;
     public int oHex;
     public String oHexResource;
 
     bool canPlace;
 
+    public bool hasRobber;
+
     public Node()
     {
         houseColour = 0;
         houseType = 0;
+
+        hasRobber = false;
 
         //currentWidth = width;
         //currentHeight = height;
@@ -54,7 +63,7 @@ public class Node
         //Debug.Log("Set Height " + currentHeight);
         //myboard = node.GetComponent<Board>();
 
-        button = new Button();
+        //button = new Button();
 
     }
 
@@ -120,7 +129,8 @@ public class Node
             }
             
         }
-        else {
+        else if (myboard.getCHeight() > myboard.getHeight() / 2)
+        { 
             // Case where index is on the top half of the board and is on the top row
             if (myboard.cHeight == myboard.getHeight())
             {
@@ -132,7 +142,7 @@ public class Node
             {
                 nodeWest = myboard.getNode(index + myboard.getCWidth() - 1);
                 nodeEast = myboard.getNode(index + myboard.getCWidth());
-                nodeNorthSouth = myboard.getNode(index + myboard.getCWidth());
+                nodeNorthSouth = myboard.getNode(index - myboard.getCWidth());
             }
             // Case where index is on the bottom half of the board, an odd height and is on the first node of that height
             else if (myboard.getCHeight() % 2 == 1 && index == myboard.sIndex)
@@ -147,7 +157,7 @@ public class Node
                 nodeNorthSouth = myboard.getNode(index - myboard.getCWidth());
             }
             // Case where index is on the top half of the board and is on an even height
-            else if (myboard.getCWidth() % 2 == 0)
+            else if (myboard.getCHeight() % 2 == 0)
             {
                 nodeWest = myboard.getNode(index - myboard.getCWidth() - 1);
                 nodeEast = myboard.getNode(index - myboard.getCWidth());
@@ -176,11 +186,11 @@ public class Node
         }
         else
         {
-            if (myboard.getCHeight() == myboard.getHeight() / 2 + 1)
-            {
+            //if (myboard.getCHeight() == myboard.getHeight() / 2 + 1)
+            //{
 
-            }
-            else if (myboard.getCHeight() % 2 == 0)
+            //}
+            if (myboard.getCHeight() % 2 == 0)
             {
                 edgeWest = myboard.getEdge(edgeCounter);
                 edgeCounter++;
@@ -195,9 +205,25 @@ public class Node
         }
     }
 
+
+
     public bool CanPlace()
     {
         return canPlace;
+    }
+    public void SetOHexLocation(int val)
+    {
+        oHexLocation = val;
+    }
+
+    public void SetRHexLocation(int val)
+    {
+        rHexLocation = val;
+    }
+
+    public void SetLHexLocation(int val)
+    {
+        lHexLocation = val;
     }
 
     public void SetOHex(int val)
@@ -260,6 +286,17 @@ public class Node
     public Edge getEdgeNorthSouth()
     {
         return edgeNorthSouth;
+    } 
+    public void setSettlementHex(GameObject g)
+    {
+        settlementHex = g;
     }
+
+    public GameObject getSettlementHex()
+    {
+        return settlementHex;
+    }
+
+    
 
 }

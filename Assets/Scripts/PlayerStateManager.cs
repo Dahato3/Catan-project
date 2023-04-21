@@ -43,6 +43,8 @@ public class PlayerStateManager : MonoBehaviour
     void Start()
     {
         player1 = new Player();
+        player1.setPlayerNumber(1);
+        player1.playerColour = 1;
         //player1.setPlayerNumber(1);
         //player1.buildSettlement(board.boardNodes[12]);
         player1.currencyLumber = 1;
@@ -53,6 +55,8 @@ public class PlayerStateManager : MonoBehaviour
 
 
         player2 = new Player();
+        player2.playerNumber = 2;
+        player2.playerColour = 2;
         //player2.setPlayerNumber(2);
         //player2.buildSettlement(board.boardNodes[4]);
         player2.currencyLumber = 1;
@@ -63,6 +67,8 @@ public class PlayerStateManager : MonoBehaviour
 
 
         player3 = new Player();
+        player3.playerNumber = 3;
+        player3.playerColour = 3;
         //player3.setPlayerNumber(3);
         //player3.buildSettlement(board.boardNodes[7]);
         player3.currencyLumber = 1;
@@ -73,6 +79,8 @@ public class PlayerStateManager : MonoBehaviour
 
 
         player4 = new Player();
+        player4.playerNumber = 4;
+        player4.playerColour = 4;
         //player4.setPlayerNumber(4);
         //player4.buildSettlement(board.boardNodes[8]);
         player4.currencyLumber = 0;
@@ -89,13 +97,27 @@ public class PlayerStateManager : MonoBehaviour
     void Update()
     {
         updateResources();
-        updateOtherPlayersResources();
+
+        player1.totalResources = player1.currencyLumber + player1.currencyGrain + player1.currencyBrick + player1.currencyOre + player1.currencyWool;
+        player2.totalResources = player2.currencyLumber + player2.currencyGrain + player2.currencyBrick + player2.currencyOre + player2.currencyWool;
+        player3.totalResources = player3.currencyLumber + player3.currencyGrain + player3.currencyBrick + player3.currencyOre + player3.currencyWool;
+        player4.totalResources = player4.currencyLumber + player4.currencyGrain + player4.currencyBrick + player4.currencyOre + player4.currencyWool;
     }
+
+    //public void callBuildSettlementCity(int i)
+    //{
+    //    player.buildSettlementCity(i);
+    //}
 
     // This method is called when the 'end turn' button on screen is clicked. It will update
     // the current player variable to the next players number
     public void SwitchState()
     {
+        GameObject.Find("End Turn Button").GetComponent<Button>().interactable = false;
+        GameObject.Find("RollDiceButton").GetComponent<Button>().interactable = true;
+
+        Debug.Log(GameObject.Find("End Turn Button").GetComponent<Button>().interactable);
+
         if (board.introTurn == false)
         {
             // On screen time set to 300 seconds on every new players turn
@@ -128,13 +150,6 @@ public class PlayerStateManager : MonoBehaviour
             //player1.EnterState(this);
         }
     }
-
-    //public void callBuildSettlementCity()
-    //{
-    //    b.gameObject
-
-    //    player.buildSettlementCity();
-    //}
 
     // This method is called every frame to keep track of when a players resource value has changed and can
     // therefore be also changed on screen
@@ -291,6 +306,31 @@ public class PlayerStateManager : MonoBehaviour
             }
         }
         
+    }
+
+    public Player getCurrentPlayer(int current)
+    {
+        if (current == 1)
+        {
+            Debug.Log("Player1!");
+            return player1;
+        }
+        else if (current == 2)
+        {
+            return player2;
+        }
+        else if (current == 3)
+        {
+            return player3;
+        }
+        else if (current == 4)
+        {
+            return player4;
+        }
+        else
+        {
+            return null;
+        }
     }
 
 }

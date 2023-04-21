@@ -345,16 +345,18 @@
 -r:"Library/Bee/artifacts/200b0aE.dag/UnityEditor.UI.ref.dll"
 -r:"Library/Bee/artifacts/200b0aE.dag/UnityEngine.UI.ref.dll"
 "Assets/Scripts/Board.cs"
-"Assets/Scripts/buildScript.cs"
+"Assets/Scripts/build.cs"
 "Assets/Scripts/CurrentPlayer.cs"
 "Assets/Scripts/DiceRoller.cs"
 "Assets/Scripts/Edge.cs"
 "Assets/Scripts/Node.cs"
 "Assets/Scripts/Player.cs"
 "Assets/Scripts/PlayerStateManager.cs"
+"Assets/Scripts/Robber.cs"
 "Assets/Scripts/RollTotal.cs"
 "Assets/Scripts/ShowPanel.cs"
 "Assets/Scripts/TimerScript.cs"
+"Assets/Scripts/Trade.cs"
 -langversion:9.0
 
 /deterministic

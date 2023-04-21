@@ -1,9 +1,13 @@
 using System;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class Player
 {
+    GameObject PlayerState;
     PlayerStateManager state;
+
+    GameObject board;
     Board myboard;
 
     // A single variable to hold the players points (Victory points)
@@ -11,8 +15,14 @@ public class Player
 
     // A player numbner vaiable to differentiate the players
     public int playerNumber;
+    public int playerColour;
 
-    
+    public string[] inventory;
+
+    public bool freeBuild = false;
+
+    public int totalResources;
+
 
     // A variable to store the amount of each resource individually
     // The type indicated the integer value that will internally represent each resource
@@ -32,6 +42,15 @@ public class Player
         currencyBrick = 0;
         currencyOre = 0;
         currencyWool = 0;
+
+        inventory = new string[14];
+
+        board = GameObject.Find("Board");
+        myboard = board.GetComponent<Board>();
+
+        PlayerState = GameObject.Find("End Turn Button");
+        state = PlayerState.GetComponent<PlayerStateManager>();
+        
     }
 
     // Getter and setter form the player number so it could be set when each player is created
@@ -52,123 +71,512 @@ public class Player
     // type = int representation of the resource
     public void addResources(int type)
     {
-        if (type == 1)
+        if (state.currentPlayerNumber == state.getCurrentPlayer(state.currentPlayerNumber).getPlayerNumber())
         {
-            currencyLumber += 1;
+
+            if (type == 1)
+            {
+                currencyLumber += 1;
+            }
+            else if (type == 2)
+            {
+                currencyGrain += 1;
+            }
+            else if (type == 3)
+            {
+                currencyBrick += 1;
+            }
+            else if (type == 4)
+            {
+                currencyOre += 1;
+            }
+            else if (type == 5)
+            {
+                currencyWool += 1;
+            }
         }
-        else if (type == 2)
-        {
-            currencyGrain += 1;
-        }
-        else if (type == 3)
-        {
-            currencyBrick += 1;
-        }
-        else if (type == 4)
-        {
-            currencyOre += 1;
-        }
-        else if (type == 5)
-        {
-            currencyWool += 1;
-        }
+        
     }
 
-    int settlementIntroCounter = 0;
-    public void buildSettlementCity(int nodeIndex)
+    public void buyDevelopmentCard()
     {
-        Debug.Log("METHOD CALLED");
-        if (settlementIntroCounter < 8)
+        if (currencyWool >= 1 && currencyOre >= 1 && currencyWool >= 1)
         {
-            settlementIntroCounter++;
-        }
-        // Nothing built on this node
-        if (myboard.boardNodes[nodeIndex].houseColour == 0)
-        {
-            if (myboard.boardNodes[nodeIndex].getNodeNorthSouth().getHouseType() == 0
-                && myboard.boardNodes[nodeIndex].getNodeWest().getHouseType() == 0
-                && myboard.boardNodes[nodeIndex].getNodeEast().getHouseType() == 0)
+            int randInt = UnityEngine.Random.Range(0, 25);
+            string setCard = myboard.developmentCards[randInt];
+            while (setCard == "")
             {
-                if (myboard.introTurn)
+                randInt = UnityEngine.Random.Range(0, 25);
+                setCard = myboard.developmentCards[randInt];
+            }
+            myboard.developmentCards[randInt] = "";
+
+            if (setCard == "knight")
+            {
+                int i = 0;
+                while (inventory[i] != "")
                 {
-                    if (settlementIntroCounter == 8)
+                    i++;
+                }
+                inventory[i] = setCard;
+            }
+            else if (setCard == "road")
+            {
+                Debug.Log("Please build 2 road for free");
+
+                freeBuild = true;
+            }
+            else if (setCard == "yearofplenty")
+            {
+                // panel to select 2 resources from bank
+            }
+            else if (setCard == "monopoly")
+            {
+                // player choose a resource, gets all resources from all players of
+                // their chose type
+            }
+            else
+            {
+                victoryPoints++;
+            }
+
+
+
+
+
+
+        }
+        Debug.Log("Not enough resources");
+    }
+
+
+
+    // TODO: 2 elements NOT yet implemented - roll dice to see who places first AND 2nd round of placing
+    // is meant to be in reverse order
+
+    
+    public void buildSettlementCity(GameObject g)
+    {
+        if (myboard.introCounter % 2 == 1 && myboard.introCounter != 0)
+        {
+            Debug.Log("Cannot build a settlement yet");
+            return;
+        }
+        Node cNode = myboard.getCurrentNode(g);
+        string hexes = myboard.isHex(cNode.boardLocation);
+        if (hexes == "ROL")
+        {
+            if (cNode.houseColour == 0)
+            {
+                if (cNode.getNodeNorthSouth().getHouseType() == 0
+                    && cNode.getNodeWest().getHouseType() == 0
+                    && cNode.getNodeEast().getHouseType() == 0)
+                {
+                    if (myboard.introTurn)
                     {
-                        // Instantiate final blue intro settlement here
+                        if (myboard.introCounter == 0 || myboard.introCounter == 8)
+                        {
+                            // Instantiate a white settlement at the given node
 
-                        victoryPoints++;
+                            myboard.boardNodes[cNode.boardLocation].settlementHex.GetComponent<MeshRenderer>().enabled = true;
+                            myboard.boardNodes[cNode.boardLocation].houseType = 1;
+                            myboard.boardNodes[cNode.boardLocation].houseColour = 1;
 
-                        // New pop up to say "Player 4 please build a road"
-                        Debug.Log("Player 4 please build a road");
+                            victoryPoints++;
 
-                        myboard.placedIntroSettlements = true;
+                            myboard.introCounter++;
+
+                            // New pop up to say "Player 1 please build a road"
+                            Debug.Log("Player 1 please build a road");
+                        }
+
+                        else if (myboard.introCounter == 2 || myboard.introCounter == 10)
+                        {
+                            // Instantiate a red settlement at the given node
+
+                            myboard.boardNodes[cNode.boardLocation].settlementHex.GetComponent<MeshRenderer>().enabled = true;
+                            myboard.boardNodes[cNode.boardLocation].houseType = 2;
+                            myboard.boardNodes[cNode.boardLocation].houseColour = 2;
+
+                            victoryPoints++;
+
+                            myboard.introCounter++;
+
+                            // New pop up to say "Player 2 please build a road"
+                            Debug.Log("Player 2 please build a road");
+                        }
+                        else if (myboard.introCounter == 4 || myboard.introCounter == 12)
+                        {
+                            // Instantiate a yellow settlement at the given node
+
+                            myboard.boardNodes[cNode.boardLocation].settlementHex.GetComponent<MeshRenderer>().enabled = true;
+                            myboard.boardNodes[cNode.boardLocation].houseType = 3;
+                            myboard.boardNodes[cNode.boardLocation].houseColour = 3;
+
+                            victoryPoints++;
+
+                            myboard.introCounter++;
+
+                            // New pop up to say "Player 3 please build a road"
+                            Debug.Log("Player 3 please build a road");
+                        }
+                        else if (myboard.introCounter == 6 || myboard.introCounter == 14)
+                        {
+                            // Instantiate a blue settlement at the given node
+
+                            myboard.boardNodes[cNode.boardLocation].settlementHex.GetComponent<MeshRenderer>().enabled = true;
+                            myboard.boardNodes[cNode.boardLocation].houseType = 4;
+                            myboard.boardNodes[cNode.boardLocation].houseColour = 4;
+
+                            victoryPoints++;
+
+                            myboard.introCounter++;
+
+                            // New pop up to say "Player 4 please build a road"
+                            Debug.Log("Player 4 please build a road");
+                        }
                     }
-                    // Instantiate settlement object at this node position
-
-                    else if (settlementIntroCounter == 1 || settlementIntroCounter == 5)
+                    else
                     {
-                        // Instantiate a white settlement at the given node
+                        if (currencyLumber >= 1 && currencyBrick >= 1 && currencyGrain >= 1 && currencyWool >= 1
+                            && (cNode.getEdgeNorthSouth().getEdgeType() == getPlayerNumber()
+                            || cNode.getEdgeWest().getEdgeType() == getPlayerNumber()
+                            || cNode.getEdgeEast().getEdgeType() == getPlayerNumber()))
+                        {
+                            currencyLumber -= 1;
+                            currencyBrick -= 1;
+                            currencyGrain -= 1;
+                            currencyWool -= 1;
 
-                        victoryPoints++;
+                            victoryPoints++;
 
-                        // New pop up to say "Player 1 please build a road"
-                        Debug.Log("Player 1 please build a road");
-                    }
-
-                    else if (settlementIntroCounter == 2 || settlementIntroCounter == 6)
-                    {
-                        // Instantiate a red settlement at the given node
-
-                        victoryPoints++;
-
-                        // New pop up to say "Player 2 please build a road"
-                        Debug.Log("Player 2 please build a road");
-                    }
-                    else if (settlementIntroCounter == 3 || settlementIntroCounter == 7)
-                    {
-                        // Instantiate a yellow settlement at the given node
-
-                        victoryPoints++;
-
-                        // New pop up to say "Player 3 please build a road"
-                        Debug.Log("Player 3 please build a road");
-                    }
-                    else if (settlementIntroCounter == 4)
-                    {
-                        // Instantiate a blue settlement at the given node
-
-                        victoryPoints++;
-
-                        // New pop up to say "Player 4 please build a road"
-                        Debug.Log("Player 4 please build a road");
+                            // Instantiate settlement object at this node position / activate node that will already be created there (at every node)
+                        }
+                        else
+                        {
+                            Debug.Log("Cannot build here2");
+                        }
                     }
                 }
                 else
                 {
-                    if (currencyLumber >= 1 && currencyBrick >= 1 && currencyGrain >= 1 && currencyWool >= 1
-                        && (myboard.boardNodes[nodeIndex].getEdgeNorthSouth().getEdgeType() == getPlayerNumber()
-                        || myboard.boardNodes[nodeIndex].getEdgeWest().getEdgeType() == getPlayerNumber()
-                        || myboard.boardNodes[nodeIndex].getEdgeEast().getEdgeType() == getPlayerNumber()))
+                    Debug.Log("Cannot build next to another player");
+                }
+            }
+            else
+            {
+                Debug.Log("Another player has already build here");
+            }
+        }
+        else if (hexes == "LR")
+        {
+            if (cNode.houseColour == 0)
+            {
+                if (cNode.getNodeWest().getHouseType() == 0
+                    && cNode.getNodeEast().getHouseType() == 0)
+                {
+                    if (myboard.introTurn)
                     {
-                        currencyLumber -= 1;
-                        currencyBrick -= 1;
-                        currencyGrain -= 1;
-                        currencyWool -= 1;
+                        if (myboard.introCounter == 0 || myboard.introCounter == 8)
+                        { 
+                            // Instantiate a white settlement at the given node
 
-                        victoryPoints++;
+                            myboard.boardNodes[cNode.boardLocation].settlementHex.GetComponent<MeshRenderer>().enabled = true;
+                            myboard.boardNodes[cNode.boardLocation].houseType = 1;
+                            myboard.boardNodes[cNode.boardLocation].houseColour = 1;
 
-                        // Instantiate settlement object at this node position / activate node that will already be created there (at every node)
+                            victoryPoints++;
+
+                            myboard.introCounter++;
+
+                            // New pop up to say "Player 1 please build a road"
+                            Debug.Log("Player 1 please build a road");
+                        }
+                        else if (myboard.introCounter == 2 || myboard.introCounter == 10)
+                        {
+                            // Instantiate a red settlement at the given node
+
+                            myboard.boardNodes[cNode.boardLocation].settlementHex.GetComponent<MeshRenderer>().enabled = true;
+                            myboard.boardNodes[cNode.boardLocation].houseType = 2;
+                            myboard.boardNodes[cNode.boardLocation].houseColour = 2;
+
+                            victoryPoints++;
+
+                            myboard.introCounter++;
+
+                            // New pop up to say "Player 2 please build a road"
+                            Debug.Log("Player 2 please build a road");
+                        }
+                        else if (myboard.introCounter == 4 || myboard.introCounter == 12)
+                        {
+                            // Instantiate a yellow settlement at the given node
+
+                            myboard.boardNodes[cNode.boardLocation].settlementHex.GetComponent<MeshRenderer>().enabled = true;
+                            myboard.boardNodes[cNode.boardLocation].houseType = 3;
+                            myboard.boardNodes[cNode.boardLocation].houseColour = 3;
+
+                            victoryPoints++;
+
+                            myboard.introCounter++;
+
+                            // New pop up to say "Player 3 please build a road"
+                            Debug.Log("Player 3 please build a road");
+                        }
+                        else if (myboard.introCounter == 6 || myboard.introCounter == 14)
+                        {
+                            // Instantiate a blue settlement at the given node
+
+                            myboard.boardNodes[cNode.boardLocation].settlementHex.GetComponent<MeshRenderer>().enabled = true;
+                            myboard.boardNodes[cNode.boardLocation].houseType = 4;
+                            myboard.boardNodes[cNode.boardLocation].houseColour = 4;
+
+                            victoryPoints++;
+
+                            myboard.introCounter++;
+
+                            // New pop up to say "Player 4 please build a road"
+                            Debug.Log("Player 4 please build a road");
+                        }
                     }
                     else
                     {
-                        Debug.Log("Cannot build here");
+                        if (currencyLumber >= 1 && currencyBrick >= 1 && currencyGrain >= 1 && currencyWool >= 1
+                            && (cNode.getEdgeWest().getEdgeType() == getPlayerNumber()
+                            || cNode.getEdgeEast().getEdgeType() == getPlayerNumber()))
+                        {
+                            currencyLumber -= 1;
+                            currencyBrick -= 1;
+                            currencyGrain -= 1;
+                            currencyWool -= 1;
+
+                            victoryPoints++;
+
+                            // Instantiate settlement object at this node position / activate node that will already be created there (at every node)
+                        }
+                        else
+                        {
+                            Debug.Log("Cannot build here");
+                        }
                     }
                 }
+                else
+                {
+                    Debug.Log("Cannot build next to another player");
+                }
+            }
+            else
+            {
+                Debug.Log("Another player has already build here");
+            }
+        }
+        else if (hexes == "RO")
+        {
+            if (cNode.houseColour == 0)
+            {
+                if (cNode.getNodeNorthSouth().getHouseType() == 0
+                    && cNode.getNodeEast().getHouseType() == 0)
+                {
+                    if (myboard.introTurn)
+                    {
+                        if (myboard.introCounter == 0 || myboard.introCounter == 8)
+                        { 
+                            // Instantiate a white settlement at the given node
+
+                            myboard.boardNodes[cNode.boardLocation].settlementHex.GetComponent<MeshRenderer>().enabled = true;
+                            myboard.boardNodes[cNode.boardLocation].houseType = 1;
+                            myboard.boardNodes[cNode.boardLocation].houseColour = 1;
+
+                            victoryPoints++;
+
+                            myboard.introCounter++;
+
+                            // New pop up to say "Player 1 please build a road"
+                            Debug.Log("Player 1 please build a road");
+                        }
+
+                        else if (myboard.introCounter == 2 || myboard.introCounter == 10)
+                        {
+                            // Instantiate a red settlement at the given node
+
+                            myboard.boardNodes[cNode.boardLocation].settlementHex.GetComponent<MeshRenderer>().enabled = true;
+                            myboard.boardNodes[cNode.boardLocation].houseType = 2;
+                            myboard.boardNodes[cNode.boardLocation].houseColour = 2;
+
+                            victoryPoints++;
+
+                            myboard.introCounter++;
+
+                            // New pop up to say "Player 2 please build a road"
+                            Debug.Log("Player 2 please build a road");
+                        }
+                        else if (myboard.introCounter == 4 || myboard.introCounter == 12)
+                        {
+                            // Instantiate a yellow settlement at the given node
+
+                            myboard.boardNodes[cNode.boardLocation].settlementHex.GetComponent<MeshRenderer>().enabled = true;
+                            myboard.boardNodes[cNode.boardLocation].houseType = 3;
+                            myboard.boardNodes[cNode.boardLocation].houseColour = 3;
+
+                            victoryPoints++;
+
+                            myboard.introCounter++;
+
+                            // New pop up to say "Player 3 please build a road"
+                            Debug.Log("Player 3 please build a road");
+                        }
+                        else if (myboard.introCounter == 6 || myboard.introCounter == 14)
+                        {
+                            // Instantiate a blue settlement at the given node
+
+                            myboard.boardNodes[cNode.boardLocation].settlementHex.GetComponent<MeshRenderer>().enabled = true;
+                            myboard.boardNodes[cNode.boardLocation].houseType = 4;
+                            myboard.boardNodes[cNode.boardLocation].houseColour = 4;
+
+                            victoryPoints++;
+
+                            myboard.introCounter++;
+
+                            // New pop up to say "Player 4 please build a road"
+                            Debug.Log("Player 4 please build a road");
+                        }
+                    }
+                    else
+                    {
+                        if (currencyLumber >= 1 && currencyBrick >= 1 && currencyGrain >= 1 && currencyWool >= 1
+                            && (cNode.getEdgeNorthSouth().getEdgeType() == getPlayerNumber()
+                            || cNode.getEdgeEast().getEdgeType() == getPlayerNumber()))
+                        {
+                            currencyLumber -= 1;
+                            currencyBrick -= 1;
+                            currencyGrain -= 1;
+                            currencyWool -= 1;
+
+                            victoryPoints++;
+
+                            // Instantiate settlement object at this node position / activate node that will already be created there (at every node)
+                        }
+                        else
+                        {
+                            Debug.Log("Cannot build here");
+                        }
+                    }
+                }
+                else
+                {
+                    Debug.Log("Cannot build next to another player");
+                }
+            }
+            else
+            {
+                Debug.Log("Another player has already build here");
+            }
+        }
+        else if (hexes == "LO")
+        {
+            if (cNode.houseColour == 0)
+            {
+                if (cNode.getNodeNorthSouth().getHouseType() == 0
+                    && cNode.getNodeWest().getHouseType() == 0)
+                {
+                    if (myboard.introTurn)
+                    {
+                        if (myboard.introCounter == 0 || myboard.introCounter == 8)
+                        { 
+                            // Instantiate a white settlement at the given node
+
+                            myboard.boardNodes[cNode.boardLocation].settlementHex.GetComponent<MeshRenderer>().enabled = true;
+                            myboard.boardNodes[cNode.boardLocation].houseType = 1;
+                            myboard.boardNodes[cNode.boardLocation].houseColour = 1;
+
+                            victoryPoints++;
+
+                            myboard.introCounter++;
+
+                            // New pop up to say "Player 1 please build a road"
+                            Debug.Log("Player 1 please build a road");
+                        }
+
+                        else if (myboard.introCounter == 2 || myboard.introCounter == 10)
+                        {
+                            // Instantiate a red settlement at the given node
+
+                            myboard.boardNodes[cNode.boardLocation].settlementHex.GetComponent<MeshRenderer>().enabled = true;
+                            myboard.boardNodes[cNode.boardLocation].houseType = 2;
+                            myboard.boardNodes[cNode.boardLocation].houseColour = 2;
+
+                            victoryPoints++;
+
+                            myboard.introCounter++;
+
+                            // New pop up to say "Player 2 please build a road"
+                            Debug.Log("Player 2 please build a road");
+                        }
+                        else if (myboard.introCounter == 4 || myboard.introCounter == 12)
+                        {
+                            // Instantiate a yellow settlement at the given node
+
+                            myboard.boardNodes[cNode.boardLocation].settlementHex.GetComponent<MeshRenderer>().enabled = true;
+                            myboard.boardNodes[cNode.boardLocation].houseType = 3;
+                            myboard.boardNodes[cNode.boardLocation].houseColour = 3;
+
+                            victoryPoints++;
+
+                            myboard.introCounter++;
+
+                            // New pop up to say "Player 3 please build a road"
+                            Debug.Log("Player 3 please build a road");
+                        }
+                        else if (myboard.introCounter == 6 || myboard.introCounter == 14)
+                        {
+                            // Instantiate a blue settlement at the given node
+
+                            myboard.boardNodes[cNode.boardLocation].settlementHex.GetComponent<MeshRenderer>().enabled = true;
+                            myboard.boardNodes[cNode.boardLocation].houseType = 4;
+                            myboard.boardNodes[cNode.boardLocation].houseColour = 4;
+
+                            victoryPoints++;
+
+                            myboard.introCounter++;
+
+                            // New pop up to say "Player 4 please build a road"
+                            Debug.Log("Player 4 please build a road");
+                        }
+                    }
+                    else
+                    {
+                        if (currencyLumber >= 1 && currencyBrick >= 1 && currencyGrain >= 1 && currencyWool >= 1
+                            && (cNode.getEdgeNorthSouth().getEdgeType() == getPlayerNumber()
+                            || cNode.getEdgeWest().getEdgeType() == getPlayerNumber()))
+                        {
+                            currencyLumber -= 1;
+                            currencyBrick -= 1;
+                            currencyGrain -= 1;
+                            currencyWool -= 1;
+
+                            victoryPoints++;
+
+                            // Instantiate settlement object at this node position / activate node that will already be created there (at every node)
+                        }
+                        else
+                        {
+                            Debug.Log("Cannot build hereee");
+                        }
+                    }
+                }
+                else
+                {
+                    Debug.Log("Cannot build next to another player");
+                }
+            }
+            else
+            {
+                Debug.Log("Another player has already build here");
             }
         }
         // Builds city
         else if (currencyGrain >= 2 && currencyOre >= 3
-            && myboard.boardNodes[nodeIndex].houseColour == playerNumber
-            && myboard.boardNodes[nodeIndex].houseType == 1)
+            && cNode.houseColour == playerNumber
+            && cNode.houseType == 1)
         {
             currencyGrain -= 2;
             currencyOre -= 3;
@@ -179,72 +587,115 @@ public class Player
         }
         else
         {
-            Debug.Log("Cannot build here");
+            Debug.Log("Cannot build here8");
         }
 
     }
 
-    int roadIntroCounter = 0;
-    public void buildRoad(Edge e)
+    int freeBuildCounter = 0;
+    public void buildRoad(GameObject g)
     {
-        if (roadIntroCounter < 8)
+        if (myboard.introCounter % 2 == 0)
         {
-            roadIntroCounter++;
+            Debug.Log("Cannot build a road yet");
+            return;
         }
+        Edge cEdge = myboard.getCurrentEdge(g);
+        Debug.Log("Intro counter: " + myboard.introCounter);
         // Nothing built on this node
-        if (e.edgeColour == 0)
+        if (cEdge.edgeColour == 0)
         {
             // If the either of the two nodes of the inputted edge has a settlement or city of the same players number
-            if (e.getNode1().getHouseColour() == getPlayerNumber() || e.getNode2().getHouseType() == getPlayerNumber())
+            if (cEdge.getNode1().getHouseColour() == state.currentPlayerNumber || cEdge.getNode2().getHouseType() == state.currentPlayerNumber)
             {
                 if (myboard.introTurn)
                 {
-                    if (roadIntroCounter == 8)
-                    {
-                        // Instantiate final blue intro road here
-
-                        myboard.placedIntroRoads = true;
-                        myboard.introTurn = false;
-                    }
-                    // Instantiate road object at this node position
-
-                    else if (roadIntroCounter == 1 || roadIntroCounter == 5)
+                    if (myboard.introCounter == 1 || myboard.introCounter == 9)
                     {
                         // Instantiate a white road at the given edge
 
+                        Debug.Log("First road build");
+                        myboard.edgeList[cEdge.edgeBoardLocation].road.GetComponent<MeshRenderer>().enabled = true;
+                        myboard.edgeList[cEdge.edgeBoardLocation].edgeColour = 1;
+
+                        myboard.introCounter++;
                         state.SwitchState();
 
                         // New pop up to say "Player 2 please build a settlement"
                         Debug.Log("Player 2 please build a Settlement");
                     }
 
-                    else if (roadIntroCounter == 2 || roadIntroCounter == 6)
+                    else if (myboard.introCounter == 3 || myboard.introCounter == 11)
                     {
                         // Instantiate a red road at the given edge
+
+                        myboard.edgeList[cEdge.edgeBoardLocation].road.GetComponent<MeshRenderer>().enabled = true;
+
+                        myboard.introCounter++;
+                        state.SwitchState();
 
                         // New pop up to say "Player 3 please build a settlement"
                         Debug.Log("Player 3 please build a settlement");
                     }
-                    else if (roadIntroCounter == 3 || roadIntroCounter == 7)
+                    else if (myboard.introCounter == 5 || myboard.introCounter == 13)
                     {
                         // Instantiate a yellow road at the given edge
+
+                        myboard.edgeList[cEdge.edgeBoardLocation].road.GetComponent<MeshRenderer>().enabled = true;
+
+                        myboard.introCounter++;
+                        state.SwitchState();
 
                         // New pop up to say "Player 4 please build a settlement"
                         Debug.Log("Player 4 please build a settlement");
                     }
-                    else if (roadIntroCounter == 4)
+                    else if (myboard.introCounter == 7 || myboard.introCounter == 15)
                     {
                         // Instantiate a blue road at the given edge
 
+                        myboard.edgeList[cEdge.edgeBoardLocation].road.GetComponent<MeshRenderer>().enabled = true;
+
+                        myboard.introCounter++;
+
                         // New pop up to say "Player 1 please build a settlement"
-                        Debug.Log("Player 1 please build a settlement");
+                        if (myboard.introCounter == 8)
+                        {
+                            Debug.Log("Player 1 please build a settlement");
+                        }
+                        else if (myboard.introCounter == 16)
+                        {
+                            myboard.introTurn = false;
+                            Debug.Log("Intro turn ended");
+
+                            GameObject.Find("End Turn Button").GetComponent<CanvasGroup>().alpha = 1f;
+                            GameObject.Find("EndTurn").GetComponent<CanvasRenderer>().SetAlpha(1);
+                            GameObject.Find("Timer").GetComponent<CanvasRenderer>().SetAlpha(1);
+                            GameObject.Find("Resources").GetComponent<CanvasGroup>().alpha = 1f;
+                            //GameObject.Find("PlayersResourcesButton").GetComponent<CanvasGroup>().alpha = 1f;
+                            GameObject.Find("RollDiceButton").GetComponent<CanvasGroup>().alpha = 1f;
+                            GameObject.Find("PlayerTrade").GetComponent<CanvasGroup>().alpha = 1f;
+
+                            GameObject.Find("CurrentPlayer").transform.position = new Vector3(750, -40, 0);
+                        }
+                        state.SwitchState();
+
+                        
                     }
                 }
                 else
                 {
-                    if (currencyLumber >= 1 && currencyBrick >= 1
-                        && (e.getNode1().getHouseColour() == getPlayerNumber()
-                        || e.getNode2().getHouseType() == getPlayerNumber()))
+                    if (freeBuild == true)
+                    {
+                        freeBuildCounter++;
+                        if (freeBuildCounter == 2)
+                        {
+                            freeBuild = false;
+                        }
+                    }
+                   
+                    else if (currencyLumber >= 1 && currencyBrick >= 1
+                        && (cEdge.getNode1().getHouseColour() == getPlayerNumber()
+                        || cEdge.getNode2().getHouseType() == getPlayerNumber()))
                         
                     {
                         currencyLumber -= 1;
@@ -259,9 +710,21 @@ public class Player
                     }
                 }
             }
+            else
+            {
+                Debug.Log("You can only build a road next to your own settlement");
+            }
+        }
+        else
+        {
+            Debug.Log("Another player has already build here");
         }
 
     }
+
+
+
+
 
 
     // Here are various methods to build. One for building a road, a settlement and city.
