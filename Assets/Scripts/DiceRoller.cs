@@ -128,6 +128,10 @@ public class DiceRoller : MonoBehaviour
         }
         if (diceTotal == 7)
         {
+            
+
+            Debug.Log("interactable: " + GameObject.Find("RollDiceButton").GetComponent<Button>().interactable);
+
             initialPlayerToRemove = playerStateManager.currentPlayerNumber;
             Debug.Log("CurrentPlayer: " + playerStateManager.getCurrentPlayer(playerStateManager.currentPlayerNumber).playerNumber);
             if (playerStateManager.getCurrentPlayer(playerStateManager.currentPlayerNumber).totalResources > 7)
@@ -136,10 +140,8 @@ public class DiceRoller : MonoBehaviour
                 toRemove = playerStateManager.getCurrentPlayer(playerStateManager.currentPlayerNumber).totalResources / 2;
                 if (halfResourcePanelG != null)
                 {
-                    Debug.Log("NOT NULL");
                     if (halfResourcePanelG.activeInHierarchy == false)
                     {
-                        Debug.Log("Active FALSE");
                         halfResourcePanelG.SetActive(true);
                         return;
                     }
@@ -155,7 +157,6 @@ public class DiceRoller : MonoBehaviour
                 toRemove = playerStateManager.getCurrentPlayer(playerStateManager.currentPlayerNumber).totalResources / 2;
                 if (halfResourcePanelG.activeInHierarchy == false)
                 {
-                    Debug.Log("Active1");
                     halfResourcePanelG.SetActive(true);
                     return;
                 }
@@ -169,7 +170,6 @@ public class DiceRoller : MonoBehaviour
                 toRemove = playerStateManager.getCurrentPlayer(playerStateManager.currentPlayerNumber).totalResources / 2;
                 if (halfResourcePanelG.activeInHierarchy == false)
                 {
-                    Debug.Log("Active2");
                     halfResourcePanelG.SetActive(true);
                     return;
                 }
@@ -184,7 +184,6 @@ public class DiceRoller : MonoBehaviour
                 toRemove = playerStateManager.getCurrentPlayer(playerStateManager.currentPlayerNumber).totalResources / 2;
                 if (halfResourcePanelG.activeInHierarchy == false)
                 {
-                    Debug.Log("Active3");
                     halfResourcePanelG.SetActive(true);
                     return;
                 }
@@ -193,6 +192,11 @@ public class DiceRoller : MonoBehaviour
             {
                 playerStateManager.SwitchState();
             }
+            GameObject.Find("RollDiceButton").GetComponent<Button>().interactable = false;
+
+            Debug.Log("Please relocate the robber");
+
+            GameObject.Find("End Turn Button").GetComponent<Button>().interactable = false;
         }
         else
         {
@@ -302,10 +306,10 @@ public class DiceRoller : MonoBehaviour
 
     public void confirmSelected()
     {
-        Debug.Log("IPTR: " + initialPlayerToRemove);
         if (toRemove != totalSelected)
         {
             return;
+
         }
 
         playerStateManager.getCurrentPlayer(playerStateManager.currentPlayerNumber).currencyLumber -= lumberSelected;

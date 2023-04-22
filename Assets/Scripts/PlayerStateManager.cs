@@ -312,7 +312,6 @@ public class PlayerStateManager : MonoBehaviour
     {
         if (current == 1)
         {
-            Debug.Log("Player1!");
             return player1;
         }
         else if (current == 2)

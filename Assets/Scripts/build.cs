@@ -8,11 +8,23 @@ public class build : MonoBehaviour
     [SerializeField] GameObject playerState;
     PlayerStateManager state;
 
+    [SerializeField] GameObject dice;
+    DiceRoller diceRoller;
+
+    [SerializeField] GameObject rob;
+    Robber robber;
+
 
     void Awake()
     {
         playerState = GameObject.Find("End Turn Button");
         state = playerState.GetComponent<PlayerStateManager>();
+
+        dice = GameObject.Find("DiceRolls");
+        diceRoller = dice.GetComponent<DiceRoller>();
+
+        rob = GameObject.Find("1");
+        robber = rob.GetComponent<Robber>();
     }
     // Start is called before the first frame update
     void Start()
@@ -30,6 +42,99 @@ public class build : MonoBehaviour
     {
         if (Input.GetMouseButtonDown(0))
         {
+            if (diceRoller.diceTotal == 7)
+            {
+                if (robber.playersAroundRobber[0].getSettlementHex() == gameObject)
+                {
+                    int randResource = Random.Range(0, 5);
+
+                    if (randResource == 1)
+                    {
+                        state.getCurrentPlayer(robber.playersAroundRobber[0].houseColour).currencyLumber--;
+                        state.getCurrentPlayer(state.currentPlayerNumber).currencyLumber++;
+                    }
+                    if (randResource == 2)
+                    {
+                        state.getCurrentPlayer(robber.playersAroundRobber[0].houseColour).currencyGrain--;
+                        state.getCurrentPlayer(state.currentPlayerNumber).currencyGrain++;
+                    }
+                    if (randResource == 3)
+                    {
+                        state.getCurrentPlayer(robber.playersAroundRobber[0].houseColour).currencyBrick--;
+                        state.getCurrentPlayer(state.currentPlayerNumber).currencyBrick++;
+                    }
+                    if (randResource == 4)
+                    {
+                        state.getCurrentPlayer(robber.playersAroundRobber[0].houseColour).currencyOre--;
+                        state.getCurrentPlayer(state.currentPlayerNumber).currencyOre++;
+                    }
+                    if (randResource == 5)
+                    {
+                        state.getCurrentPlayer(robber.playersAroundRobber[0].houseColour).currencyWool--;
+                        state.getCurrentPlayer(state.currentPlayerNumber).currencyWool++;
+                    }
+                }
+                else if (robber.playersAroundRobber[1].getSettlementHex() == gameObject)
+                {
+                    int randResource = Random.Range(0, 5);
+
+                    if (randResource == 1)
+                    {
+                        state.getCurrentPlayer(robber.playersAroundRobber[1].houseColour).currencyLumber--;
+                        state.getCurrentPlayer(state.currentPlayerNumber).currencyLumber++;
+                    }
+                    if (randResource == 2)
+                    {
+                        state.getCurrentPlayer(robber.playersAroundRobber[1].houseColour).currencyGrain--;
+                        state.getCurrentPlayer(state.currentPlayerNumber).currencyGrain++;
+                    }
+                    if (randResource == 3)
+                    {
+                        state.getCurrentPlayer(robber.playersAroundRobber[1].houseColour).currencyBrick--;
+                        state.getCurrentPlayer(state.currentPlayerNumber).currencyBrick++;
+                    }
+                    if (randResource == 4)
+                    {
+                        state.getCurrentPlayer(robber.playersAroundRobber[1].houseColour).currencyOre--;
+                        state.getCurrentPlayer(state.currentPlayerNumber).currencyOre++;
+                    }
+                    if (randResource == 5)
+                    {
+                        state.getCurrentPlayer(robber.playersAroundRobber[1].houseColour).currencyWool--;
+                        state.getCurrentPlayer(state.currentPlayerNumber).currencyWool++;
+                    }
+                }
+                else if (robber.playersAroundRobber[2].getSettlementHex() == gameObject)
+                {
+                    int randResource = Random.Range(0, 5);
+
+                    if (randResource == 1)
+                    {
+                        state.getCurrentPlayer(robber.playersAroundRobber[2].houseColour).currencyLumber--;
+                        state.getCurrentPlayer(state.currentPlayerNumber).currencyLumber++;
+                    }
+                    if (randResource == 2)
+                    {
+                        state.getCurrentPlayer(robber.playersAroundRobber[2].houseColour).currencyGrain--;
+                        state.getCurrentPlayer(state.currentPlayerNumber).currencyGrain++;
+                    }
+                    if (randResource == 3)
+                    {
+                        state.getCurrentPlayer(robber.playersAroundRobber[2].houseColour).currencyBrick--;
+                        state.getCurrentPlayer(state.currentPlayerNumber).currencyBrick++;
+                    }
+                    if (randResource == 4)
+                    {
+                        state.getCurrentPlayer(robber.playersAroundRobber[2].houseColour).currencyOre--;
+                        state.getCurrentPlayer(state.currentPlayerNumber).currencyOre++;
+                    }
+                    if (randResource == 5)
+                    {
+                        state.getCurrentPlayer(robber.playersAroundRobber[2].houseColour).currencyWool--;
+                        state.getCurrentPlayer(state.currentPlayerNumber).currencyWool++;
+                    }
+                }
+            }
             if (state.currentPlayerNumber == 1)
             {
                 gameObject.GetComponent<MeshRenderer>().material.color = Color.white;

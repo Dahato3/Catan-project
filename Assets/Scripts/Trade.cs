@@ -78,7 +78,6 @@ public class Trade : MonoBehaviour
             GameObject.Find("OreAmountReturn").GetComponent<Text>().text = "" + receiveOre;
             GameObject.Find("WoolAmountReturn").GetComponent<Text>().text = "" + receiveWool;
 
-            //isCounterOffer = false;
         }
         else
         {
