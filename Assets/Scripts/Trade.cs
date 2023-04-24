@@ -3,11 +3,13 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.EventSystems;
 
 public class Trade : MonoBehaviour
 {
     PlayerStateManager playerStateManager;
     [SerializeField] GameObject player;
+
     ShowPanel tradePanel;
     [SerializeField] GameObject theInitialTradePanel;
     [SerializeField] GameObject receivedTradePanel;
@@ -28,11 +30,6 @@ public class Trade : MonoBehaviour
     public static int receiveWool = 0;
 
     public static bool isCounterOffer = false;
-
-    //public string otherPlayer1Choice = "";
-    //public string otherPlayer2Choice = "";
-    //public string otherPlayer3Choice = "";
-
 
     void Awake()
     {
@@ -66,6 +63,8 @@ public class Trade : MonoBehaviour
             theInitialTradePanel.SetActive(false);
             receivedTradePanel.gameObject.SetActive(true);
 
+            GameObject.Find("End Turn Button").GetComponent<Button>().interactable = false;
+
             GameObject.Find("LumberAmountFrom").GetComponent<Text>().text = "" + offerLumber;
             GameObject.Find("GrainAmountFrom").GetComponent<Text>().text = "" + offerGrain;
             GameObject.Find("BrickAmountFrom").GetComponent<Text>().text = "" + offerBrick;
@@ -84,6 +83,8 @@ public class Trade : MonoBehaviour
 
             theInitialTradePanel.SetActive(false);
             receivedTradePanel.gameObject.SetActive(true);
+
+            GameObject.Find("End Turn Button").GetComponent<Button>().interactable = false;
 
             initiatedTradePlayerNum = playerStateManager.currentPlayerNumber;
 
@@ -178,7 +179,9 @@ public class Trade : MonoBehaviour
 
         receivedTradePanel.SetActive(false);
 
-        while(playerStateManager.currentPlayerNumber != initiatedTradePlayerNum)
+        GameObject.Find("End Turn Button").GetComponent<Button>().interactable = true;
+
+        while (playerStateManager.currentPlayerNumber != initiatedTradePlayerNum)
         {
             playerStateManager.SwitchState();
         }
@@ -189,6 +192,7 @@ public class Trade : MonoBehaviour
         if (isCounterOffer == true)
         {
             receivedTradePanel.SetActive(false);
+            GameObject.Find("End Turn Button").GetComponent<Button>().interactable = true;
             isCounterOffer = false;
         }
         else
@@ -210,6 +214,7 @@ public class Trade : MonoBehaviour
                 receiveWool = 0;
 
                 receivedTradePanel.SetActive(false);
+                GameObject.Find("End Turn Button").GetComponent<Button>().interactable = true;
             }
         }
     }
@@ -247,6 +252,8 @@ public class Trade : MonoBehaviour
         receivedTradePanel.SetActive(false);
         theInitialTradePanel.SetActive(true);
 
+        GameObject.Find("End Turn Button").GetComponent<Button>().interactable = false;
+
         GameObject.Find("LumberAmount(O)").GetComponent<Text>().text = "" + offerLumber;
         GameObject.Find("GrainAmount(O)").GetComponent<Text>().text = "" + offerGrain;
         GameObject.Find("BrickAmount(O)").GetComponent<Text>().text = "" + offerBrick;
@@ -264,6 +271,10 @@ public class Trade : MonoBehaviour
 
     public void openTradePanel()
     {
+
+        Debug.Log(EventSystem.current.currentSelectedGameObject);
+
+
         offerLumber = 0;
         offerGrain = 0;
         offerBrick = 0;
@@ -281,6 +292,7 @@ public class Trade : MonoBehaviour
             if (theInitialTradePanel.activeInHierarchy == false)
             {
                 theInitialTradePanel.SetActive(true);
+                GameObject.Find("End Turn Button").GetComponent<Button>().interactable = false;
 
                 GameObject.Find("LumberAmount(O)").GetComponent<Text>().text = "" + offerLumber;
                 GameObject.Find("GrainAmount(O)").GetComponent<Text>().text = "" + offerGrain;
@@ -297,6 +309,7 @@ public class Trade : MonoBehaviour
             else
             {
                 theInitialTradePanel.SetActive(false);
+                GameObject.Find("End Turn Button").GetComponent<Button>().interactable = true;
             }
         }
     }

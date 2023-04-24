@@ -1,22 +1,21 @@
 using JetBrains.Annotations;
+using TMPro;
 using Unity.VisualScripting.Dependencies.NCalc;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class Board : MonoBehaviour
 {
+    // These are variable to store each panel used. allows direct access to each panel
     [SerializeField] GameObject playerState;
     [SerializeField] GameObject theInitialTradePanel;
     [SerializeField] GameObject receivedTradePanel;
     [SerializeField] GameObject halfResourcePanel;
+    [SerializeField] GameObject stealResourcePanel;
 
-    PlayerStateManager state;
-    Player player;
+    // The following is a set of variables to store each prefab which is used to instantiate each of the later on
 
-
-    // Game objects to instantiate the board:
-
-    // Game objects for each hexagon type
+    // Prefabs for each hexagon: 
     [SerializeField] GameObject fieldHexPrefab;
     [SerializeField] GameObject lumbgerHexPrefab;
     [SerializeField] GameObject brickHexPrefab;
@@ -24,7 +23,7 @@ public class Board : MonoBehaviour
     [SerializeField] GameObject woolHexPrefab;
     [SerializeField] GameObject desertHexPrefab;
 
-    //Game objects for each number
+    // Prefabs for each number on the hexagon:
     [SerializeField] GameObject twoHexPrefab;
     [SerializeField] GameObject threeHexPrefab;
     [SerializeField] GameObject fourHexPrefab;
@@ -36,10 +35,23 @@ public class Board : MonoBehaviour
     [SerializeField] GameObject elevenHexPrefab;
     [SerializeField] GameObject twelveHexPrefab;
 
+    // Prafbs for each object we "build".
     [SerializeField] GameObject settlementCityPrefab;
     [SerializeField] GameObject roadPrefab;
+    [SerializeField] GameObject cityPrefab;
 
-    public GameObject robber;
+
+    // Variables to allow us to access properties of the PlayerStateManager and Player classes
+    PlayerStateManager state;
+    Player player;
+
+    // Variables to allow us to access properties from the DiceRoller class
+    [SerializeField] GameObject dice;
+    DiceRoller diceRoller;
+
+    // Variables to allow us to access properties from the Robber class
+    [SerializeField] GameObject rob;
+    Robber robber;
 
     // These variables are used to help setup the game (will reference them as the "base variables")
 
@@ -47,23 +59,33 @@ public class Board : MonoBehaviour
     public int width;
     // Current width will change as we move up the board (during generation or setting of nodes / edges)
     public int cWidth;
+    // Can be seen as the amount of nodes
     public int totalWidth;
-    public int i;
+    // Otherwise know as the "level", essentially how many rows of nodes we have gone through
     public int height;
+    // Current height will be the current "level" of the board we are on
     public int cHeight;
+    // The first node of the row / height we are on
     public int sIndex;
 
+    public int i;
+    public int nodeCounter = 0;
     public int introCounter = 0;
 
     public bool introTurn;
     public bool placedIntroSettlements;
     public bool placedIntroRoads;
 
+    public int edgeNum;
+
+    // These varaiables are used in assignHex() and takes a new value each iteration of the loop
+    public int setValue;
+    public string setResource;
+
     // Arrays to help with generation
     public int[] valueSet;
     public string[] resourceSet;
 
-    public int edgeNum;
     public Edge[] edgeList;
 
     public Node[] boardNodes;
@@ -73,16 +95,20 @@ public class Board : MonoBehaviour
 
     public GameObject[] settlementCities;
 
+    // Awake function called before start to initialse the GameObject we use to access other classes
     void Awake()
     {
         state = playerState.GetComponent<PlayerStateManager>();
+
+        diceRoller = dice.GetComponent<DiceRoller>();
+
+        rob = (GameObject)Resources.Load("robber");
+        robber = rob.GetComponent<Robber>();
     }
 
+    // Start is the first method called to initialize various variables
     void Start()
-    {
-
-
-
+    { 
         // First intialization of the base variables
         width = 3;
         cWidth = width;
@@ -95,14 +121,13 @@ public class Board : MonoBehaviour
         placedIntroSettlements = false;
         placedIntroRoads = false;
 
-        //edgeNum = 7 * width * width + 13 * width - 32;
         edgeList = new Edge[72];
         boardNodes = new Node[54];
 
+        // Here we initialize our resource and value array that will hod the types / values of the hexagons / numbers and also the development card array
         developmentCards = new string[25] { "knight", "knight", "knight", "knight", "knight", "knight", "knight", "knight", "knight", "knight", "knight", "knight", "knight", "knight", "road", "road", "yearofplenty", "yearofplenty", "monopoly", "monopoly", "university", "market", "greathall", "chapel", "library" };
-
-        // Here we initialize our resource array and value array that will hod the types / values of the hexagons / numbers
         resourceSet = new string[18] { "wool", "wool", "wool", "wool", "lumber", "lumber", "lumber", "lumber", "grain", "grain", "grain", "grain", "brick", "brick", "brick", "ore", "ore", "ore" };
+        // We do 2 checks here to allow variable sized boards if implementation possible, otherwise uses the default size (3)
         if (width == 3)
         {
             valueSet = new int[18] { 2, 3, 3, 4, 4, 5, 5, 6, 6, 8, 8, 9, 9, 10, 10, 11, 11, 12 };
@@ -117,91 +142,66 @@ public class Board : MonoBehaviour
 
         }
 
-        GenerateBoard();
+        // The next few lines of code is what actually sets up the game, the order of method calls is important, each will be explained
+        // NOTE: it was important to "resetInitialVariables()" (which will reset the "base variables" to their inital values) after each stage of the board initialization as we use a checkWidth() method
+        // at each stage and without resetting it would cause various erros.
 
+        // Here we fill up the node array with node objets
+        GenerateBoard();
+        resetIntialvariables();
+
+        // Here we loop through each node and call the setNode() method on each. This will, at each node, set it's respective nodeWest, nodeEast and nodeNorthSouth node.
+        // Additionally, it will set a "boardLocation" to each node incase needed later.
         for (int q = 0; q < totalWidth; q++)
         {
             boardNodes[q].SetNode(q);
             boardNodes[q].boardLocation = q;
-
         }
-        for (int w = 0; w < totalWidth; w++)
-        {
-            boardNodes[w].setNodeEdge(w);
-        }
-
         resetIntialvariables();
 
+        // Here we do two things, the edges are created and fill up the edge array. Each edge is created with a "node1" and "node2". Secondly, when we create an edge, we set it's "node1"s and "node2"s edgeWest,
+        // edgeEast and edgeNorthSouth respectivly.
         setBoardEdges();
-
         resetIntialvariables();
 
+        // Here we call an important method which will do a few things, to start we loop through every node and call two more methods: assignHexPositions() and assignNumberPositions() which
+        // will (depending on the node position) instantiate a hex / hexNumber respectivly and relocate it to it's correct position relative to the node. Within these 2 methods we do some additional
+        // things which will be explained later.
+        // The final thing we do in this method is, at each node, set it's respective rHex, lHex and oHex value / resource.
         assignHex();
-
         resetIntialvariables();
 
+        // Here we once again loop through each node, at each node we set it's respective rHex, lHex and oHex locations on the board (1-19 on the default size)
         setLocalHexes();
-
         resetIntialvariables();
 
-
-        // Loops through the node array and will call a node method on each node to assign their neighbouring nodes
-        // similar to assigning the hexagons to nodes (either: nodeWest - left most node, nodeEast - right most node, nodeNorthSouth - bottom
-        // most or top most node)
-        
-        
-
-        
-       
+        // Here we edit some our UI compontants to not be displayed, we revert this after the "intro turn" has concluded
         GameObject.Find("EndTurn").GetComponent<CanvasRenderer>().SetAlpha(0);
-        GameObject.Find("PlayerTrade").GetComponent<CanvasGroup>().alpha = 0f;
-
         GameObject.Find("Timer").GetComponent<CanvasRenderer>().SetAlpha(0);
+        GameObject.Find("VP").GetComponent<CanvasRenderer>().SetAlpha(0);
+        GameObject.Find("PlayerTrade").GetComponent<CanvasGroup>().alpha = 0f;
         GameObject.Find("Resources").GetComponent<CanvasGroup>().alpha = 0f;
         GameObject.Find("RollDiceButton").GetComponent<CanvasGroup>().alpha = 0f;
         GameObject.Find("End Turn Button").GetComponent<CanvasGroup>().alpha = 0f;
-
-        GameObject.Find("CurrentPlayer").transform.position = new Vector3(200, 300, 0);
-
-
-
+        GameObject.Find("BuildingCosts").GetComponent<CanvasGroup>().alpha = 0f;
+        GameObject.Find("CurrentPlayer").transform.position = new Vector3(170, 385, 0);
+        GameObject.Find("CurrentPlayer").GetComponent<Text>().fontSize = 28;
 
         // Pop up to say player 1 build house
         Debug.Log("Player 1 please build a settlement");
 
-
-
-        //for (i = 0; i < boardNodes.Length; i++)
-        //{
-        //    Debug.Log("i: " + i);
-        //    Debug.Log("rHex: " + boardNodes[i].rHex);
-        //    Debug.Log("lHex: " + boardNodes[i].lHex);
-        //    Debug.Log("oHex: " + boardNodes[i].oHex);
-        //}
-
-
+        // Here we set two of our panels to not active as they are not required at the start
         receivedTradePanel.SetActive(false);
-
+        stealResourcePanel.SetActive(false);
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (theInitialTradePanel.activeInHierarchy == false
-            && receivedTradePanel.activeInHierarchy == false
-            && GameObject.Find("RollDiceButton").GetComponent<Button>().interactable == false)
-        {
-            GameObject.Find("End Turn Button").GetComponent<Button>().interactable = true;
-        }
-        else if (theInitialTradePanel.activeInHierarchy == true
-            || receivedTradePanel.activeInHierarchy == true
-            || halfResourcePanel.activeInHierarchy == true)
-        {
-            GameObject.Find("End Turn Button").GetComponent<Button>().interactable = false;
-        }
+
     }
 
-    // generate board will fill up the node array with a new node at each position
+    // Generate board will fill up the node array with a new node at each position
     void GenerateBoard()
     {
         for (int j = 0; j < boardNodes.Length; j++)
@@ -209,10 +209,6 @@ public class Board : MonoBehaviour
             boardNodes[j] = new Node();   
         }
     }
-
-    // These varaiables are used in asign hex and takes a new value each iteration of the loop
-    public int setValue;
-    public string setResource;
 
     // Assign hex will loop through every node we set up previously and depending on where it's located on the board, will assign
     // it's corrosponding hexagon (either Ohex - up or down, Rhex - on the right side, Lhex - on the left side)
@@ -234,50 +230,90 @@ public class Board : MonoBehaviour
                 // and m hasn't exceded the final node on that height
                 if (cHeight % 2 == 1 && cHeight < height / 2 && m <= sIndex + cWidth - 1)
                 {
-                    Debug.Log("M: " + m);
                     setValue = getVal();
                     setResource = getResource();
-                    for (int w = 0; w <= 5; w++)
+                    // Loops through each of the five nodes on a hexagon and sets it's respective rHex, lhex and oHex value and resource
+                    if (cHeight != 5)
                     {
-                        if (w == 0)
+                        for (int w = 0; w <= 5; w++)
                         {
-                            boardNodes[m].SetOHex(setValue);
-                            boardNodes[m].SetOHexResource(setResource);
+                            if (w == 0)
+                            {
+                                boardNodes[m].SetOHex(setValue);
+                                boardNodes[m].SetOHexResource(setResource);
+                            }
+                            if (w == 1)
+                            {
+                                boardNodes[m + cWidth].SetRHex(setValue);
+                                boardNodes[m + cWidth].SetRHexResouce(setResource);
+                            }
+                            if (w == 2)
+                            {
+                                boardNodes[m + cWidth + 1].SetLHex(setValue);
+                                boardNodes[m + cWidth + 1].SetLHexResouce(setResource);
+                            }
+                            if (w == 3)
+                            {
+                                boardNodes[m + (2 * cWidth) + 1].SetRHex(setValue);
+                                boardNodes[m + (2 * cWidth) + 1].SetRHexResouce(setResource);
+                            }
+                            if (w == 4)
+                            {
+                                boardNodes[m + (2 * cWidth) + 2].SetLHex(setValue);
+                                boardNodes[m + (2 * cWidth) + 2].SetLHexResouce(setResource);
+                            }
+                            if (w == 5)
+                            {
+                                boardNodes[m + (3 * cWidth) + 3].SetOHex(setValue);
+                                boardNodes[m + (3 * cWidth) + 3].SetOHexResource(setResource);
+                            }
                         }
-                        if (w == 1)
-                        {
-                            boardNodes[m + cWidth].SetRHex(setValue);
-                            boardNodes[m + cWidth].SetRHexResouce(setResource);
-                        }
-                        if (w == 2)
-                        {
-                            boardNodes[m + cWidth + 1].SetLHex(setValue);
-                            boardNodes[m + cWidth + 1].SetLHexResouce(setResource);
-                        }
-                        if (w == 3)
-                        {
-                            boardNodes[m + (2 * cWidth) + 1].SetRHex(setValue);
-                            boardNodes[m + (2 * cWidth) + 1].SetRHexResouce(setResource);
-                        }
-                        if (w == 4)
-                        {
-                            boardNodes[m + (2 * cWidth) + 2].SetLHex(setValue);
-                            boardNodes[m + (2 * cWidth) + 2].SetLHexResouce(setResource);
-                        }
-                        if (w == 5)
-                        {
-                            boardNodes[m + (3 * cWidth) + 3].SetOHex(setValue);
-                            boardNodes[m + (3 * cWidth) + 3].SetOHexResource(setResource);
-                        }  
+                        asignHexPositions(m);
+                        assignNumberPositions(m);
                     }
-                    asignHexPositions(m);
-                    assignNumberPositions(m);
+                    else
+                    {
+                        for (int w = 0; w <= 5; w++)
+                        {
+                            if (w == 0)
+                            {
+                                boardNodes[m].SetOHex(setValue);
+                                boardNodes[m].SetOHexResource(setResource);
+                            }
+                            if (w == 1)
+                            {
+                                boardNodes[m + cWidth].SetRHex(setValue);
+                                boardNodes[m + cWidth].SetRHexResouce(setResource);
+                            }
+                            if (w == 2)
+                            {
+                                boardNodes[m + cWidth + 1].SetLHex(setValue);
+                                boardNodes[m + cWidth + 1].SetLHexResouce(setResource);
+                            }
+                            if (w == 3)
+                            {
+                                boardNodes[m + (2 * cWidth) + 1].SetRHex(setValue);
+                                boardNodes[m + (2 * cWidth) + 1].SetRHexResouce(setResource);
+                            }
+                            if (w == 4)
+                            {
+                                boardNodes[m + (2 * cWidth) + 2].SetLHex(setValue);
+                                boardNodes[m + (2 * cWidth) + 2].SetLHexResouce(setResource);
+                            }
+                            if (w == 5)
+                            {
+                                boardNodes[m + (3 * cWidth) + 2].SetOHex(setValue);
+                                boardNodes[m + (3 * cWidth) + 2].SetOHexResource(setResource);
+                            }
+                        }
+                        asignHexPositions(m);
+                        assignNumberPositions(m);
+                    }
                 }
                 // Case where the current height is greater than total height / 2 (top half of then board) and m is
                 // on an even height
                 else if (cHeight > height / 2 + 2 && cHeight % 2 == 0)
                 {
-                    Debug.Log("M: " + m);
                     setValue = getVal();
                     setResource = getResource();
 
@@ -322,13 +358,6 @@ public class Board : MonoBehaviour
         }
     }
 
-
-
-
-
-
-
-
     // This method is called throughout various methods, will take the node postion and calculate the height and width of that node position
     // to be used in the corrosponding method
     public void checkWidth(int nodePosition)
@@ -359,6 +388,9 @@ public class Board : MonoBehaviour
             }
         }
     }
+
+    // This method is very similar to the one above but is fixed as apose to being calculated. This was needed in some cases and will only work effectivly on the default sized board
+    // Only calculated the cWidth
     public void checkWidthOfParticularNode(int nodePosition)
     {
         if (nodePosition <= 2)
@@ -396,6 +428,8 @@ public class Board : MonoBehaviour
             cWidth = 3;
         }
     }
+
+    // Once again similar to the above methods but will calculate the cHeight and sIndex of a particular node
     public void checkHeightOfParticularNode(int nodePosition)
     {
         if (nodePosition <= 2)
@@ -466,10 +500,9 @@ public class Board : MonoBehaviour
         }
     }
 
-    // Two methods to choose either our resources form the hexagons or the numbers for hexagons at random
+    // Two methods to choose either our resources for the hexagons or the numbers for hexagons at random
 
-
-    // For the vlaues, we take a random position from the value array, if it's 0 we choose another, if not, we set
+    // For the values, we take a random position from the value array, if it's 0 we choose another, if not, we set
     // that position to 0 and return the value at the position previously
     public int getVal()
     {
@@ -503,69 +536,96 @@ public class Board : MonoBehaviour
     }
 
     // This method will once again loop through every node and create an edge between it's neighbouring nodes that we assigned earlier on. The edge
-    // added to an edge array so we can use them later on
+    // added to an edge array with a "node1" and a "node2".
+    // We also, at each created edge, set it to it's "node1"s and "node2"s respective edgeWest, edgeEast and edgeNorthSouth
     public void setBoardEdges()
     {
         int edgeCounter = 0;
         for (int k = 0; k < boardNodes.Length; k++)
         {
             checkWidth(k);
+            // Checks if k / current node is on the bottom half of the board
             if (cHeight <= height / 2)
             {
+                // Checks if k is on an odd height, bottom half
                 if (cHeight % 2 == 1)
                 {
                     edgeList[edgeCounter] = new Edge(boardNodes[k], boardNodes[k].getNodeWest());
                     edgeList[edgeCounter].edgeBoardLocation = edgeCounter;
+
+                    boardNodes[k].edgeWest = edgeList[edgeCounter];
+                    boardNodes[k].getNodeWest().edgeEast = edgeList[edgeCounter];
                     edgeCounter++;
+
                     edgeList[edgeCounter] = new Edge(boardNodes[k], boardNodes[k].getNodeEast());
                     edgeList[edgeCounter].edgeBoardLocation = edgeCounter;
+
+                    boardNodes[k].edgeEast = edgeList[edgeCounter];
+                    boardNodes[k].getNodeEast().edgeWest = edgeList[edgeCounter];
+
                     edgeCounter++;
                 }
                 else
+                // If k wasn't on an odd height it must be on an even height, bottom half
                 {
                     edgeList[edgeCounter] = new Edge(boardNodes[k], boardNodes[k].getNodeNorthSouth());
                     edgeList[edgeCounter].edgeBoardLocation = edgeCounter;
+
+                    boardNodes[k].edgeNorthSouth = edgeList[edgeCounter];
+                    boardNodes[k].getNodeNorthSouth().edgeNorthSouth = edgeList[edgeCounter];
+
                     edgeCounter++;
                 }
             }
+            // Top half of the board
             else
             {
+                // Checks if k if on the 7th height / the first height of the top half
+                // If so we skip it as the edge has already ben created and set
                 if (cHeight == height / 2 + 1)
                 {
 
                 }
+                // Checks if k is on an even heigt, top half
                 else if (cHeight % 2 == 0)
                 {
                     edgeList[edgeCounter] = new Edge(boardNodes[k], boardNodes[k].getNodeWest());
                     edgeList[edgeCounter].edgeBoardLocation = edgeCounter;
+
+                    boardNodes[k].edgeWest = edgeList[edgeCounter];
+                    boardNodes[k].getNodeWest().edgeEast = edgeList[edgeCounter];
                     edgeCounter++;
+
                     edgeList[edgeCounter] = new Edge(boardNodes[k], boardNodes[k].getNodeEast());
                     edgeList[edgeCounter].edgeBoardLocation = edgeCounter;
+
+                    boardNodes[k].edgeEast = edgeList[edgeCounter];
+                    boardNodes[k].getNodeEast().edgeWest = edgeList[edgeCounter];
                     edgeCounter++;
                 }
+                // If k wasn't on an even height, it must be on an odd heght, top half
                 else
                 {
                     edgeList[edgeCounter] = new Edge(boardNodes[k], boardNodes[k].getNodeNorthSouth());
                     edgeList[edgeCounter].edgeBoardLocation = edgeCounter;
+
+                    boardNodes[k].edgeNorthSouth = edgeList[edgeCounter];
+                    boardNodes[k].getNodeNorthSouth().edgeNorthSouth = edgeList[edgeCounter];
+
                     edgeCounter++;
                 }
             }
         }
-        
     }
 
-
-    public void placeRobber()
-    {
-
-    }
-
-
-    // The next two methods are what create the hexagons / number game object (from the prefab in unity) and position it in the correct
+    // The next two methods are what create the hexagons, numbers and building game objects (from their respective prefab in unity) and position it in the correct
     // position. Alot of the code is the same but we needed to have a case for every combination of hexagon and number location
 
     // This method does the hexes, will obtain the current node position, the current resource and instantiate it in the corrosponding
-    // location that links to the node postion
+    // location that links to the node postion. Additionaly it will create a certain amount of settlements, cities and roads in order to fill the board with a gameobject in
+    // every location where it may be needed
+    // It will also give each hexagon a collider, the robber script componant and some variable from the robber script. The reason this was needed is due to these objects
+    // needed access to the scripts but it couldnt be set in the inspector as they are created at run time
     public void asignHexPositions(int nodeIndex)
     {
         GameObject temp = null;
@@ -576,11 +636,15 @@ public class Board : MonoBehaviour
         if (nodeIndex == 0)
         {
             temp.transform.position = new Vector3(12.5f, 0, -150);
-            //temp.transform.name = temp.name + "0";
             temp.transform.name = "1";
             temp.AddComponent<SphereCollider>().center = new Vector3(-2,0,0);
             temp.GetComponent<SphereCollider>().radius = 0.875f;
             temp.AddComponent<Robber>();
+            temp.GetComponent<Robber>().stealResourcePanel = GameObject.Find("StealResourcePanel");
+            temp.GetComponent<Robber>().stealPlayer1Button = GameObject.Find("player1Button");
+            temp.GetComponent<Robber>().stealPlayer2Button = GameObject.Find("player2Button");
+            temp.GetComponent<Robber>().stealPlayer3Button = GameObject.Find("player3Button");
+            temp.GetComponent<Robber>().stealPlayer4Button = GameObject.Find("player4Button");
 
             GameObject temp2 = Instantiate(settlementCityPrefab, temp.transform);
             temp2.transform.localPosition = new Vector3(-2, 0.335f, -0.92f);
@@ -594,6 +658,17 @@ public class Board : MonoBehaviour
 
             boardNodes[3].setSettlementHex(temp3);
 
+            GameObject cTemp2 = Instantiate(cityPrefab, temp.transform);
+            cTemp2.transform.localPosition = new Vector3(-2, 0.335f, -0.92f);
+            cTemp2.transform.localScale = new Vector3(0.25f, 0.12f, 0.25f);
+
+            boardNodes[0].setCity(cTemp2);
+
+            GameObject cTemp3 = Instantiate(cityPrefab, temp.transform);
+            cTemp3.transform.localPosition = new Vector3(-2.785f, 0.335f, -0.45f);
+            cTemp3.transform.localScale = new Vector3(0.25f, 0.12f, 0.25f);
+
+            boardNodes[3].setCity(cTemp3);
 
             GameObject rTemp1 = Instantiate(roadPrefab, temp.transform);
             rTemp1.transform.localPosition = new Vector3(-2.4f, 0.335f, -0.7f);
@@ -624,6 +699,11 @@ public class Board : MonoBehaviour
             temp.AddComponent<SphereCollider>().center = new Vector3(-2, 0, 0);
             temp.GetComponent<SphereCollider>().radius = 0.875f;
             temp.AddComponent<Robber>();
+            temp.GetComponent<Robber>().stealResourcePanel = GameObject.Find("StealResourcePanel");
+            temp.GetComponent<Robber>().stealPlayer1Button = GameObject.Find("player1Button");
+            temp.GetComponent<Robber>().stealPlayer2Button = GameObject.Find("player2Button");
+            temp.GetComponent<Robber>().stealPlayer3Button = GameObject.Find("player3Button");
+            temp.GetComponent<Robber>().stealPlayer4Button = GameObject.Find("player4Button");
 
             GameObject temp2 = Instantiate(settlementCityPrefab, temp.transform);
             temp2.transform.localPosition = new Vector3(-2, 0.335f, -0.92f);
@@ -636,6 +716,18 @@ public class Board : MonoBehaviour
             temp3.transform.localScale = new Vector3(0.25f, 0.25f, 0.25f);
 
             boardNodes[4].setSettlementHex(temp3);
+
+            GameObject cTemp2 = Instantiate(cityPrefab, temp.transform);
+            cTemp2.transform.localPosition = new Vector3(-2, 0.335f, -0.92f);
+            cTemp2.transform.localScale = new Vector3(0.25f, 0.12f, 0.25f);
+
+            boardNodes[1].setCity(cTemp2);
+
+            GameObject cTemp3 = Instantiate(cityPrefab, temp.transform);
+            cTemp3.transform.localPosition = new Vector3(-2.785f, 0.335f, -0.45f);
+            cTemp3.transform.localScale = new Vector3(0.25f, 0.12f, 0.25f);
+
+            boardNodes[4].setCity(cTemp3);
 
             GameObject rTemp1 = Instantiate(roadPrefab, temp.transform);
             rTemp1.transform.localPosition = new Vector3(-2.4f, 0.335f, -0.7f);
@@ -666,6 +758,11 @@ public class Board : MonoBehaviour
             temp.AddComponent<SphereCollider>().center = new Vector3(-2, 0, 0);
             temp.GetComponent<SphereCollider>().radius = 0.875f;
             temp.AddComponent<Robber>();
+            temp.GetComponent<Robber>().stealResourcePanel = GameObject.Find("StealResourcePanel");
+            temp.GetComponent<Robber>().stealPlayer1Button = GameObject.Find("player1Button");
+            temp.GetComponent<Robber>().stealPlayer2Button = GameObject.Find("player2Button");
+            temp.GetComponent<Robber>().stealPlayer3Button = GameObject.Find("player3Button");
+            temp.GetComponent<Robber>().stealPlayer4Button = GameObject.Find("player4Button");
 
             GameObject temp2 = Instantiate(settlementCityPrefab, temp.transform);
             temp2.transform.localPosition = new Vector3(-2, 0.335f, -0.92f);
@@ -684,6 +781,24 @@ public class Board : MonoBehaviour
             temp4.transform.localScale = new Vector3(0.25f, 0.25f, 0.25f);
 
             boardNodes[6].setSettlementHex(temp4);
+
+            GameObject cTemp2 = Instantiate(cityPrefab, temp.transform);
+            cTemp2.transform.localPosition = new Vector3(-2, 0.335f, -0.92f);
+            cTemp2.transform.localScale = new Vector3(0.25f, 0.12f, 0.25f);
+
+            boardNodes[2].setCity(cTemp2);
+
+            GameObject cTemp3 = Instantiate(cityPrefab, temp.transform);
+            cTemp3.transform.localPosition = new Vector3(-2.785f, 0.335f, -0.45f);
+            cTemp3.transform.localScale = new Vector3(0.25f, 0.12f, 0.25f);
+
+            boardNodes[5].setCity(cTemp3);
+
+            GameObject cTemp4 = Instantiate(cityPrefab, temp.transform);
+            cTemp4.transform.localPosition = new Vector3(-1.1f, 0.335f, -0.45f);
+            cTemp4.transform.localScale = new Vector3(0.25f, 0.12f, 0.25f);
+
+            boardNodes[6].setCity(cTemp3);
 
             GameObject rTemp1 = Instantiate(roadPrefab, temp.transform);
             rTemp1.transform.localPosition = new Vector3(-2.4f, 0.335f, -0.7f);
@@ -716,11 +831,16 @@ public class Board : MonoBehaviour
         else if (nodeIndex == 7)
         {
             temp.transform.position = new Vector3(-32, 0, -75);
-            temp.transform.name = "7";
+            temp.transform.name = "4";
 
             temp.AddComponent<SphereCollider>().center = new Vector3(-2, 0, 0);
             temp.GetComponent<SphereCollider>().radius = 0.875f;
             temp.AddComponent<Robber>();
+            temp.GetComponent<Robber>().stealResourcePanel = GameObject.Find("StealResourcePanel");
+            temp.GetComponent<Robber>().stealPlayer1Button = GameObject.Find("player1Button");
+            temp.GetComponent<Robber>().stealPlayer2Button = GameObject.Find("player2Button");
+            temp.GetComponent<Robber>().stealPlayer3Button = GameObject.Find("player3Button");
+            temp.GetComponent<Robber>().stealPlayer4Button = GameObject.Find("player4Button");
 
             GameObject temp2 = Instantiate(settlementCityPrefab, temp.transform);
             temp2.transform.localPosition = new Vector3(-2, 0.335f, -0.92f);
@@ -733,6 +853,18 @@ public class Board : MonoBehaviour
             temp3.transform.localScale = new Vector3(0.25f, 0.25f, 0.25f);
 
             boardNodes[11].setSettlementHex(temp3);
+
+            GameObject cTemp2 = Instantiate(cityPrefab, temp.transform);
+            cTemp2.transform.localPosition = new Vector3(-2, 0.335f, -0.92f);
+            cTemp2.transform.localScale = new Vector3(0.25f, 0.12f, 0.25f);
+
+            boardNodes[7].setCity(cTemp2);
+
+            GameObject cTemp3 = Instantiate(cityPrefab, temp.transform);
+            cTemp3.transform.localPosition = new Vector3(-2.785f, 0.335f, -0.45f);
+            cTemp3.transform.localScale = new Vector3(0.25f, 0.12f, 0.25f);
+
+            boardNodes[11].setCity(cTemp3);
 
             GameObject rTemp1 = Instantiate(roadPrefab, temp.transform);
             rTemp1.transform.localPosition = new Vector3(-2.4f, 0.335f, -0.7f);
@@ -758,11 +890,16 @@ public class Board : MonoBehaviour
         else if (nodeIndex == 8)
         {
             temp.transform.position = new Vector3(56, 0, -75);
-            temp.transform.name = "8";
+            temp.transform.name = "5";
 
             temp.AddComponent<SphereCollider>().center = new Vector3(-2, 0, 0);
             temp.GetComponent<SphereCollider>().radius = 0.875f;
             temp.AddComponent<Robber>();
+            temp.GetComponent<Robber>().stealResourcePanel = GameObject.Find("StealResourcePanel");
+            temp.GetComponent<Robber>().stealPlayer1Button = GameObject.Find("player1Button");
+            temp.GetComponent<Robber>().stealPlayer2Button = GameObject.Find("player2Button");
+            temp.GetComponent<Robber>().stealPlayer3Button = GameObject.Find("player3Button");
+            temp.GetComponent<Robber>().stealPlayer4Button = GameObject.Find("player4Button");
 
             GameObject temp2 = Instantiate(settlementCityPrefab, temp.transform);
             temp2.transform.localPosition = new Vector3(-2, 0.335f, -0.92f);
@@ -775,6 +912,18 @@ public class Board : MonoBehaviour
             temp3.transform.localScale = new Vector3(0.25f, 0.25f, 0.25f);
 
             boardNodes[12].setSettlementHex(temp3);
+
+            GameObject cTemp2 = Instantiate(cityPrefab, temp.transform);
+            cTemp2.transform.localPosition = new Vector3(-2, 0.335f, -0.92f);
+            cTemp2.transform.localScale = new Vector3(0.25f, 0.12f, 0.25f);
+
+            boardNodes[8].setCity(cTemp2);
+
+            GameObject cTemp3 = Instantiate(cityPrefab, temp.transform);
+            cTemp3.transform.localPosition = new Vector3(-2.785f, 0.335f, -0.45f);
+            cTemp3.transform.localScale = new Vector3(0.25f, 0.12f, 0.25f);
+
+            boardNodes[12].setCity(cTemp3);
 
             GameObject rTemp1 = Instantiate(roadPrefab, temp.transform);
             rTemp1.transform.localPosition = new Vector3(-2.4f, 0.335f, -0.7f);
@@ -800,11 +949,16 @@ public class Board : MonoBehaviour
         else if (nodeIndex == 9)
         {
             temp.transform.position = new Vector3(143, 0, -75);
-            temp.transform.name = "9";
+            temp.transform.name = "6";
 
             temp.AddComponent<SphereCollider>().center = new Vector3(-2, 0, 0);
             temp.GetComponent<SphereCollider>().radius = 0.875f;
             temp.AddComponent<Robber>();
+            temp.GetComponent<Robber>().stealResourcePanel = GameObject.Find("StealResourcePanel");
+            temp.GetComponent<Robber>().stealPlayer1Button = GameObject.Find("player1Button");
+            temp.GetComponent<Robber>().stealPlayer2Button = GameObject.Find("player2Button");
+            temp.GetComponent<Robber>().stealPlayer3Button = GameObject.Find("player3Button");
+            temp.GetComponent<Robber>().stealPlayer4Button = GameObject.Find("player4Button");
 
             GameObject temp2 = Instantiate(settlementCityPrefab, temp.transform);
             temp2.transform.localPosition = new Vector3(-2, 0.335f, -0.92f);
@@ -817,6 +971,18 @@ public class Board : MonoBehaviour
             temp3.transform.localScale = new Vector3(0.25f, 0.25f, 0.25f);
 
             boardNodes[13].setSettlementHex(temp3);
+
+            GameObject cTemp2 = Instantiate(cityPrefab, temp.transform);
+            cTemp2.transform.localPosition = new Vector3(-2, 0.335f, -0.92f);
+            cTemp2.transform.localScale = new Vector3(0.25f, 0.12f, 0.25f);
+
+            boardNodes[9].setCity(cTemp2);
+
+            GameObject cTemp3 = Instantiate(cityPrefab, temp.transform);
+            cTemp3.transform.localPosition = new Vector3(-2.785f, 0.335f, -0.45f);
+            cTemp3.transform.localScale = new Vector3(0.25f, 0.12f, 0.25f);
+
+            boardNodes[13].setCity(cTemp3);
 
             GameObject rTemp1 = Instantiate(roadPrefab, temp.transform);
             rTemp1.transform.localPosition = new Vector3(-2.4f, 0.335f, -0.7f);
@@ -842,11 +1008,16 @@ public class Board : MonoBehaviour
         else if (nodeIndex == 10)
         {
             temp.transform.position = new Vector3(230.5f, 0, -75);
-            temp.transform.name = "10";
+            temp.transform.name = "7";
 
             temp.AddComponent<SphereCollider>().center = new Vector3(-2, 0, 0);
             temp.GetComponent<SphereCollider>().radius = 0.875f;
             temp.AddComponent<Robber>();
+            temp.GetComponent<Robber>().stealResourcePanel = GameObject.Find("StealResourcePanel");
+            temp.GetComponent<Robber>().stealPlayer1Button = GameObject.Find("player1Button");
+            temp.GetComponent<Robber>().stealPlayer2Button = GameObject.Find("player2Button");
+            temp.GetComponent<Robber>().stealPlayer3Button = GameObject.Find("player3Button");
+            temp.GetComponent<Robber>().stealPlayer4Button = GameObject.Find("player4Button");
 
             GameObject temp2 = Instantiate(settlementCityPrefab, temp.transform);
             temp2.transform.localPosition = new Vector3(-2, 0.335f, -0.92f);
@@ -865,6 +1036,24 @@ public class Board : MonoBehaviour
             temp4.transform.localScale = new Vector3(0.25f, 0.25f, 0.25f);
 
             boardNodes[15].setSettlementHex(temp4);
+
+            GameObject cTemp2 = Instantiate(cityPrefab, temp.transform);
+            cTemp2.transform.localPosition = new Vector3(-2, 0.335f, -0.92f);
+            cTemp2.transform.localScale = new Vector3(0.25f, 0.12f, 0.25f);
+
+            boardNodes[10].setCity(cTemp2);
+
+            GameObject cTemp3 = Instantiate(cityPrefab, temp.transform);
+            cTemp3.transform.localPosition = new Vector3(-2.785f, 0.335f, -0.45f);
+            cTemp3.transform.localScale = new Vector3(0.25f, 0.12f, 0.25f);
+
+            boardNodes[14].setCity(cTemp3);
+
+            GameObject cTemp4 = Instantiate(cityPrefab, temp.transform);
+            cTemp4.transform.localPosition = new Vector3(-1.1f, 0.335f, -0.45f);
+            cTemp4.transform.localScale = new Vector3(0.25f, 0.12f, 0.25f);
+
+            boardNodes[15].setCity(cTemp4);
 
             GameObject rTemp1 = Instantiate(roadPrefab, temp.transform);
             rTemp1.transform.localPosition = new Vector3(-2.4f, 0.335f, -0.7f);
@@ -897,11 +1086,16 @@ public class Board : MonoBehaviour
         else if (nodeIndex == 16)
         {
             temp.transform.position = new Vector3(-75.5f, 0, 0);
-            temp.transform.name = "16";
+            temp.transform.name = "8";
 
             temp.AddComponent<SphereCollider>().center = new Vector3(-2, 0, 0);
             temp.GetComponent<SphereCollider>().radius = 0.875f;
             temp.AddComponent<Robber>();
+            temp.GetComponent<Robber>().stealResourcePanel = GameObject.Find("StealResourcePanel");
+            temp.GetComponent<Robber>().stealPlayer1Button = GameObject.Find("player1Button");
+            temp.GetComponent<Robber>().stealPlayer2Button = GameObject.Find("player2Button");
+            temp.GetComponent<Robber>().stealPlayer3Button = GameObject.Find("player3Button");
+            temp.GetComponent<Robber>().stealPlayer4Button = GameObject.Find("player4Button");
 
             GameObject temp2 = Instantiate(settlementCityPrefab, temp.transform);
             temp2.transform.localPosition = new Vector3(-2, 0.335f, -0.92f);
@@ -926,6 +1120,30 @@ public class Board : MonoBehaviour
             temp5.transform.localScale = new Vector3(0.25f, 0.25f, 0.25f);
 
             boardNodes[27].setSettlementHex(temp5);
+
+            GameObject cTemp2 = Instantiate(cityPrefab, temp.transform);
+            cTemp2.transform.localPosition = new Vector3(-2, 0.335f, -0.92f);
+            cTemp2.transform.localScale = new Vector3(0.25f, 0.12f, 0.25f);
+
+            boardNodes[16].setCity(cTemp2);
+
+            GameObject cTemp3 = Instantiate(cityPrefab, temp.transform);
+            cTemp3.transform.localPosition = new Vector3(-2.785f, 0.335f, -0.45f);
+            cTemp3.transform.localScale = new Vector3(0.25f, 0.12f, 0.25f);
+
+            boardNodes[21].setCity(cTemp3);
+
+            GameObject cTemp4 = Instantiate(cityPrefab, temp.transform);
+            cTemp4.transform.localPosition = new Vector3(-1.95f, 0.335f, 0.92f);
+            cTemp4.transform.localScale = new Vector3(0.25f, 0.12f, 0.25f);
+
+            boardNodes[33].setCity(cTemp4);
+
+            GameObject cTemp5 = Instantiate(cityPrefab, temp.transform);
+            cTemp5.transform.localPosition = new Vector3(-2.85f, 0.335f, 0.55f);
+            cTemp5.transform.localScale = new Vector3(0.25f, 0.12f, 0.25f);
+
+            boardNodes[27].setCity(cTemp5);
 
             GameObject rTemp1 = Instantiate(roadPrefab, temp.transform);
             rTemp1.transform.localPosition = new Vector3(-2.4f, 0.335f, -0.7f);
@@ -965,11 +1183,16 @@ public class Board : MonoBehaviour
         else if (nodeIndex == 17)
         {
             temp.transform.position = new Vector3(12, 0, 0);
-            temp.transform.name = "17";
+            temp.transform.name = "9";
 
             temp.AddComponent<SphereCollider>().center = new Vector3(-2, 0, 0);
             temp.GetComponent<SphereCollider>().radius = 0.875f;
             temp.AddComponent<Robber>();
+            temp.GetComponent<Robber>().stealResourcePanel = GameObject.Find("StealResourcePanel");
+            temp.GetComponent<Robber>().stealPlayer1Button = GameObject.Find("player1Button");
+            temp.GetComponent<Robber>().stealPlayer2Button = GameObject.Find("player2Button");
+            temp.GetComponent<Robber>().stealPlayer3Button = GameObject.Find("player3Button");
+            temp.GetComponent<Robber>().stealPlayer4Button = GameObject.Find("player4Button");
 
             GameObject temp2 = Instantiate(settlementCityPrefab, temp.transform);
             temp2.transform.localPosition = new Vector3(-2, 0.335f, -0.92f);
@@ -994,6 +1217,30 @@ public class Board : MonoBehaviour
             temp5.transform.localScale = new Vector3(0.25f, 0.25f, 0.25f);
 
             boardNodes[28].setSettlementHex(temp5);
+
+            GameObject cTemp2 = Instantiate(cityPrefab, temp.transform);
+            cTemp2.transform.localPosition = new Vector3(-2, 0.335f, -0.92f);
+            cTemp2.transform.localScale = new Vector3(0.25f, 0.12f, 0.25f);
+
+            boardNodes[17].setCity(cTemp2);
+
+            GameObject cTemp3 = Instantiate(cityPrefab, temp.transform);
+            cTemp3.transform.localPosition = new Vector3(-2.785f, 0.335f, -0.45f);
+            cTemp3.transform.localScale = new Vector3(0.25f, 0.12f, 0.25f);
+
+            boardNodes[22].setCity(cTemp3);
+
+            GameObject cTemp4 = Instantiate(cityPrefab, temp.transform);
+            cTemp4.transform.localPosition = new Vector3(-1.95f, 0.335f, 0.92f);
+            cTemp4.transform.localScale = new Vector3(0.25f, 0.12f, 0.25f);
+
+            boardNodes[34].setCity(cTemp4);
+
+            GameObject cTemp5 = Instantiate(cityPrefab, temp.transform);
+            cTemp5.transform.localPosition = new Vector3(-2.85f, 0.335f, 0.55f);
+            cTemp5.transform.localScale = new Vector3(0.25f, 0.12f, 0.25f);
+
+            boardNodes[28].setCity(cTemp5);
 
             GameObject rTemp1 = Instantiate(roadPrefab, temp.transform);
             rTemp1.transform.localPosition = new Vector3(-2.4f, 0.335f, -0.7f);
@@ -1034,11 +1281,16 @@ public class Board : MonoBehaviour
         {
             temp = Instantiate(desertHexPrefab, new Vector3(100, 0, 0), transform.rotation);
             temp.transform.localScale = new Vector3(50, 50, 50);
-            temp.transform.name = "18";
+            temp.transform.name = "10";
 
             temp.AddComponent<SphereCollider>().center = new Vector3(-2, 0, 0);
             temp.GetComponent<SphereCollider>().radius = 0.875f;
             temp.AddComponent<Robber>();
+            temp.GetComponent<Robber>().stealResourcePanel = GameObject.Find("StealResourcePanel");
+            temp.GetComponent<Robber>().stealPlayer1Button = GameObject.Find("player1Button");
+            temp.GetComponent<Robber>().stealPlayer2Button = GameObject.Find("player2Button");
+            temp.GetComponent<Robber>().stealPlayer3Button = GameObject.Find("player3Button");
+            temp.GetComponent<Robber>().stealPlayer4Button = GameObject.Find("player4Button");
 
             //GameObject robberTemp = Instantiate(robber, temp.transform);
             //robberTemp.transform.localPosition = new Vector3(-2f, 0.32f, 0.005f);
@@ -1067,6 +1319,30 @@ public class Board : MonoBehaviour
             temp5.transform.localScale = new Vector3(0.25f, 0.25f, 0.25f);
 
             boardNodes[29].setSettlementHex(temp5);
+
+            GameObject cTemp2 = Instantiate(cityPrefab, temp.transform);
+            cTemp2.transform.localPosition = new Vector3(-2, 0.335f, -0.92f);
+            cTemp2.transform.localScale = new Vector3(0.25f, 0.12f, 0.25f);
+
+            boardNodes[18].setCity(cTemp2);
+
+            GameObject cTemp3 = Instantiate(cityPrefab, temp.transform);
+            cTemp3.transform.localPosition = new Vector3(-2.785f, 0.335f, -0.45f);
+            cTemp3.transform.localScale = new Vector3(0.25f, 0.12f, 0.25f);
+
+            boardNodes[23].setCity(cTemp3);
+
+            GameObject cTemp4 = Instantiate(cityPrefab, temp.transform);
+            cTemp4.transform.localPosition = new Vector3(-1.95f, 0.335f, 0.92f);
+            cTemp4.transform.localScale = new Vector3(0.25f, 0.12f, 0.25f);
+
+            boardNodes[35].setCity(cTemp4);
+
+            GameObject cTemp5 = Instantiate(cityPrefab, temp.transform);
+            cTemp5.transform.localPosition = new Vector3(-2.85f, 0.335f, 0.55f);
+            cTemp5.transform.localScale = new Vector3(0.25f, 0.12f, 0.25f);
+
+            boardNodes[29].setCity(cTemp5);
 
             GameObject rTemp1 = Instantiate(roadPrefab, temp.transform);
             rTemp1.transform.localPosition = new Vector3(-2.4f, 0.335f, -0.7f);
@@ -1107,11 +1383,16 @@ public class Board : MonoBehaviour
         else if (nodeIndex == 19)
         {
             temp.transform.position = new Vector3(186, 0, 0);
-            temp.transform.name = "19";
+            temp.transform.name = "11";
 
             temp.AddComponent<SphereCollider>().center = new Vector3(-2, 0, 0);
             temp.GetComponent<SphereCollider>().radius = 0.875f;
             temp.AddComponent<Robber>();
+            temp.GetComponent<Robber>().stealResourcePanel = GameObject.Find("StealResourcePanel");
+            temp.GetComponent<Robber>().stealPlayer1Button = GameObject.Find("player1Button");
+            temp.GetComponent<Robber>().stealPlayer2Button = GameObject.Find("player2Button");
+            temp.GetComponent<Robber>().stealPlayer3Button = GameObject.Find("player3Button");
+            temp.GetComponent<Robber>().stealPlayer4Button = GameObject.Find("player4Button");
 
             GameObject temp2 = Instantiate(settlementCityPrefab, temp.transform);
             temp2.transform.localPosition = new Vector3(-2, 0.335f, -0.92f);
@@ -1136,6 +1417,30 @@ public class Board : MonoBehaviour
             temp5.transform.localScale = new Vector3(0.25f, 0.25f, 0.25f);
 
             boardNodes[30].setSettlementHex(temp5);
+
+            GameObject cTemp2 = Instantiate(cityPrefab, temp.transform);
+            cTemp2.transform.localPosition = new Vector3(-2, 0.335f, -0.92f);
+            cTemp2.transform.localScale = new Vector3(0.25f, 0.12f, 0.25f);
+
+            boardNodes[19].setCity(cTemp2);
+
+            GameObject cTemp3 = Instantiate(cityPrefab, temp.transform);
+            cTemp3.transform.localPosition = new Vector3(-2.85f, 0.335f, -0.45f);
+            cTemp3.transform.localScale = new Vector3(0.25f, 0.12f, 0.25f);
+
+            boardNodes[24].setCity(cTemp3);
+
+            GameObject cTemp4 = Instantiate(cityPrefab, temp.transform);
+            cTemp4.transform.localPosition = new Vector3(-1.95f, 0.335f, 0.92f);
+            cTemp4.transform.localScale = new Vector3(0.25f, 0.12f, 0.25f);
+
+            boardNodes[36].setCity(cTemp4);
+
+            GameObject cTemp5 = Instantiate(cityPrefab, temp.transform);
+            cTemp5.transform.localPosition = new Vector3(-2.85f, 0.335f, 0.55f);
+            cTemp5.transform.localScale = new Vector3(0.25f, 0.12f, 0.25f);
+
+            boardNodes[30].setCity(cTemp5);
 
             GameObject rTemp1 = Instantiate(roadPrefab, temp.transform);
             rTemp1.transform.localPosition = new Vector3(-2.4f, 0.335f, -0.7f);
@@ -1175,11 +1480,16 @@ public class Board : MonoBehaviour
         else if (nodeIndex == 20)
         {
             temp.transform.position = new Vector3(274, 0, 0);
-            temp.transform.name = "20";
+            temp.transform.name = "12";
 
             temp.AddComponent<SphereCollider>().center = new Vector3(-2, 0, 0);
             temp.GetComponent<SphereCollider>().radius = 0.875f;
             temp.AddComponent<Robber>();
+            temp.GetComponent<Robber>().stealResourcePanel = GameObject.Find("StealResourcePanel");
+            temp.GetComponent<Robber>().stealPlayer1Button = GameObject.Find("player1Button");
+            temp.GetComponent<Robber>().stealPlayer2Button = GameObject.Find("player2Button");
+            temp.GetComponent<Robber>().stealPlayer3Button = GameObject.Find("player3Button");
+            temp.GetComponent<Robber>().stealPlayer4Button = GameObject.Find("player4Button");
 
             GameObject temp2 = Instantiate(settlementCityPrefab, temp.transform);
             temp2.transform.localPosition = new Vector3(-2, 0.335f, -0.92f);
@@ -1216,6 +1526,42 @@ public class Board : MonoBehaviour
             temp7.transform.localScale = new Vector3(0.25f, 0.25f, 0.25f);
 
             boardNodes[32].setSettlementHex(temp7);
+
+            GameObject cTemp2 = Instantiate(cityPrefab, temp.transform);
+            cTemp2.transform.localPosition = new Vector3(-2, 0.335f, -0.92f);
+            cTemp2.transform.localScale = new Vector3(0.25f, 0.12f, 0.25f);
+
+            boardNodes[20].setCity(cTemp2);
+
+            GameObject cTemp3 = Instantiate(cityPrefab, temp.transform);
+            cTemp3.transform.localPosition = new Vector3(-2.85f, 0.335f, -0.45f);
+            cTemp3.transform.localScale = new Vector3(0.25f, 0.12f, 0.25f);
+
+            boardNodes[25].setCity(cTemp3);
+
+            GameObject cTemp4 = Instantiate(cityPrefab, temp.transform);
+            cTemp4.transform.localPosition = new Vector3(-1.1f, 0.335f, -0.45f);
+            cTemp4.transform.localScale = new Vector3(0.25f, 0.12f, 0.25f);
+
+            boardNodes[26].setCity(cTemp4);
+
+            GameObject cTemp5 = Instantiate(cityPrefab, temp.transform);
+            cTemp5.transform.localPosition = new Vector3(-1.95f, 0.335f, 0.92f);
+            cTemp5.transform.localScale = new Vector3(0.25f, 0.12f, 0.25f);
+
+            boardNodes[37].setCity(cTemp5);
+
+            GameObject cTemp6 = Instantiate(cityPrefab, temp.transform);
+            cTemp6.transform.localPosition = new Vector3(-2.85f, 0.335f, 0.55f);
+            cTemp6.transform.localScale = new Vector3(0.25f, 0.12f, 0.25f);
+
+            boardNodes[31].setCity(cTemp6);
+
+            GameObject cTemp7 = Instantiate(cityPrefab, temp.transform);
+            cTemp7.transform.localPosition = new Vector3(-1.1f, 0.335f, 0.55f);
+            cTemp7.transform.localScale = new Vector3(0.25f, 0.12f, 0.25f);
+
+            boardNodes[32].setCity(cTemp7);
 
             GameObject rTemp1 = Instantiate(roadPrefab, temp.transform);
             rTemp1.transform.localPosition = new Vector3(-2.4f, 0.335f, -0.7f);
@@ -1262,11 +1608,16 @@ public class Board : MonoBehaviour
         else if (nodeIndex == 43)
         {
             temp.transform.position = new Vector3(-32, 0, 75);
-            temp.transform.name = "43";
+            temp.transform.name = "13";
 
             temp.AddComponent<SphereCollider>().center = new Vector3(-2, 0, 0);
             temp.GetComponent<SphereCollider>().radius = 0.875f;
             temp.AddComponent<Robber>();
+            temp.GetComponent<Robber>().stealResourcePanel = GameObject.Find("StealResourcePanel");
+            temp.GetComponent<Robber>().stealPlayer1Button = GameObject.Find("player1Button");
+            temp.GetComponent<Robber>().stealPlayer2Button = GameObject.Find("player2Button");
+            temp.GetComponent<Robber>().stealPlayer3Button = GameObject.Find("player3Button");
+            temp.GetComponent<Robber>().stealPlayer4Button = GameObject.Find("player4Button");
 
             GameObject temp2 = Instantiate(settlementCityPrefab, temp.transform);
             temp2.transform.localPosition = new Vector3(-2, 0.335f, 0.92f);
@@ -1279,6 +1630,18 @@ public class Board : MonoBehaviour
             temp3.transform.localScale = new Vector3(0.25f, 0.25f, 0.25f);
 
             boardNodes[38].setSettlementHex(temp3);
+
+            GameObject cTemp2 = Instantiate(cityPrefab, temp.transform);
+            cTemp2.transform.localPosition = new Vector3(-2, 0.335f, 0.92f);
+            cTemp2.transform.localScale = new Vector3(0.25f, 0.12f, 0.25f);
+
+            boardNodes[43].setCity(cTemp2);
+
+            GameObject cTemp3 = Instantiate(cityPrefab, temp.transform);
+            cTemp3.transform.localPosition = new Vector3(-2.785f, 0.335f, 0.45f);
+            cTemp3.transform.localScale = new Vector3(0.25f, 0.12f, 0.25f);
+
+            boardNodes[38].setCity(cTemp3);
 
             GameObject rTemp1 = Instantiate(roadPrefab, temp.transform);
             rTemp1.transform.localPosition = new Vector3(-2.85f, 0.335f, -0.075f);
@@ -1304,11 +1667,16 @@ public class Board : MonoBehaviour
         else if (nodeIndex == 44)
         {
             temp.transform.position = new Vector3(56, 0, 75);
-            temp.transform.name = "44";
+            temp.transform.name = "14";
 
             temp.AddComponent<SphereCollider>().center = new Vector3(-2, 0, 0);
             temp.GetComponent<SphereCollider>().radius = 0.875f;
             temp.AddComponent<Robber>();
+            temp.GetComponent<Robber>().stealResourcePanel = GameObject.Find("StealResourcePanel");
+            temp.GetComponent<Robber>().stealPlayer1Button = GameObject.Find("player1Button");
+            temp.GetComponent<Robber>().stealPlayer2Button = GameObject.Find("player2Button");
+            temp.GetComponent<Robber>().stealPlayer3Button = GameObject.Find("player3Button");
+            temp.GetComponent<Robber>().stealPlayer4Button = GameObject.Find("player4Button");
 
             GameObject temp2 = Instantiate(settlementCityPrefab, temp.transform);
             temp2.transform.localPosition = new Vector3(-2, 0.335f, 0.92f);
@@ -1321,6 +1689,18 @@ public class Board : MonoBehaviour
             temp3.transform.localScale = new Vector3(0.25f, 0.25f, 0.25f);
 
             boardNodes[39].setSettlementHex(temp3);
+
+            GameObject cTemp2 = Instantiate(cityPrefab, temp.transform);
+            cTemp2.transform.localPosition = new Vector3(-2, 0.335f, 0.92f);
+            cTemp2.transform.localScale = new Vector3(0.25f, 0.12f, 0.25f);
+
+            boardNodes[44].setCity(cTemp2);
+
+            GameObject cTemp3 = Instantiate(cityPrefab, temp.transform);
+            cTemp3.transform.localPosition = new Vector3(-2.785f, 0.335f, 0.45f);
+            cTemp3.transform.localScale = new Vector3(0.25f, 0.12f, 0.25f);
+
+            boardNodes[39].setCity(cTemp3);
 
             GameObject rTemp1 = Instantiate(roadPrefab, temp.transform);
             rTemp1.transform.localPosition = new Vector3(-2.85f, 0.335f, -0.075f);
@@ -1347,11 +1727,16 @@ public class Board : MonoBehaviour
         else if (nodeIndex == 45)
         {
             temp.transform.position = new Vector3(143, 0, 75);
-            temp.transform.name = "45";
+            temp.transform.name = "15";
 
             temp.AddComponent<SphereCollider>().center = new Vector3(-2, 0, 0);
             temp.GetComponent<SphereCollider>().radius = 0.875f;
             temp.AddComponent<Robber>();
+            temp.GetComponent<Robber>().stealResourcePanel = GameObject.Find("StealResourcePanel");
+            temp.GetComponent<Robber>().stealPlayer1Button = GameObject.Find("player1Button");
+            temp.GetComponent<Robber>().stealPlayer2Button = GameObject.Find("player2Button");
+            temp.GetComponent<Robber>().stealPlayer3Button = GameObject.Find("player3Button");
+            temp.GetComponent<Robber>().stealPlayer4Button = GameObject.Find("player4Button");
 
             GameObject temp2 = Instantiate(settlementCityPrefab, temp.transform);
             temp2.transform.localPosition = new Vector3(-2, 0.335f, 0.92f);
@@ -1364,6 +1749,18 @@ public class Board : MonoBehaviour
             temp3.transform.localScale = new Vector3(0.25f, 0.25f, 0.25f);
 
             boardNodes[40].setSettlementHex(temp3);
+
+            GameObject cTemp2 = Instantiate(cityPrefab, temp.transform);
+            cTemp2.transform.localPosition = new Vector3(-2, 0.335f, 0.92f);
+            cTemp2.transform.localScale = new Vector3(0.25f, 0.12f, 0.25f);
+
+            boardNodes[45].setCity(cTemp2);
+
+            GameObject cTemp3 = Instantiate(cityPrefab, temp.transform);
+            cTemp3.transform.localPosition = new Vector3(-2.785f, 0.335f, 0.45f);
+            cTemp3.transform.localScale = new Vector3(0.25f, 0.12f, 0.25f);
+
+            boardNodes[40].setCity(cTemp3);
 
             GameObject rTemp1 = Instantiate(roadPrefab, temp.transform);
             rTemp1.transform.localPosition = new Vector3(-2.85f, 0.335f, -0.075f);
@@ -1389,11 +1786,16 @@ public class Board : MonoBehaviour
         else if (nodeIndex == 46)
         {
             temp.transform.position = new Vector3(230, 0, 75);
-            temp.transform.name = "46";
+            temp.transform.name = "16";
 
             temp.AddComponent<SphereCollider>().center = new Vector3(-2, 0, 0);
             temp.GetComponent<SphereCollider>().radius = 0.875f;
             temp.AddComponent<Robber>();
+            temp.GetComponent<Robber>().stealResourcePanel = GameObject.Find("StealResourcePanel");
+            temp.GetComponent<Robber>().stealPlayer1Button = GameObject.Find("player1Button");
+            temp.GetComponent<Robber>().stealPlayer2Button = GameObject.Find("player2Button");
+            temp.GetComponent<Robber>().stealPlayer3Button = GameObject.Find("player3Button");
+            temp.GetComponent<Robber>().stealPlayer4Button = GameObject.Find("player4Button");
 
             GameObject temp2 = Instantiate(settlementCityPrefab, temp.transform);
             temp2.transform.localPosition = new Vector3(-2, 0.335f, 0.92f);
@@ -1412,6 +1814,24 @@ public class Board : MonoBehaviour
             temp4.transform.localScale = new Vector3(0.25f, 0.25f, 0.25f);
 
             boardNodes[42].setSettlementHex(temp4);
+
+            GameObject cTemp2 = Instantiate(cityPrefab, temp.transform);
+            cTemp2.transform.localPosition = new Vector3(-2, 0.335f, 0.92f);
+            cTemp2.transform.localScale = new Vector3(0.25f, 0.12f, 0.25f);
+
+            boardNodes[46].setCity(cTemp2);
+
+            GameObject cTemp3 = Instantiate(cityPrefab, temp.transform);
+            cTemp3.transform.localPosition = new Vector3(-2.785f, 0.335f, 0.45f);
+            cTemp3.transform.localScale = new Vector3(0.25f, 0.12f, 0.25f);
+
+            boardNodes[41].setCity(cTemp3);
+
+            GameObject cTemp4 = Instantiate(cityPrefab, temp.transform);
+            cTemp4.transform.localPosition = new Vector3(-1.2f, 0.335f, 0.45f);
+            cTemp4.transform.localScale = new Vector3(0.25f, 0.12f, 0.25f);
+
+            boardNodes[42].setCity(cTemp4);
 
             GameObject rTemp1 = Instantiate(roadPrefab, temp.transform);
             rTemp1.transform.localPosition = new Vector3(-2.85f, 0.335f, -0.075f);
@@ -1444,11 +1864,16 @@ public class Board : MonoBehaviour
         else if (nodeIndex == 51)
         {
             temp.transform.position = new Vector3(12.5f, 0, 150);
-            temp.transform.name = "51";
+            temp.transform.name = "17";
 
             temp.AddComponent<SphereCollider>().center = new Vector3(-2, 0, 0);
             temp.GetComponent<SphereCollider>().radius = 0.875f;
             temp.AddComponent<Robber>();
+            temp.GetComponent<Robber>().stealResourcePanel = GameObject.Find("StealResourcePanel");
+            temp.GetComponent<Robber>().stealPlayer1Button = GameObject.Find("player1Button");
+            temp.GetComponent<Robber>().stealPlayer2Button = GameObject.Find("player2Button");
+            temp.GetComponent<Robber>().stealPlayer3Button = GameObject.Find("player3Button");
+            temp.GetComponent<Robber>().stealPlayer4Button = GameObject.Find("player4Button");
 
             GameObject temp2 = Instantiate(settlementCityPrefab, temp.transform);
             temp2.transform.localPosition = new Vector3(-2, 0.335f, 0.92f);
@@ -1461,6 +1886,18 @@ public class Board : MonoBehaviour
             temp3.transform.localScale = new Vector3(0.25f, 0.25f, 0.25f);
 
             boardNodes[47].setSettlementHex(temp3);
+
+            GameObject cTemp2 = Instantiate(cityPrefab, temp.transform);
+            cTemp2.transform.localPosition = new Vector3(-2, 0.335f, 0.92f);
+            cTemp2.transform.localScale = new Vector3(0.25f, 0.12f, 0.25f);
+
+            boardNodes[51].setCity(cTemp2);
+
+            GameObject cTemp3 = Instantiate(cityPrefab, temp.transform);
+            cTemp3.transform.localPosition = new Vector3(-2.785f, 0.335f, 0.45f);
+            cTemp3.transform.localScale = new Vector3(0.25f, 0.12f, 0.25f);
+
+            boardNodes[47].setCity(cTemp3);
 
             GameObject rTemp1 = Instantiate(roadPrefab, temp.transform);
             rTemp1.transform.localPosition = new Vector3(-2.85f, 0.335f, -0.075f);
@@ -1486,11 +1923,16 @@ public class Board : MonoBehaviour
         else if (nodeIndex == 52)
         {
             temp.transform.position = new Vector3(100, 0, 150);
-            temp.transform.name = "52";
+            temp.transform.name = "18";
 
             temp.AddComponent<SphereCollider>().center = new Vector3(-2, 0, 0);
             temp.GetComponent<SphereCollider>().radius = 0.875f;
             temp.AddComponent<Robber>();
+            temp.GetComponent<Robber>().stealResourcePanel = GameObject.Find("StealResourcePanel");
+            temp.GetComponent<Robber>().stealPlayer1Button = GameObject.Find("player1Button");
+            temp.GetComponent<Robber>().stealPlayer2Button = GameObject.Find("player2Button");
+            temp.GetComponent<Robber>().stealPlayer3Button = GameObject.Find("player3Button");
+            temp.GetComponent<Robber>().stealPlayer4Button = GameObject.Find("player4Button");
 
             GameObject temp2 = Instantiate(settlementCityPrefab, temp.transform);
             temp2.transform.localPosition = new Vector3(-2, 0.335f, 0.92f);
@@ -1503,6 +1945,18 @@ public class Board : MonoBehaviour
             temp3.transform.localScale = new Vector3(0.25f, 0.25f, 0.25f);
 
             boardNodes[48].setSettlementHex(temp3);
+
+            GameObject cTemp2 = Instantiate(cityPrefab, temp.transform);
+            cTemp2.transform.localPosition = new Vector3(-2, 0.335f, 0.92f);
+            cTemp2.transform.localScale = new Vector3(0.25f, 0.12f, 0.25f);
+
+            boardNodes[52].setCity(cTemp2);
+
+            GameObject cTemp3 = Instantiate(cityPrefab, temp.transform);
+            cTemp3.transform.localPosition = new Vector3(-2.785f, 0.335f, 0.45f);
+            cTemp3.transform.localScale = new Vector3(0.25f, 0.12f, 0.25f);
+
+            boardNodes[48].setCity(cTemp3);
 
             GameObject rTemp1 = Instantiate(roadPrefab, temp.transform);
             rTemp1.transform.localPosition = new Vector3(-2.85f, 0.335f, -0.075f);
@@ -1528,11 +1982,16 @@ public class Board : MonoBehaviour
         else if (nodeIndex == 53)
         {
             temp.transform.position = new Vector3(186, 0, 150);
-            temp.transform.name = "53";
+            temp.transform.name = "19";
 
             temp.AddComponent<SphereCollider>().center = new Vector3(-2, 0, 0);
             temp.GetComponent<SphereCollider>().radius = 0.875f;
             temp.AddComponent<Robber>();
+            temp.GetComponent<Robber>().stealResourcePanel = GameObject.Find("StealResourcePanel");
+            temp.GetComponent<Robber>().stealPlayer1Button = GameObject.Find("player1Button");
+            temp.GetComponent<Robber>().stealPlayer2Button = GameObject.Find("player2Button");
+            temp.GetComponent<Robber>().stealPlayer3Button = GameObject.Find("player3Button");
+            temp.GetComponent<Robber>().stealPlayer4Button = GameObject.Find("player4Button");
 
             GameObject temp2 = Instantiate(settlementCityPrefab, temp.transform);
             temp2.transform.localPosition = new Vector3(-2, 0.335f, 0.92f);
@@ -1551,6 +2010,24 @@ public class Board : MonoBehaviour
             temp4.transform.localScale = new Vector3(0.25f, 0.25f, 0.25f);
 
             boardNodes[50].setSettlementHex(temp4);
+
+            GameObject cTemp2 = Instantiate(cityPrefab, temp.transform);
+            cTemp2.transform.localPosition = new Vector3(-2, 0.335f, 0.92f);
+            cTemp2.transform.localScale = new Vector3(0.25f, 0.12f, 0.25f);
+
+            boardNodes[53].setCity(cTemp2);
+
+            GameObject cTemp3 = Instantiate(cityPrefab, temp.transform);
+            cTemp3.transform.localPosition = new Vector3(-2.785f, 0.335f, 0.45f);
+            cTemp3.transform.localScale = new Vector3(0.25f, 0.12f, 0.25f);
+
+            boardNodes[49].setCity(cTemp3);
+
+            GameObject cTemp4 = Instantiate(cityPrefab, temp.transform);
+            cTemp4.transform.localPosition = new Vector3(-1.2f, 0.335f, 0.45f);
+            cTemp4.transform.localScale = new Vector3(0.25f, 0.12f, 0.25f);
+
+            boardNodes[50].setCity(cTemp4);
 
             GameObject rTemp1 = Instantiate(roadPrefab, temp.transform);
             rTemp1.transform.localPosition = new Vector3(-2.85f, 0.335f, -0.075f);
@@ -1584,9 +2061,9 @@ public class Board : MonoBehaviour
         
     }
 
-
     // This method will do a simiar operation as the method above but will instead instantite the number and postion
-    // it in the correct location. We also need to flip the obk
+    // it in the correct location.
+    // Once again it will give each of these objects a collider, the robber script and needed variables from the robber class. FOr the same reasoning as above
     public void assignNumberPositions(int nodePosition)
     {
         GameObject temp = instantiateHexNumber(setValue);
@@ -1597,6 +2074,11 @@ public class Board : MonoBehaviour
 
             temp.AddComponent<BoxCollider>();
             temp.AddComponent<Robber>();
+            temp.GetComponent<Robber>().stealResourcePanel = GameObject.Find("StealResourcePanel");
+            temp.GetComponent<Robber>().stealPlayer1Button = GameObject.Find("player1Button");
+            temp.GetComponent<Robber>().stealPlayer2Button = GameObject.Find("player2Button");
+            temp.GetComponent<Robber>().stealPlayer3Button = GameObject.Find("player3Button");
+            temp.GetComponent<Robber>().stealPlayer4Button = GameObject.Find("player4Button");
         }
         else if (nodePosition == 1)
         {
@@ -1605,6 +2087,11 @@ public class Board : MonoBehaviour
 
             temp.AddComponent<BoxCollider>();
             temp.AddComponent<Robber>();
+            temp.GetComponent<Robber>().stealResourcePanel = GameObject.Find("StealResourcePanel");
+            temp.GetComponent<Robber>().stealPlayer1Button = GameObject.Find("player1Button");
+            temp.GetComponent<Robber>().stealPlayer2Button = GameObject.Find("player2Button");
+            temp.GetComponent<Robber>().stealPlayer3Button = GameObject.Find("player3Button");
+            temp.GetComponent<Robber>().stealPlayer4Button = GameObject.Find("player4Button");
         }
         else if (nodePosition == 2)
         {
@@ -1613,6 +2100,11 @@ public class Board : MonoBehaviour
 
             temp.AddComponent<BoxCollider>();
             temp.AddComponent<Robber>();
+            temp.GetComponent<Robber>().stealResourcePanel = GameObject.Find("StealResourcePanel");
+            temp.GetComponent<Robber>().stealPlayer1Button = GameObject.Find("player1Button");
+            temp.GetComponent<Robber>().stealPlayer2Button = GameObject.Find("player2Button");
+            temp.GetComponent<Robber>().stealPlayer3Button = GameObject.Find("player3Button");
+            temp.GetComponent<Robber>().stealPlayer4Button = GameObject.Find("player4Button");
         }
         else if (nodePosition == 7)
         {
@@ -1621,6 +2113,11 @@ public class Board : MonoBehaviour
 
             temp.AddComponent<BoxCollider>();
             temp.AddComponent<Robber>();
+            temp.GetComponent<Robber>().stealResourcePanel = GameObject.Find("StealResourcePanel");
+            temp.GetComponent<Robber>().stealPlayer1Button = GameObject.Find("player1Button");
+            temp.GetComponent<Robber>().stealPlayer2Button = GameObject.Find("player2Button");
+            temp.GetComponent<Robber>().stealPlayer3Button = GameObject.Find("player3Button");
+            temp.GetComponent<Robber>().stealPlayer4Button = GameObject.Find("player4Button");
         }
         else if (nodePosition == 8)
         {
@@ -1629,6 +2126,11 @@ public class Board : MonoBehaviour
 
             temp.AddComponent<BoxCollider>();
             temp.AddComponent<Robber>();
+            temp.GetComponent<Robber>().stealResourcePanel = GameObject.Find("StealResourcePanel");
+            temp.GetComponent<Robber>().stealPlayer1Button = GameObject.Find("player1Button");
+            temp.GetComponent<Robber>().stealPlayer2Button = GameObject.Find("player2Button");
+            temp.GetComponent<Robber>().stealPlayer3Button = GameObject.Find("player3Button");
+            temp.GetComponent<Robber>().stealPlayer4Button = GameObject.Find("player4Button");
         }
         else if (nodePosition == 9)
         {
@@ -1637,6 +2139,11 @@ public class Board : MonoBehaviour
 
             temp.AddComponent<BoxCollider>();
             temp.AddComponent<Robber>();
+            temp.GetComponent<Robber>().stealResourcePanel = GameObject.Find("StealResourcePanel");
+            temp.GetComponent<Robber>().stealPlayer1Button = GameObject.Find("player1Button");
+            temp.GetComponent<Robber>().stealPlayer2Button = GameObject.Find("player2Button");
+            temp.GetComponent<Robber>().stealPlayer3Button = GameObject.Find("player3Button");
+            temp.GetComponent<Robber>().stealPlayer4Button = GameObject.Find("player4Button");
         }
         else if (nodePosition == 10)
         {
@@ -1645,6 +2152,11 @@ public class Board : MonoBehaviour
 
             temp.AddComponent<BoxCollider>();
             temp.AddComponent<Robber>();
+            temp.GetComponent<Robber>().stealResourcePanel = GameObject.Find("StealResourcePanel");
+            temp.GetComponent<Robber>().stealPlayer1Button = GameObject.Find("player1Button");
+            temp.GetComponent<Robber>().stealPlayer2Button = GameObject.Find("player2Button");
+            temp.GetComponent<Robber>().stealPlayer3Button = GameObject.Find("player3Button");
+            temp.GetComponent<Robber>().stealPlayer4Button = GameObject.Find("player4Button");
         }
         else if (nodePosition == 16)
         {
@@ -1653,6 +2165,11 @@ public class Board : MonoBehaviour
 
             temp.AddComponent<BoxCollider>();
             temp.AddComponent<Robber>();
+            temp.GetComponent<Robber>().stealResourcePanel = GameObject.Find("StealResourcePanel");
+            temp.GetComponent<Robber>().stealPlayer1Button = GameObject.Find("player1Button");
+            temp.GetComponent<Robber>().stealPlayer2Button = GameObject.Find("player2Button");
+            temp.GetComponent<Robber>().stealPlayer3Button = GameObject.Find("player3Button");
+            temp.GetComponent<Robber>().stealPlayer4Button = GameObject.Find("player4Button");
         }
         else if (nodePosition == 17)
         {
@@ -1661,6 +2178,11 @@ public class Board : MonoBehaviour
 
             temp.AddComponent<BoxCollider>();
             temp.AddComponent<Robber>();
+            temp.GetComponent<Robber>().stealResourcePanel = GameObject.Find("StealResourcePanel");
+            temp.GetComponent<Robber>().stealPlayer1Button = GameObject.Find("player1Button");
+            temp.GetComponent<Robber>().stealPlayer2Button = GameObject.Find("player2Button");
+            temp.GetComponent<Robber>().stealPlayer3Button = GameObject.Find("player3Button");
+            temp.GetComponent<Robber>().stealPlayer4Button = GameObject.Find("player4Button");
         }
         else if (nodePosition == 18)
         {
@@ -1673,6 +2195,11 @@ public class Board : MonoBehaviour
 
             temp.AddComponent<BoxCollider>();
             temp.AddComponent<Robber>();
+            temp.GetComponent<Robber>().stealResourcePanel = GameObject.Find("StealResourcePanel");
+            temp.GetComponent<Robber>().stealPlayer1Button = GameObject.Find("player1Button");
+            temp.GetComponent<Robber>().stealPlayer2Button = GameObject.Find("player2Button");
+            temp.GetComponent<Robber>().stealPlayer3Button = GameObject.Find("player3Button");
+            temp.GetComponent<Robber>().stealPlayer4Button = GameObject.Find("player4Button");
         }
         else if (nodePosition == 20)
         {
@@ -1681,6 +2208,11 @@ public class Board : MonoBehaviour
 
             temp.AddComponent<BoxCollider>();
             temp.AddComponent<Robber>();
+            temp.GetComponent<Robber>().stealResourcePanel = GameObject.Find("StealResourcePanel");
+            temp.GetComponent<Robber>().stealPlayer1Button = GameObject.Find("player1Button");
+            temp.GetComponent<Robber>().stealPlayer2Button = GameObject.Find("player2Button");
+            temp.GetComponent<Robber>().stealPlayer3Button = GameObject.Find("player3Button");
+            temp.GetComponent<Robber>().stealPlayer4Button = GameObject.Find("player4Button");
         }
         else if (nodePosition == 43)
         {
@@ -1697,6 +2229,11 @@ public class Board : MonoBehaviour
 
             temp.AddComponent<BoxCollider>();
             temp.AddComponent<Robber>();
+            temp.GetComponent<Robber>().stealResourcePanel = GameObject.Find("StealResourcePanel");
+            temp.GetComponent<Robber>().stealPlayer1Button = GameObject.Find("player1Button");
+            temp.GetComponent<Robber>().stealPlayer2Button = GameObject.Find("player2Button");
+            temp.GetComponent<Robber>().stealPlayer3Button = GameObject.Find("player3Button");
+            temp.GetComponent<Robber>().stealPlayer4Button = GameObject.Find("player4Button");
         }
         else if (nodePosition == 45)
         {
@@ -1705,6 +2242,11 @@ public class Board : MonoBehaviour
 
             temp.AddComponent<BoxCollider>();
             temp.AddComponent<Robber>();
+            temp.GetComponent<Robber>().stealResourcePanel = GameObject.Find("StealResourcePanel");
+            temp.GetComponent<Robber>().stealPlayer1Button = GameObject.Find("player1Button");
+            temp.GetComponent<Robber>().stealPlayer2Button = GameObject.Find("player2Button");
+            temp.GetComponent<Robber>().stealPlayer3Button = GameObject.Find("player3Button");
+            temp.GetComponent<Robber>().stealPlayer4Button = GameObject.Find("player4Button");
         }
         else if (nodePosition == 46)
         {
@@ -1713,6 +2255,11 @@ public class Board : MonoBehaviour
 
             temp.AddComponent<BoxCollider>();
             temp.AddComponent<Robber>();
+            temp.GetComponent<Robber>().stealResourcePanel = GameObject.Find("StealResourcePanel");
+            temp.GetComponent<Robber>().stealPlayer1Button = GameObject.Find("player1Button");
+            temp.GetComponent<Robber>().stealPlayer2Button = GameObject.Find("player2Button");
+            temp.GetComponent<Robber>().stealPlayer3Button = GameObject.Find("player3Button");
+            temp.GetComponent<Robber>().stealPlayer4Button = GameObject.Find("player4Button");
         }
         if (nodePosition == 51)
         {
@@ -1721,6 +2268,11 @@ public class Board : MonoBehaviour
 
             temp.AddComponent<BoxCollider>();
             temp.AddComponent<Robber>();
+            temp.GetComponent<Robber>().stealResourcePanel = GameObject.Find("StealResourcePanel");
+            temp.GetComponent<Robber>().stealPlayer1Button = GameObject.Find("player1Button");
+            temp.GetComponent<Robber>().stealPlayer2Button = GameObject.Find("player2Button");
+            temp.GetComponent<Robber>().stealPlayer3Button = GameObject.Find("player3Button");
+            temp.GetComponent<Robber>().stealPlayer4Button = GameObject.Find("player4Button");
         }
         else if (nodePosition == 52)
         {
@@ -1729,6 +2281,11 @@ public class Board : MonoBehaviour
 
             temp.AddComponent<BoxCollider>();
             temp.AddComponent<Robber>();
+            temp.GetComponent<Robber>().stealResourcePanel = GameObject.Find("StealResourcePanel");
+            temp.GetComponent<Robber>().stealPlayer1Button = GameObject.Find("player1Button");
+            temp.GetComponent<Robber>().stealPlayer2Button = GameObject.Find("player2Button");
+            temp.GetComponent<Robber>().stealPlayer3Button = GameObject.Find("player3Button");
+            temp.GetComponent<Robber>().stealPlayer4Button = GameObject.Find("player4Button");
         }
         else if (nodePosition == 53)
         {
@@ -1737,9 +2294,16 @@ public class Board : MonoBehaviour
 
             temp.AddComponent<BoxCollider>();
             temp.AddComponent<Robber>();
+            temp.GetComponent<Robber>().stealResourcePanel = GameObject.Find("StealResourcePanel");
+            temp.GetComponent<Robber>().stealPlayer1Button = GameObject.Find("player1Button");
+            temp.GetComponent<Robber>().stealPlayer2Button = GameObject.Find("player2Button");
+            temp.GetComponent<Robber>().stealPlayer3Button = GameObject.Find("player3Button");
+            temp.GetComponent<Robber>().stealPlayer4Button = GameObject.Find("player4Button");
         }
     }
 
+    // This method is called in the asignHex method and was created to reduce repeated code. It takes in the randomly chosen resource,
+    // instantiates it's corosponding hex prefab and returns it
     public GameObject instantiateHex(string resource)
     {
         GameObject temp = null;
@@ -1764,11 +2328,10 @@ public class Board : MonoBehaviour
             temp = Instantiate(woolHexPrefab);
         }
         temp.transform.localScale = new Vector3(50, 50, 50);
-        //temp.transform.name = temp.name + counter.ToString();
-        //counter++;
         return temp;
     }
 
+    // Similar to the above method, but instead takes in a value, instantiates the corrosponding hexNumber prefab and returns it
     public GameObject instantiateHexNumber(int value)
     {
         GameObject temp = null;
@@ -1817,115 +2380,86 @@ public class Board : MonoBehaviour
         return temp;
     }
 
-    // This method will reset the initial variables, was needed as checkWidth() updates them and we need them
-    // reset for when checkWidth() is used again
-    public void resetIntialvariables()
-    {
-        width = 3;
-        cWidth = width;
-        totalWidth = width * width * 6;
-        height = width * 4;
-        cHeight = 1;
-        sIndex = 0;
-    }
-
-    // Getters to help with other methods
-    public Node getNode(int n)
-    {
-        return boardNodes[n];
-    }
-    public Edge getEdge(int n)
-    {
-        return edgeList[n];
-    }
-    public int getWidth()
-    {
-        return totalWidth;
-    }
-
-    public int getCWidth()
-    {
-        return cWidth;
-    }
-
-    public int getLoopIndex()
-    {
-        return i;
-    }
-    public int getHeight()
-    {
-        return height;
-    }
-    public int getCHeight()
-    {
-        return cHeight;
-    }
-    public Node getCurrentNode(GameObject g)
-    {
-        for(int i = 0; i < boardNodes.Length; i++)
-        {
-            if (boardNodes[i].getSettlementHex() == g)
-            {
-                return boardNodes[i];
-            }
-        }
-        return null;
-    }
-    public Edge getCurrentEdge(GameObject g)
-    {
-        for (int i = 0; i < edgeList.Length; i++)
-        {
-            if (edgeList[i].getRoad() == g)
-            {
-                return edgeList[i];
-            }
-        }
-        return null;
-    }
-
-    public int nodeCounter = 0;
+    // This is a basic method that loops 19 times (working only on the default sized board) and on each iteration sets each nodes rHex location, lHexLocation and oHex location
+    // respectivly.
     public void setLocalHexes()
     {
+        // Loops 19 times as that is the number if hexes on the default board
         for (int i = 1; i < 20; i++)
         {
-            Debug.Log("THIS I: " + i);
+            // Checks if we are the on the bottom hlaf of the baord
             if (i < 13)
             {
+                // Here is where the particualr width / height of a certain node was needed
                 checkWidthOfParticularNode(nodeCounter);
                 checkHeightOfParticularNode(nodeCounter);
-                Debug.Log("cWidth: " + cWidth);
-                Debug.Log("cHeight: " + cHeight);
-                Debug.Log("sIndex: " + sIndex);
-                for (int w = 0; w <= 5; w++)
-                {
-                    Debug.Log("NodeCounter: " + nodeCounter);
-                    if (w == 0)
-                    {
-                        boardNodes[nodeCounter].SetOHexLocation(i);
-                    }
-                    if (w == 1)
-                    {
-                        boardNodes[nodeCounter + cWidth].SetRHexLocation(i);
-                    }
-                    if (w == 2)
-                    {
-                        boardNodes[nodeCounter + cWidth + 1].SetLHexLocation(i);
-                    }
-                    if (w == 3)
-                    {
-                        boardNodes[nodeCounter + (2 * cWidth) + 1].SetRHexLocation(i);
-                    }
-                    if (w == 4)
-                    {
-                        boardNodes[nodeCounter + (2 * cWidth) + 2].SetLHexLocation(i);
-                    }
-                    if (w == 5)
-                    {
-                        boardNodes[nodeCounter + (3 * cWidth) + 3].SetOHexLocation(i);
-                    }
 
+                // We check that the current height isn't 5 as 5 has a special case where the array indexing needs to be adjusted by 1
+                if (cHeight != 5)
+                {
+                    for (int w = 0; w <= 5; w++)
+                    {
+                        if (w == 0)
+                        {
+                            boardNodes[nodeCounter].SetOHexLocation(i);
+                        }
+                        if (w == 1)
+                        {
+                            boardNodes[nodeCounter + cWidth].SetRHexLocation(i);
+                        }
+                        if (w == 2)
+                        {
+                            boardNodes[nodeCounter + cWidth + 1].SetLHexLocation(i);
+                        }
+                        if (w == 3)
+                        {
+                            boardNodes[nodeCounter + (2 * cWidth) + 1].SetRHexLocation(i);
+                        }
+                        if (w == 4)
+                        {
+                            boardNodes[nodeCounter + (2 * cWidth) + 2].SetLHexLocation(i);
+                        }
+                        if (w == 5)
+                        {
+                            boardNodes[nodeCounter + (3 * cWidth) + 3].SetOHexLocation(i);
+                        }
+
+                    }
                 }
-               
+                // If the curent height is 5
+                else
+                {
+                    for (int w = 0; w <= 5; w++)
+                    {
+                        if (w == 0)
+                        {
+                            boardNodes[nodeCounter].SetOHexLocation(i);
+                        }
+                        if (w == 1)
+                        {
+                            boardNodes[nodeCounter + cWidth].SetRHexLocation(i);
+                        }
+                        if (w == 2)
+                        {
+                            boardNodes[nodeCounter + cWidth + 1].SetLHexLocation(i);
+                        }
+                        if (w == 3)
+                        {
+                            boardNodes[nodeCounter + (2 * cWidth) + 1].SetRHexLocation(i);
+                        }
+                        if (w == 4)
+                        {
+                            boardNodes[nodeCounter + (2 * cWidth) + 2].SetLHexLocation(i);
+                        }
+                        if (w == 5)
+                        {
+                            boardNodes[nodeCounter + (3 * cWidth) + 2].SetOHexLocation(i);
+                        }
+
+                    }
+                }
+                // This section of code will run after we loop through the 5 nodes around a hex and wil check if we are changing height
+                // If so, the nodeCounter is adjusted correctly
                 if (nodeCounter == cWidth + sIndex - 1)
                 {
                     nodeCounter = nodeCounter + cWidth + 2;
@@ -1934,26 +2468,17 @@ public class Board : MonoBehaviour
                 {
                     nodeCounter++;
                 }
-               
             }
             else
             {
                 if (i == 13)
                 {
-                    Debug.Log("HIT");
                     nodeCounter = 43;
                 }
-                Debug.Log("NEWHALF");
-                Debug.Log("THIS I: " + i);
-                
                 checkWidthOfParticularNode(nodeCounter);
                 checkHeightOfParticularNode(nodeCounter);
-                Debug.Log("cWidth: " + cWidth);
-                Debug.Log("cHeight: " + cHeight);
-                Debug.Log("sIndex: " + sIndex);
                 for (int w = 0; w <= 5; w++)
                 {
-                    Debug.Log("NodeCounter: " + nodeCounter);
                     if (w == 0)
                     {
                         boardNodes[nodeCounter].SetOHexLocation(i);
@@ -1992,9 +2517,8 @@ public class Board : MonoBehaviour
         }
     }
 
-
-    
-
+    // This method will take in a index to a node as a parameter and will return a string to specify what hexagons that particlar node has surrounding it
+    // ROL - RightOtherLeft hexagons, LR - LeftRight hexagons, RO - RightOther hexagons and LO - LeftOther hexagons.
     public string isHex(int index)
     {
         checkWidthOfParticularNode(index);
@@ -2054,7 +2578,71 @@ public class Board : MonoBehaviour
         return null;
     }
 
+    // This method will reset the initial variables, was needed as checkWidth() updates them and we need them
+    // reset for when checkWidth() is used again
+    public void resetIntialvariables()
+    {
+        width = 3;
+        cWidth = width;
+        totalWidth = width * width * 6;
+        height = width * 4;
+        cHeight = 1;
+        sIndex = 0;
+    }
 
+    // Getters to help with other methods
+    public Node getNode(int n)
+    {
+        return boardNodes[n];
+    }
+    public Edge getEdge(int n)
+    {
+        return edgeList[n];
+    }
+    public int getWidth()
+    {
+        return totalWidth;
+    }
+
+    public int getCWidth()
+    {
+        return cWidth;
+    }
+
+    public int getLoopIndex()
+    {
+        return i;
+    }
+    public int getHeight()
+    {
+        return height;
+    }
+    public int getCHeight()
+    {
+        return cHeight;
+    }
+    public Node getCurrentNode(GameObject g)
+    {
+        for (int i = 0; i < boardNodes.Length; i++)
+        {
+            if (boardNodes[i].getSettlementHex() == g)
+            {
+                return boardNodes[i];
+            }
+        }
+        return null;
+    }
+    public Edge getCurrentEdge(GameObject g)
+    {
+        for (int i = 0; i < edgeList.Length; i++)
+        {
+            if (edgeList[i].getRoad() == g)
+            {
+                return edgeList[i];
+            }
+        }
+        return null;
+    }
 
     // OLD ASSIGN HEX METHOD
 

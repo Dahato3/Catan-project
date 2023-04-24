@@ -1,6 +1,7 @@
 using System;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Player
 {
@@ -13,16 +14,12 @@ public class Player
     // A single variable to hold the players points (Victory points)
     public int victoryPoints;
 
-    // A player numbner vaiable to differentiate the players
     public int playerNumber;
     public int playerColour;
-
-    public string[] inventory;
-
-    public bool freeBuild = false;
-
     public int totalResources;
 
+    public string[] inventory;
+    public bool freeBuild = false;
 
     // A variable to store the amount of each resource individually
     // The type indicated the integer value that will internally represent each resource
@@ -139,12 +136,6 @@ public class Player
             {
                 victoryPoints++;
             }
-
-
-
-
-
-
         }
         Debug.Log("Not enough resources");
     }
@@ -182,6 +173,30 @@ public class Player
                             myboard.boardNodes[cNode.boardLocation].houseType = 1;
                             myboard.boardNodes[cNode.boardLocation].houseColour = 1;
 
+                            Debug.Log("r: " + myboard.boardNodes[cNode.boardLocation].rHexResource);
+                            Debug.Log(myboard.boardNodes[cNode.boardLocation].lHexResource);
+                            Debug.Log(myboard.boardNodes[cNode.boardLocation].oHexResource);
+
+                            if (myboard.introCounter == 0)
+                            {
+                                if (myboard.boardNodes[cNode.boardLocation].rHexResource != null)
+                                {
+                                    string initialRHexResource = myboard.boardNodes[cNode.boardLocation].rHexResource;
+                                    state.setResource(initialRHexResource, state.currentPlayerNumber);
+                                }
+                                if (myboard.boardNodes[cNode.boardLocation].lHexResource != null)
+                                {
+                                    string initialLHexResource = myboard.boardNodes[cNode.boardLocation].lHexResource;
+                                    state.setResource(initialLHexResource, state.currentPlayerNumber);
+                                }
+                                if (myboard.boardNodes[cNode.boardLocation].oHexResource != null)
+                                {
+                                    string initialOHexResource = myboard.boardNodes[cNode.boardLocation].oHexResource;
+                                    state.setResource(initialOHexResource, state.currentPlayerNumber);
+                                }
+                            }
+                            
+
                             victoryPoints++;
 
                             myboard.introCounter++;
@@ -198,6 +213,26 @@ public class Player
                             myboard.boardNodes[cNode.boardLocation].houseType = 2;
                             myboard.boardNodes[cNode.boardLocation].houseColour = 2;
 
+                            if (myboard.introCounter == 2)
+                            {
+                                if (myboard.boardNodes[cNode.boardLocation].rHexResource != null)
+                                {
+                                    string initialRHexResource = myboard.boardNodes[cNode.boardLocation].rHexResource;
+                                    state.setResource(initialRHexResource, state.currentPlayerNumber);
+                                }
+                                if (myboard.boardNodes[cNode.boardLocation].lHexResource != null)
+                                {
+                                    string initialLHexResource = myboard.boardNodes[cNode.boardLocation].lHexResource;
+                                    state.setResource(initialLHexResource, state.currentPlayerNumber);
+                                }
+                                if (myboard.boardNodes[cNode.boardLocation].oHexResource != null)
+                                {
+                                    string initialOHexResource = myboard.boardNodes[cNode.boardLocation].oHexResource;
+                                    state.setResource(initialOHexResource, state.currentPlayerNumber);
+                                }
+                            }
+                            
+
                             victoryPoints++;
 
                             myboard.introCounter++;
@@ -212,6 +247,25 @@ public class Player
                             myboard.boardNodes[cNode.boardLocation].settlementHex.GetComponent<MeshRenderer>().enabled = true;
                             myboard.boardNodes[cNode.boardLocation].houseType = 3;
                             myboard.boardNodes[cNode.boardLocation].houseColour = 3;
+
+                            if (myboard.introCounter == 4)
+                            {
+                                if (myboard.boardNodes[cNode.boardLocation].rHexResource != null)
+                                {
+                                    string initialRHexResource = myboard.boardNodes[cNode.boardLocation].rHexResource;
+                                    state.setResource(initialRHexResource, state.currentPlayerNumber);
+                                }
+                                if (myboard.boardNodes[cNode.boardLocation].lHexResource != null)
+                                {
+                                    string initialLHexResource = myboard.boardNodes[cNode.boardLocation].lHexResource;
+                                    state.setResource(initialLHexResource, state.currentPlayerNumber);
+                                }
+                                if (myboard.boardNodes[cNode.boardLocation].oHexResource != null)
+                                {
+                                    string initialOHexResource = myboard.boardNodes[cNode.boardLocation].oHexResource;
+                                    state.setResource(initialOHexResource, state.currentPlayerNumber);
+                                }
+                            }
 
                             victoryPoints++;
 
@@ -228,6 +282,25 @@ public class Player
                             myboard.boardNodes[cNode.boardLocation].houseType = 4;
                             myboard.boardNodes[cNode.boardLocation].houseColour = 4;
 
+                            if (myboard.introCounter == 6)
+                            {
+                                if (myboard.boardNodes[cNode.boardLocation].rHexResource != null)
+                                {
+                                    string initialRHexResource = myboard.boardNodes[cNode.boardLocation].rHexResource;
+                                    state.setResource(initialRHexResource, state.currentPlayerNumber);
+                                }
+                                if (myboard.boardNodes[cNode.boardLocation].lHexResource != null)
+                                {
+                                    string initialLHexResource = myboard.boardNodes[cNode.boardLocation].lHexResource;
+                                    state.setResource(initialLHexResource, state.currentPlayerNumber);
+                                }
+                                if (myboard.boardNodes[cNode.boardLocation].oHexResource != null)
+                                {
+                                    string initialOHexResource = myboard.boardNodes[cNode.boardLocation].oHexResource;
+                                    state.setResource(initialOHexResource, state.currentPlayerNumber);
+                                }
+                            }
+
                             victoryPoints++;
 
                             myboard.introCounter++;
@@ -236,6 +309,7 @@ public class Player
                             Debug.Log("Player 4 please build a road");
                         }
                     }
+                    // Case where we build a seetlement, not apart of the intro
                     else
                     {
                         if (currencyLumber >= 1 && currencyBrick >= 1 && currencyGrain >= 1 && currencyWool >= 1
@@ -250,11 +324,13 @@ public class Player
 
                             victoryPoints++;
 
-                            // Instantiate settlement object at this node position / activate node that will already be created there (at every node)
+                            myboard.boardNodes[cNode.boardLocation].settlementHex.GetComponent<MeshRenderer>().enabled = true;
+                            myboard.boardNodes[cNode.boardLocation].houseType = playerNumber;
+                            myboard.boardNodes[cNode.boardLocation].houseColour = playerNumber;
                         }
                         else
                         {
-                            Debug.Log("Cannot build here2");
+                            Debug.Log("Cannot build here");
                         }
                     }
                 }
@@ -262,6 +338,25 @@ public class Player
                 {
                     Debug.Log("Cannot build next to another player");
                 }
+            }
+            else if (cNode.houseColour == playerNumber && myboard.introTurn == false)
+            {
+                if (currencyGrain >= 2 && currencyOre >= 3)
+                {
+                    // build city
+                    myboard.boardNodes[cNode.boardLocation].settlementHex.GetComponent<MeshRenderer>().enabled = false;
+                    myboard.boardNodes[cNode.boardLocation].city.GetComponent<MeshRenderer>().enabled = true;
+
+                    currencyGrain = currencyGrain - 2;
+                    currencyOre = currencyOre - 3;
+
+                    victoryPoints--;
+                    victoryPoints = victoryPoints + 2;
+                }
+                else
+                {
+                    Debug.Log("Not enough resources to build a city");
+                } 
             }
             else
             {
@@ -278,12 +373,31 @@ public class Player
                     if (myboard.introTurn)
                     {
                         if (myboard.introCounter == 0 || myboard.introCounter == 8)
-                        { 
+                        {
                             // Instantiate a white settlement at the given node
 
                             myboard.boardNodes[cNode.boardLocation].settlementHex.GetComponent<MeshRenderer>().enabled = true;
                             myboard.boardNodes[cNode.boardLocation].houseType = 1;
                             myboard.boardNodes[cNode.boardLocation].houseColour = 1;
+
+                            if (myboard.introCounter == 0)
+                            {
+                                if (myboard.boardNodes[cNode.boardLocation].rHexResource != null)
+                                {
+                                    string initialRHexResource = myboard.boardNodes[cNode.boardLocation].rHexResource;
+                                    state.setResource(initialRHexResource, state.currentPlayerNumber);
+                                }
+                                if (myboard.boardNodes[cNode.boardLocation].lHexResource != null)
+                                {
+                                    string initialLHexResource = myboard.boardNodes[cNode.boardLocation].lHexResource;
+                                    state.setResource(initialLHexResource, state.currentPlayerNumber);
+                                }
+                                if (myboard.boardNodes[cNode.boardLocation].oHexResource != null)
+                                {
+                                    string initialOHexResource = myboard.boardNodes[cNode.boardLocation].oHexResource;
+                                    state.setResource(initialOHexResource, state.currentPlayerNumber);
+                                }
+                            }
 
                             victoryPoints++;
 
@@ -300,6 +414,25 @@ public class Player
                             myboard.boardNodes[cNode.boardLocation].houseType = 2;
                             myboard.boardNodes[cNode.boardLocation].houseColour = 2;
 
+                            if (myboard.introCounter == 2)
+                            {
+                                if (myboard.boardNodes[cNode.boardLocation].rHexResource != null)
+                                {
+                                    string initialRHexResource = myboard.boardNodes[cNode.boardLocation].rHexResource;
+                                    state.setResource(initialRHexResource, state.currentPlayerNumber);
+                                }
+                                if (myboard.boardNodes[cNode.boardLocation].lHexResource != null)
+                                {
+                                    string initialLHexResource = myboard.boardNodes[cNode.boardLocation].lHexResource;
+                                    state.setResource(initialLHexResource, state.currentPlayerNumber);
+                                }
+                                if (myboard.boardNodes[cNode.boardLocation].oHexResource != null)
+                                {
+                                    string initialOHexResource = myboard.boardNodes[cNode.boardLocation].oHexResource;
+                                    state.setResource(initialOHexResource, state.currentPlayerNumber);
+                                }
+                            }
+
                             victoryPoints++;
 
                             myboard.introCounter++;
@@ -315,6 +448,25 @@ public class Player
                             myboard.boardNodes[cNode.boardLocation].houseType = 3;
                             myboard.boardNodes[cNode.boardLocation].houseColour = 3;
 
+                            if (myboard.introCounter == 4)
+                            {
+                                if (myboard.boardNodes[cNode.boardLocation].rHexResource != null)
+                                {
+                                    string initialRHexResource = myboard.boardNodes[cNode.boardLocation].rHexResource;
+                                    state.setResource(initialRHexResource, state.currentPlayerNumber);
+                                }
+                                if (myboard.boardNodes[cNode.boardLocation].lHexResource != null)
+                                {
+                                    string initialLHexResource = myboard.boardNodes[cNode.boardLocation].lHexResource;
+                                    state.setResource(initialLHexResource, state.currentPlayerNumber);
+                                }
+                                if (myboard.boardNodes[cNode.boardLocation].oHexResource != null)
+                                {
+                                    string initialOHexResource = myboard.boardNodes[cNode.boardLocation].oHexResource;
+                                    state.setResource(initialOHexResource, state.currentPlayerNumber);
+                                }
+                            }
+
                             victoryPoints++;
 
                             myboard.introCounter++;
@@ -329,6 +481,25 @@ public class Player
                             myboard.boardNodes[cNode.boardLocation].settlementHex.GetComponent<MeshRenderer>().enabled = true;
                             myboard.boardNodes[cNode.boardLocation].houseType = 4;
                             myboard.boardNodes[cNode.boardLocation].houseColour = 4;
+
+                            if (myboard.introCounter == 6)
+                            {
+                                if (myboard.boardNodes[cNode.boardLocation].rHexResource != null)
+                                {
+                                    string initialRHexResource = myboard.boardNodes[cNode.boardLocation].rHexResource;
+                                    state.setResource(initialRHexResource, state.currentPlayerNumber);
+                                }
+                                if (myboard.boardNodes[cNode.boardLocation].lHexResource != null)
+                                {
+                                    string initialLHexResource = myboard.boardNodes[cNode.boardLocation].lHexResource;
+                                    state.setResource(initialLHexResource, state.currentPlayerNumber);
+                                }
+                                if (myboard.boardNodes[cNode.boardLocation].oHexResource != null)
+                                {
+                                    string initialOHexResource = myboard.boardNodes[cNode.boardLocation].oHexResource;
+                                    state.setResource(initialOHexResource, state.currentPlayerNumber);
+                                }
+                            }
 
                             victoryPoints++;
 
@@ -364,6 +535,25 @@ public class Player
                     Debug.Log("Cannot build next to another player");
                 }
             }
+            else if (cNode.houseColour == playerNumber && myboard.introTurn == false)
+            {
+                if (currencyGrain >= 2 && currencyOre >= 3)
+                {
+                    // build city
+                    myboard.boardNodes[cNode.boardLocation].settlementHex.GetComponent<MeshRenderer>().enabled = false;
+                    myboard.boardNodes[cNode.boardLocation].city.GetComponent<MeshRenderer>().enabled = true;
+
+                    currencyGrain = currencyGrain - 2;
+                    currencyOre = currencyOre - 3;
+
+                    victoryPoints--;
+                    victoryPoints = victoryPoints + 2;
+                }
+                else
+                {
+                    Debug.Log("Not enough resources to build a city");
+                }
+            }
             else
             {
                 Debug.Log("Another player has already build here");
@@ -379,12 +569,31 @@ public class Player
                     if (myboard.introTurn)
                     {
                         if (myboard.introCounter == 0 || myboard.introCounter == 8)
-                        { 
+                        {
                             // Instantiate a white settlement at the given node
 
                             myboard.boardNodes[cNode.boardLocation].settlementHex.GetComponent<MeshRenderer>().enabled = true;
                             myboard.boardNodes[cNode.boardLocation].houseType = 1;
                             myboard.boardNodes[cNode.boardLocation].houseColour = 1;
+
+                            if (myboard.introCounter == 0)
+                            {
+                                if (myboard.boardNodes[cNode.boardLocation].rHexResource != null)
+                                {
+                                    string initialRHexResource = myboard.boardNodes[cNode.boardLocation].rHexResource;
+                                    state.setResource(initialRHexResource, state.currentPlayerNumber);
+                                }
+                                if (myboard.boardNodes[cNode.boardLocation].lHexResource != null)
+                                {
+                                    string initialLHexResource = myboard.boardNodes[cNode.boardLocation].lHexResource;
+                                    state.setResource(initialLHexResource, state.currentPlayerNumber);
+                                }
+                                if (myboard.boardNodes[cNode.boardLocation].oHexResource != null)
+                                {
+                                    string initialOHexResource = myboard.boardNodes[cNode.boardLocation].oHexResource;
+                                    state.setResource(initialOHexResource, state.currentPlayerNumber);
+                                }
+                            }
 
                             victoryPoints++;
 
@@ -402,6 +611,25 @@ public class Player
                             myboard.boardNodes[cNode.boardLocation].houseType = 2;
                             myboard.boardNodes[cNode.boardLocation].houseColour = 2;
 
+                            if (myboard.introCounter == 2)
+                            {
+                                if (myboard.boardNodes[cNode.boardLocation].rHexResource != null)
+                                {
+                                    string initialRHexResource = myboard.boardNodes[cNode.boardLocation].rHexResource;
+                                    state.setResource(initialRHexResource, state.currentPlayerNumber);
+                                }
+                                if (myboard.boardNodes[cNode.boardLocation].lHexResource != null)
+                                {
+                                    string initialLHexResource = myboard.boardNodes[cNode.boardLocation].lHexResource;
+                                    state.setResource(initialLHexResource, state.currentPlayerNumber);
+                                }
+                                if (myboard.boardNodes[cNode.boardLocation].oHexResource != null)
+                                {
+                                    string initialOHexResource = myboard.boardNodes[cNode.boardLocation].oHexResource;
+                                    state.setResource(initialOHexResource, state.currentPlayerNumber);
+                                }
+                            }
+
                             victoryPoints++;
 
                             myboard.introCounter++;
@@ -417,6 +645,25 @@ public class Player
                             myboard.boardNodes[cNode.boardLocation].houseType = 3;
                             myboard.boardNodes[cNode.boardLocation].houseColour = 3;
 
+                            if (myboard.introCounter == 4)
+                            {
+                                if (myboard.boardNodes[cNode.boardLocation].rHexResource != null)
+                                {
+                                    string initialRHexResource = myboard.boardNodes[cNode.boardLocation].rHexResource;
+                                    state.setResource(initialRHexResource, state.currentPlayerNumber);
+                                }
+                                if (myboard.boardNodes[cNode.boardLocation].lHexResource != null)
+                                {
+                                    string initialLHexResource = myboard.boardNodes[cNode.boardLocation].lHexResource;
+                                    state.setResource(initialLHexResource, state.currentPlayerNumber);
+                                }
+                                if (myboard.boardNodes[cNode.boardLocation].oHexResource != null)
+                                {
+                                    string initialOHexResource = myboard.boardNodes[cNode.boardLocation].oHexResource;
+                                    state.setResource(initialOHexResource, state.currentPlayerNumber);
+                                }
+                            }
+
                             victoryPoints++;
 
                             myboard.introCounter++;
@@ -431,6 +678,25 @@ public class Player
                             myboard.boardNodes[cNode.boardLocation].settlementHex.GetComponent<MeshRenderer>().enabled = true;
                             myboard.boardNodes[cNode.boardLocation].houseType = 4;
                             myboard.boardNodes[cNode.boardLocation].houseColour = 4;
+
+                            if (myboard.introCounter == 6)
+                            {
+                                if (myboard.boardNodes[cNode.boardLocation].rHexResource != null)
+                                {
+                                    string initialRHexResource = myboard.boardNodes[cNode.boardLocation].rHexResource;
+                                    state.setResource(initialRHexResource, state.currentPlayerNumber);
+                                }
+                                if (myboard.boardNodes[cNode.boardLocation].lHexResource != null)
+                                {
+                                    string initialLHexResource = myboard.boardNodes[cNode.boardLocation].lHexResource;
+                                    state.setResource(initialLHexResource, state.currentPlayerNumber);
+                                }
+                                if (myboard.boardNodes[cNode.boardLocation].oHexResource != null)
+                                {
+                                    string initialOHexResource = myboard.boardNodes[cNode.boardLocation].oHexResource;
+                                    state.setResource(initialOHexResource, state.currentPlayerNumber);
+                                }
+                            }
 
                             victoryPoints++;
 
@@ -466,6 +732,25 @@ public class Player
                     Debug.Log("Cannot build next to another player");
                 }
             }
+            else if (cNode.houseColour == playerNumber && myboard.introTurn == false)
+            {
+                if (currencyGrain >= 2 && currencyOre >= 3)
+                {
+                    // build city
+                    myboard.boardNodes[cNode.boardLocation].settlementHex.GetComponent<MeshRenderer>().enabled = false;
+                    myboard.boardNodes[cNode.boardLocation].city.GetComponent<MeshRenderer>().enabled = true;
+
+                    currencyGrain = currencyGrain - 2;
+                    currencyOre = currencyOre - 3;
+
+                    victoryPoints--;
+                    victoryPoints = victoryPoints + 2;
+                }
+                else
+                {
+                    Debug.Log("Not enough resources to build a city");
+                }
+            }
             else
             {
                 Debug.Log("Another player has already build here");
@@ -481,12 +766,31 @@ public class Player
                     if (myboard.introTurn)
                     {
                         if (myboard.introCounter == 0 || myboard.introCounter == 8)
-                        { 
+                        {
                             // Instantiate a white settlement at the given node
 
                             myboard.boardNodes[cNode.boardLocation].settlementHex.GetComponent<MeshRenderer>().enabled = true;
                             myboard.boardNodes[cNode.boardLocation].houseType = 1;
                             myboard.boardNodes[cNode.boardLocation].houseColour = 1;
+
+                            if (myboard.introCounter == 0)
+                            {
+                                if (myboard.boardNodes[cNode.boardLocation].rHexResource != null)
+                                {
+                                    string initialRHexResource = myboard.boardNodes[cNode.boardLocation].rHexResource;
+                                    state.setResource(initialRHexResource, state.currentPlayerNumber);
+                                }
+                                if (myboard.boardNodes[cNode.boardLocation].lHexResource != null)
+                                {
+                                    string initialLHexResource = myboard.boardNodes[cNode.boardLocation].lHexResource;
+                                    state.setResource(initialLHexResource, state.currentPlayerNumber);
+                                }
+                                if (myboard.boardNodes[cNode.boardLocation].oHexResource != null)
+                                {
+                                    string initialOHexResource = myboard.boardNodes[cNode.boardLocation].oHexResource;
+                                    state.setResource(initialOHexResource, state.currentPlayerNumber);
+                                }
+                            }
 
                             victoryPoints++;
 
@@ -504,6 +808,25 @@ public class Player
                             myboard.boardNodes[cNode.boardLocation].houseType = 2;
                             myboard.boardNodes[cNode.boardLocation].houseColour = 2;
 
+                            if (myboard.introCounter == 2)
+                            {
+                                if (myboard.boardNodes[cNode.boardLocation].rHexResource != null)
+                                {
+                                    string initialRHexResource = myboard.boardNodes[cNode.boardLocation].rHexResource;
+                                    state.setResource(initialRHexResource, state.currentPlayerNumber);
+                                }
+                                if (myboard.boardNodes[cNode.boardLocation].lHexResource != null)
+                                {
+                                    string initialLHexResource = myboard.boardNodes[cNode.boardLocation].lHexResource;
+                                    state.setResource(initialLHexResource, state.currentPlayerNumber);
+                                }
+                                if (myboard.boardNodes[cNode.boardLocation].oHexResource != null)
+                                {
+                                    string initialOHexResource = myboard.boardNodes[cNode.boardLocation].oHexResource;
+                                    state.setResource(initialOHexResource, state.currentPlayerNumber);
+                                }
+                            }
+
                             victoryPoints++;
 
                             myboard.introCounter++;
@@ -519,6 +842,25 @@ public class Player
                             myboard.boardNodes[cNode.boardLocation].houseType = 3;
                             myboard.boardNodes[cNode.boardLocation].houseColour = 3;
 
+                            if (myboard.introCounter == 4)
+                            {
+                                if (myboard.boardNodes[cNode.boardLocation].rHexResource != null)
+                                {
+                                    string initialRHexResource = myboard.boardNodes[cNode.boardLocation].rHexResource;
+                                    state.setResource(initialRHexResource, state.currentPlayerNumber);
+                                }
+                                if (myboard.boardNodes[cNode.boardLocation].lHexResource != null)
+                                {
+                                    string initialLHexResource = myboard.boardNodes[cNode.boardLocation].lHexResource;
+                                    state.setResource(initialLHexResource, state.currentPlayerNumber);
+                                }
+                                if (myboard.boardNodes[cNode.boardLocation].oHexResource != null)
+                                {
+                                    string initialOHexResource = myboard.boardNodes[cNode.boardLocation].oHexResource;
+                                    state.setResource(initialOHexResource, state.currentPlayerNumber);
+                                }
+                            }
+
                             victoryPoints++;
 
                             myboard.introCounter++;
@@ -533,6 +875,25 @@ public class Player
                             myboard.boardNodes[cNode.boardLocation].settlementHex.GetComponent<MeshRenderer>().enabled = true;
                             myboard.boardNodes[cNode.boardLocation].houseType = 4;
                             myboard.boardNodes[cNode.boardLocation].houseColour = 4;
+
+                            if (myboard.introCounter == 6)
+                            {
+                                if (myboard.boardNodes[cNode.boardLocation].rHexResource != null)
+                                {
+                                    string initialRHexResource = myboard.boardNodes[cNode.boardLocation].rHexResource;
+                                    state.setResource(initialRHexResource, state.currentPlayerNumber);
+                                }
+                                if (myboard.boardNodes[cNode.boardLocation].lHexResource != null)
+                                {
+                                    string initialLHexResource = myboard.boardNodes[cNode.boardLocation].lHexResource;
+                                    state.setResource(initialLHexResource, state.currentPlayerNumber);
+                                }
+                                if (myboard.boardNodes[cNode.boardLocation].oHexResource != null)
+                                {
+                                    string initialOHexResource = myboard.boardNodes[cNode.boardLocation].oHexResource;
+                                    state.setResource(initialOHexResource, state.currentPlayerNumber);
+                                }
+                            }
 
                             victoryPoints++;
 
@@ -568,6 +929,25 @@ public class Player
                     Debug.Log("Cannot build next to another player");
                 }
             }
+            else if (cNode.houseColour == playerNumber && myboard.introTurn == false)
+            {
+                if (currencyGrain >= 2 && currencyOre >= 3)
+                {
+                    // build city
+                    myboard.boardNodes[cNode.boardLocation].settlementHex.GetComponent<MeshRenderer>().enabled = false;
+                    myboard.boardNodes[cNode.boardLocation].city.GetComponent<MeshRenderer>().enabled = true;
+
+                    currencyGrain = currencyGrain - 2;
+                    currencyOre = currencyOre - 3;
+
+                    victoryPoints--;
+                    victoryPoints = victoryPoints + 2;
+                }
+                else
+                {
+                    Debug.Log("Not enough resources to build a city");
+                }
+            }
             else
             {
                 Debug.Log("Another player has already build here");
@@ -587,7 +967,7 @@ public class Player
         }
         else
         {
-            Debug.Log("Cannot build here8");
+            Debug.Log("Cannot build here");
         }
 
     }
@@ -595,7 +975,7 @@ public class Player
     int freeBuildCounter = 0;
     public void buildRoad(GameObject g)
     {
-        if (myboard.introCounter % 2 == 0)
+        if (myboard.introCounter % 2 == 0 && myboard.introTurn == true)
         {
             Debug.Log("Cannot build a road yet");
             return;
@@ -605,8 +985,29 @@ public class Player
         // Nothing built on this node
         if (cEdge.edgeColour == 0)
         {
+            //Debug.Log(cEdge.getNode1());
+            //Debug.Log(cEdge.getNode2());
+
+            //Debug.Log("N1 boardLoc: " + cEdge.getNode1().boardLocation);
+            //Debug.Log("N2 boardLoc: " + cEdge.getNode2().boardLocation);
+
+            //Debug.Log("N1 east boardLoc: " + cEdge.getNode1().getEdgeEast().edgeBoardLocation);
+            //Debug.Log("N1 west boardLoc: " + cEdge.getNode1().getEdgeWest().edgeBoardLocation);
+            //Debug.Log("N1 northSouth boardLoc: " + cEdge.getNode1().getEdgeNorthSouth().edgeBoardLocation);
+
+            //Debug.Log("N1 east boardLoc: " + cEdge.getNode1().getEdgeEast().edgeBoardLocation);
+            //Debug.Log("N1 west boardLoc: " + cEdge.getNode1().getEdgeWest().edgeBoardLocation);
+            //Debug.Log("N1 northSouth boardLoc: " + cEdge.getNode1().getEdgeNorthSouth().edgeBoardLocation);
+
+            //Debug.Log("N2 east: " + cEdge.getNode2().getEdgeEast().edgeColour);
+            //Debug.Log("N2 west: " + cEdge.getNode2().getEdgeWest().edgeColour);
+            //Debug.Log("N2 northSouth: " + cEdge.getNode2().getEdgeNorthSouth().edgeColour);
+
             // If the either of the two nodes of the inputted edge has a settlement or city of the same players number
-            if (cEdge.getNode1().getHouseColour() == state.currentPlayerNumber || cEdge.getNode2().getHouseType() == state.currentPlayerNumber)
+            if (cEdge.getNode1().getHouseColour() == state.currentPlayerNumber || cEdge.getNode2().getHouseColour() == state.currentPlayerNumber
+                || cEdge.getNode1().edgeEast.edgeColour == state.currentPlayerNumber || cEdge.getNode1().edgeWest.edgeColour == state.currentPlayerNumber || cEdge.getNode1().edgeNorthSouth.edgeColour == state.currentPlayerNumber
+                || cEdge.getNode2().edgeEast.edgeColour == state.currentPlayerNumber || cEdge.getNode2().edgeWest.edgeColour == state.currentPlayerNumber || cEdge.getNode2().edgeNorthSouth.edgeColour == state.currentPlayerNumber)
+
             {
                 if (myboard.introTurn)
                 {
@@ -616,7 +1017,7 @@ public class Player
 
                         Debug.Log("First road build");
                         myboard.edgeList[cEdge.edgeBoardLocation].road.GetComponent<MeshRenderer>().enabled = true;
-                        myboard.edgeList[cEdge.edgeBoardLocation].edgeColour = 1;
+                        myboard.edgeList[cEdge.edgeBoardLocation].edgeColour = state.currentPlayerNumber;
 
                         myboard.introCounter++;
                         state.SwitchState();
@@ -630,6 +1031,7 @@ public class Player
                         // Instantiate a red road at the given edge
 
                         myboard.edgeList[cEdge.edgeBoardLocation].road.GetComponent<MeshRenderer>().enabled = true;
+                        myboard.edgeList[cEdge.edgeBoardLocation].edgeColour = state.currentPlayerNumber;
 
                         myboard.introCounter++;
                         state.SwitchState();
@@ -642,6 +1044,7 @@ public class Player
                         // Instantiate a yellow road at the given edge
 
                         myboard.edgeList[cEdge.edgeBoardLocation].road.GetComponent<MeshRenderer>().enabled = true;
+                        myboard.edgeList[cEdge.edgeBoardLocation].edgeColour = state.currentPlayerNumber;
 
                         myboard.introCounter++;
                         state.SwitchState();
@@ -654,6 +1057,7 @@ public class Player
                         // Instantiate a blue road at the given edge
 
                         myboard.edgeList[cEdge.edgeBoardLocation].road.GetComponent<MeshRenderer>().enabled = true;
+                        myboard.edgeList[cEdge.edgeBoardLocation].edgeColour = state.currentPlayerNumber;
 
                         myboard.introCounter++;
 
@@ -670,16 +1074,18 @@ public class Player
                             GameObject.Find("End Turn Button").GetComponent<CanvasGroup>().alpha = 1f;
                             GameObject.Find("EndTurn").GetComponent<CanvasRenderer>().SetAlpha(1);
                             GameObject.Find("Timer").GetComponent<CanvasRenderer>().SetAlpha(1);
+                            GameObject.Find("VP").GetComponent<CanvasRenderer>().SetAlpha(1);
                             GameObject.Find("Resources").GetComponent<CanvasGroup>().alpha = 1f;
-                            //GameObject.Find("PlayersResourcesButton").GetComponent<CanvasGroup>().alpha = 1f;
                             GameObject.Find("RollDiceButton").GetComponent<CanvasGroup>().alpha = 1f;
                             GameObject.Find("PlayerTrade").GetComponent<CanvasGroup>().alpha = 1f;
+                            GameObject.Find("BuildingCosts").GetComponent<CanvasGroup>().alpha = 1f;
 
                             GameObject.Find("CurrentPlayer").transform.position = new Vector3(750, -40, 0);
+                            GameObject.Find("CurrentPlayer").GetComponent<Text>().fontSize = 20;
                         }
                         state.SwitchState();
 
-                        
+
                     }
                 }
                 else
@@ -692,15 +1098,19 @@ public class Player
                             freeBuild = false;
                         }
                     }
-                   
+
                     else if (currencyLumber >= 1 && currencyBrick >= 1
                         && (cEdge.getNode1().getHouseColour() == getPlayerNumber()
-                        || cEdge.getNode2().getHouseType() == getPlayerNumber()))
-                        
+                        || cEdge.getNode2().getHouseType() == getPlayerNumber()
+                        || cEdge.getNode1().edgeEast.edgeColour == state.currentPlayerNumber || cEdge.getNode1().edgeWest.edgeColour == state.currentPlayerNumber || cEdge.getNode1().edgeNorthSouth.edgeColour == state.currentPlayerNumber
+                        || cEdge.getNode2().edgeEast.edgeColour == state.currentPlayerNumber || cEdge.getNode2().edgeWest.edgeColour == state.currentPlayerNumber || cEdge.getNode2().edgeNorthSouth.edgeColour == state.currentPlayerNumber))
+
                     {
                         currencyLumber -= 1;
                         currencyBrick -= 1;
-                       
+
+                        myboard.edgeList[cEdge.edgeBoardLocation].road.GetComponent<MeshRenderer>().enabled = true;
+                        myboard.edgeList[cEdge.edgeBoardLocation].edgeColour = playerNumber;
 
                         // Instantiate road object at this node position / activate road that will already be created there (at every edge)
                     }

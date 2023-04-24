@@ -4,6 +4,12 @@ using UnityEngine.UI;
 
 public class PlayerStateManager : MonoBehaviour
 {
+
+    //TODO: NEED TO ADD FUNCTIONALITY TO NOT LET PLAYERS BUILD MORE THAN:-
+    // 5 settlements, 4 cities and 15 roads IN TOTAL
+
+
+
     // Variables to access other relevent classes
     TimerScript timeScript;
     Board board;
@@ -32,7 +38,6 @@ public class PlayerStateManager : MonoBehaviour
     void Awake()
     {
         timeScript = timer.GetComponent<TimerScript>();
-        //showPanel = panel.GetComponent<ShowPanel>();
         board = myBoard.GetComponent<Board>();
 
     }
@@ -43,52 +48,40 @@ public class PlayerStateManager : MonoBehaviour
     void Start()
     {
         player1 = new Player();
-        player1.setPlayerNumber(1);
+        player1.playerNumber = 1;
         player1.playerColour = 1;
-        //player1.setPlayerNumber(1);
-        //player1.buildSettlement(board.boardNodes[12]);
-        player1.currencyLumber = 1;
+        player1.currencyLumber = 0;
         player1.currencyGrain = 0;
         player1.currencyBrick = 0;
-        player1.currencyOre = 1;
-        player1.currencyWool = 1;
-
+        player1.currencyOre = 0;
+        player1.currencyWool = 0;
 
         player2 = new Player();
         player2.playerNumber = 2;
         player2.playerColour = 2;
-        //player2.setPlayerNumber(2);
-        //player2.buildSettlement(board.boardNodes[4]);
-        player2.currencyLumber = 1;
-        player2.currencyGrain = 1;
+        player2.currencyLumber = 0;
+        player2.currencyGrain = 0;
         player2.currencyBrick = 0;
         player2.currencyOre = 0;
-        player2.currencyWool = 1;
-
+        player2.currencyWool = 0;
 
         player3 = new Player();
         player3.playerNumber = 3;
         player3.playerColour = 3;
-        //player3.setPlayerNumber(3);
-        //player3.buildSettlement(board.boardNodes[7]);
-        player3.currencyLumber = 1;
-        player3.currencyGrain = 1;
+        player3.currencyLumber = 0;
+        player3.currencyGrain = 0;
         player3.currencyBrick = 0;
         player3.currencyOre = 0;
-        player3.currencyWool = 1;
-
+        player3.currencyWool = 0;
 
         player4 = new Player();
         player4.playerNumber = 4;
         player4.playerColour = 4;
-        //player4.setPlayerNumber(4);
-        //player4.buildSettlement(board.boardNodes[8]);
         player4.currencyLumber = 0;
         player4.currencyGrain = 0;
-        player4.currencyBrick = 1;
-        player4.currencyOre = 1;
-        player4.currencyWool = 1;
-
+        player4.currencyBrick = 0;
+        player4.currencyOre = 0;
+        player4.currencyWool = 0;
 
         currentPlayerNumber = 1;
     }
@@ -155,6 +148,9 @@ public class PlayerStateManager : MonoBehaviour
     // therefore be also changed on screen
     public void updateResources()
     {
+
+        checkNegativeResources();
+
         if (currentPlayerNumber == 1)
         {
             GameObject.Find("MyLumberAmount").GetComponent<Text>().text = "" + player1.currencyLumber;
@@ -162,6 +158,8 @@ public class PlayerStateManager : MonoBehaviour
             GameObject.Find("MyBrickAmount").GetComponent<Text>().text = "" + player1.currencyBrick;
             GameObject.Find("MyOreAmount").GetComponent<Text>().text = "" + player1.currencyOre;
             GameObject.Find("MyWoolAmount").GetComponent<Text>().text = "" + player1.currencyWool;
+
+            GameObject.Find("VP").GetComponent<Text>().text = "Victory points: " +  player1.victoryPoints;
         }
         if (currentPlayerNumber == 2)
         {
@@ -170,6 +168,8 @@ public class PlayerStateManager : MonoBehaviour
             GameObject.Find("MyBrickAmount").GetComponent<Text>().text = "" + player2.currencyBrick;
             GameObject.Find("MyOreAmount").GetComponent<Text>().text = "" + player2.currencyOre;
             GameObject.Find("MyWoolAmount").GetComponent<Text>().text = "" + player2.currencyWool;
+
+            GameObject.Find("VP").GetComponent<Text>().text = "Victory points: " + player2.victoryPoints;
         }
         if (currentPlayerNumber == 3)
         {
@@ -178,6 +178,8 @@ public class PlayerStateManager : MonoBehaviour
             GameObject.Find("MyBrickAmount").GetComponent<Text>().text = "" + player3.currencyBrick;
             GameObject.Find("MyOreAmount").GetComponent<Text>().text = "" + player3.currencyOre;
             GameObject.Find("MyWoolAmount").GetComponent<Text>().text = "" + player3.currencyWool;
+
+            GameObject.Find("VP").GetComponent<Text>().text = "Victory points: " + player3.victoryPoints;
         }
         if (currentPlayerNumber == 4)
         {
@@ -186,6 +188,8 @@ public class PlayerStateManager : MonoBehaviour
             GameObject.Find("MyBrickAmount").GetComponent<Text>().text = "" + player4.currencyBrick;
             GameObject.Find("MyOreAmount").GetComponent<Text>().text = "" + player4.currencyOre;
             GameObject.Find("MyWoolAmount").GetComponent<Text>().text = "" + player4.currencyWool;
+
+            GameObject.Find("VP").GetComponent<Text>().text = "Victory points: " + player4.victoryPoints;
         }
     }
 
@@ -332,6 +336,216 @@ public class PlayerStateManager : MonoBehaviour
         }
     }
 
+    public void checkNegativeResources()
+    {
+        if (player1.currencyLumber < 0)
+        {
+            Debug.Log("Player 1 lumber went below 0");
+            player1.currencyLumber = 0;
+        }
+        else if (player1.currencyGrain < 0)
+        {
+            Debug.Log("Player 1 grain went below 0");
+            player1.currencyGrain = 0;
+        }
+        else if (player1.currencyBrick < 0)
+        {
+            Debug.Log("Player 1 brick went below 0");
+            player1.currencyBrick = 0;
+        }
+        else if (player1.currencyOre < 0)
+        {
+            Debug.Log("Player 1 ore went below 0");
+            player1.currencyOre = 0;
+        }
+        else if (player1.currencyWool < 0)
+        {
+            Debug.Log("Player 1 wool went below 0");
+            player1.currencyWool = 0;
+        }
+
+        else if (player2.currencyLumber < 0)
+        {
+            Debug.Log("Player 2 lumber went below 0");
+            player2.currencyLumber = 0;
+        }
+        else if (player2.currencyGrain < 0)
+        {
+            Debug.Log("Player 2 grain went below 0");
+            player2.currencyGrain = 0;
+        }
+        else if (player2.currencyBrick < 0)
+        {
+            Debug.Log("Player 2 brick went below 0");
+            player1.currencyBrick = 0;
+        }
+        else if (player2.currencyOre < 0)
+        {
+            Debug.Log("Player 2 ore went below 0");
+            player1.currencyOre = 0;
+        }
+        else if (player2.currencyWool < 0)
+        {
+            Debug.Log("Player 2 wool went below 0");
+            player1.currencyWool = 0;
+        }
+
+        else if (player3.currencyLumber < 0)
+        {
+            Debug.Log("Player 3 lumber went below 0");
+            player3.currencyLumber = 0;
+        }
+        else if (player3.currencyGrain < 0)
+        {
+            Debug.Log("Player 3 grain went below 0");
+            player3.currencyGrain = 0;
+        }
+        else if (player3.currencyBrick < 0)
+        {
+            Debug.Log("Player 3 brick went below 0");
+            player3.currencyBrick = 0;
+        }
+        else if (player3.currencyOre < 0)
+        {
+            Debug.Log("Player 3 ore went below 0");
+            player3.currencyOre = 0;
+        }
+        else if (player3.currencyWool < 0)
+        {
+            Debug.Log("Player 3 wool went below 0");
+            player3.currencyWool = 0;
+        }
+
+        else if (player4.currencyLumber < 0)
+        {
+            Debug.Log("Player 4 lumber went below 0");
+            player4.currencyLumber = 0;
+        }
+        else if (player4.currencyGrain < 0)
+        {
+            Debug.Log("Player 4 grain went below 0");
+            player2.currencyGrain = 0;
+        }
+        else if (player4.currencyBrick < 0)
+        {
+            Debug.Log("Player 4 brick went below 0");
+            player4.currencyBrick = 0;
+        }
+        else if (player4.currencyOre < 0)
+        {
+            Debug.Log("Player 4 ore went below 0");
+            player4.currencyOre = 0;
+        }
+        else if (player4.currencyWool < 0)
+        {
+            Debug.Log("Player 4 wool went below 0");
+            player4.currencyWool = 0;
+        }
+    }
+
+    public void setResource(string resource, int playerNum)
+    {
+
+        Player player = getCurrentPlayer(playerNum);
+
+        Debug.Log("initialResource: " + resource);
+        Debug.Log("initialPlayer: " + playerNum);
+
+        if (player == player1)
+        {
+            if (resource == "lumber")
+            {
+                player1.currencyLumber++;
+            }
+            else if (resource == "grain")
+            {
+                player1.currencyGrain++;
+            }
+            else if (resource == "brick")
+            {
+                player1.currencyBrick++;
+            }
+            else if (resource == "ore")
+            {
+                player1.currencyOre++;
+            }
+            else if (resource == "wool")
+            {
+                player1.currencyWool++;
+            }
+        }
+        else if (player == player2)
+        {
+            if (resource == "lumber")
+            {
+                player2.currencyLumber++;
+            }
+            else if (resource == "grain")
+            {
+                player2.currencyGrain++;
+            }
+            else if (resource == "brick")
+            {
+                player2.currencyBrick++;
+            }
+            else if (resource == "ore")
+            {
+                player2.currencyOre++;
+            }
+            else if (resource == "wool")
+            {
+                player2.currencyWool++;
+            }
+        }
+        else if (player == player3)
+        {
+            if (resource == "lumber")
+            {
+                player3.currencyLumber++;
+            }
+            else if (resource == "grain")
+            {
+                player3.currencyGrain++;
+            }
+            else if (resource == "brick")
+            {
+                player3.currencyBrick++;
+            }
+            else if (resource == "ore")
+            {
+                player3.currencyOre++;
+            }
+            else if (resource == "wool")
+            {
+                player3.currencyWool++;
+            }
+        }
+        else if (player == player4)
+        {
+            if (resource == "lumber")
+            {
+                player4.currencyLumber++;
+            }
+            else if (resource == "grain")
+            {
+                player4.currencyGrain++;
+            }
+            else if (resource == "brick")
+            {
+                player4.currencyBrick++;
+            }
+            else if (resource == "ore")
+            {
+                player4.currencyOre++;
+            }
+            else if (resource == "wool")
+            {
+                player4.currencyWool++;
+            }
+        }
+
+
+    }
 }
 
 

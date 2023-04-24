@@ -9,8 +9,6 @@ public class CurrentPlayer : MonoBehaviour
     PlayerStateManager playerStateManager;
     public GameObject player;
 
-
-
     void Awake()
     {
         playerStateManager = player.GetComponent<PlayerStateManager>();

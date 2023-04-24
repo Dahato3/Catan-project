@@ -9,8 +9,6 @@ public class DiceRoller : MonoBehaviour
 
     [SerializeField] GameObject halfResourcePanelG;
 
-    //[SerializeField] GameObject endTurn;
-
     Board board;
 
     [SerializeField] GameObject myBoard;
@@ -47,23 +45,12 @@ public class DiceRoller : MonoBehaviour
     {
         // initialzing out array here
         diceValues = new int[2];
-        //GameObject.Find("End Turn Button").GetComponent<Button>().interactable = false;
-        //if (halfResourcePanelG.activeInHierarchy == true)
-        //{
-        //    halfResourcePanelG.SetActive(false);
-        //}
     }
 
     // Update is called once per frame
     void Update()
     {
         totalSelected = lumberSelected + grainSelected + brickSelected + oreSelected + woolSelected;
-
-        //if (GameObject.Find("RollDiceButton").GetComponent<Button>().interactable == false)
-        //{
-        //    GameObject.Find("End Turn Button").GetComponent<Button>().interactable = true;
-        //}
-
     }
 
     public int[] diceValues;
@@ -79,9 +66,6 @@ public class DiceRoller : MonoBehaviour
     // Method to actually roll the dice, Stores 2 random integers in the range of 1 to 6 into out diceValues array.
     public void RollDice()
     {
-        //rolled = true;
-
-        
         GameObject.Find("RollDiceButton").GetComponent<Button>().interactable = false;
         GameObject.Find("End Turn Button").GetComponent<Button>().interactable = true;
 
@@ -128,12 +112,7 @@ public class DiceRoller : MonoBehaviour
         }
         if (diceTotal == 7)
         {
-            
-
-            Debug.Log("interactable: " + GameObject.Find("RollDiceButton").GetComponent<Button>().interactable);
-
             initialPlayerToRemove = playerStateManager.currentPlayerNumber;
-            Debug.Log("CurrentPlayer: " + playerStateManager.getCurrentPlayer(playerStateManager.currentPlayerNumber).playerNumber);
             if (playerStateManager.getCurrentPlayer(playerStateManager.currentPlayerNumber).totalResources > 7)
             {
                 Debug.Log(playerStateManager.getCurrentPlayer(playerStateManager.currentPlayerNumber).totalResources);
@@ -153,7 +132,6 @@ public class DiceRoller : MonoBehaviour
             }
             if (playerStateManager.getCurrentPlayer(playerStateManager.currentPlayerNumber).totalResources > 7)
             {
-                Debug.Log(playerStateManager.getCurrentPlayer(playerStateManager.currentPlayerNumber).totalResources);
                 toRemove = playerStateManager.getCurrentPlayer(playerStateManager.currentPlayerNumber).totalResources / 2;
                 if (halfResourcePanelG.activeInHierarchy == false)
                 {
@@ -180,7 +158,6 @@ public class DiceRoller : MonoBehaviour
             }
             if (playerStateManager.getCurrentPlayer(playerStateManager.currentPlayerNumber).totalResources > 7)
             {
-                Debug.Log(playerStateManager.getCurrentPlayer(playerStateManager.currentPlayerNumber).totalResources);
                 toRemove = playerStateManager.getCurrentPlayer(playerStateManager.currentPlayerNumber).totalResources / 2;
                 if (halfResourcePanelG.activeInHierarchy == false)
                 {
@@ -296,12 +273,6 @@ public class DiceRoller : MonoBehaviour
             totalSelected = lumberSelected + grainSelected + brickSelected + oreSelected + woolSelected;
             GameObject.Find("WoolAmountSelected").GetComponent<Text>().text = "" + woolSelected;
         }
-        Debug.Log("L: " + lumberSelected);
-        Debug.Log("G: " + grainSelected);
-        Debug.Log("B: " + brickSelected);
-        Debug.Log("O: " + oreSelected);
-        Debug.Log("W: " + woolSelected);
-        Debug.Log("TS: " + totalSelected);
     }
 
     public void confirmSelected()
@@ -402,7 +373,7 @@ public class DiceRoller : MonoBehaviour
             playerStateManager.SwitchState();
             if (playerStateManager.getCurrentPlayer(playerStateManager.currentPlayerNumber).playerNumber == initialPlayerToRemove)
             {
-                halfResourcePanelG.SetActive(false);
+               
 
                 lumberSelected = 0;
                 grainSelected = 0;
@@ -415,6 +386,8 @@ public class DiceRoller : MonoBehaviour
                 GameObject.Find("BrickAmountSelected").GetComponent<Text>().text = "" + grainSelected;
                 GameObject.Find("OreAmountSelected").GetComponent<Text>().text = "" + grainSelected;
                 GameObject.Find("WoolAmountSelected").GetComponent<Text>().text = "" + grainSelected;
+
+                halfResourcePanelG.SetActive(false);
 
                 return;
             }
@@ -442,7 +415,6 @@ public class DiceRoller : MonoBehaviour
             playerStateManager.SwitchState();
             if (playerStateManager.getCurrentPlayer(playerStateManager.currentPlayerNumber).playerNumber == initialPlayerToRemove)
             {
-                halfResourcePanelG.SetActive(false);
 
                 lumberSelected = 0;
                 grainSelected = 0;
@@ -455,6 +427,8 @@ public class DiceRoller : MonoBehaviour
                 GameObject.Find("BrickAmountSelected").GetComponent<Text>().text = "" + grainSelected;
                 GameObject.Find("OreAmountSelected").GetComponent<Text>().text = "" + grainSelected;
                 GameObject.Find("WoolAmountSelected").GetComponent<Text>().text = "" + grainSelected;
+
+                halfResourcePanelG.SetActive(false);
 
                 return;
             }

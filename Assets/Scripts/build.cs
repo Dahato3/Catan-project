@@ -2,6 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UIElements;
+using UnityEngine.EventSystems;
+using Unity.VisualScripting;
 
 public class build : MonoBehaviour
 {
@@ -42,6 +44,10 @@ public class build : MonoBehaviour
     {
         if (Input.GetMouseButtonDown(0))
         {
+            if (EventSystem.current.IsPointerOverGameObject() && gameObject.name != "settlementCity(Clone)" && gameObject.name != "road(Clone)")
+            {
+                return;
+            }
             if (diceRoller.diceTotal == 7)
             {
                 if (robber.playersAroundRobber[0].getSettlementHex() == gameObject)
@@ -157,6 +163,10 @@ public class build : MonoBehaviour
             {
                 state.getCurrentPlayer(state.currentPlayerNumber).buildSettlementCity(gameObject);
             }
+            //else if (gameObject.tag == "city")
+            //{
+            //    state.getCurrentPlayer(state.currentPlayerNumber).buildSettlementCity(gameObject);
+            //}
             else if (gameObject.tag == "road")
             {
                 state.getCurrentPlayer(state.currentPlayerNumber).buildRoad(gameObject);

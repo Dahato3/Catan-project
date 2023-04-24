@@ -21,42 +21,6 @@ public class Edge
         edgeColour = 0;
     }
 
-    //public void setEdgeNodes(int index)
-    //{
-    //    myboard.checkWidth(index);
-    //    if (myboard.getCHeight() <= myboard.getHeight() / 2)
-    //    {
-    //        if (myboard.getCHeight() % 2 == 1)
-    //        {
-    //            node1 = myboard.boardNodes[index + myboard.cWidth];
-    //            node2 = myboard.boardNodes[index + myboard.cWidth + 1];
-    //        }
-    //        else
-    //        {
-    //            edgeNorthSouth = myboard.getEdge(edgeCounter);
-    //        }
-    //    }
-    //    else
-    //    {
-    //        if (myboard.getCHeight() == myboard.getHeight() / 2 + 1)
-    //        {
-
-    //        }
-    //        else if (myboard.getCHeight() % 2 == 0)
-    //        {
-    //            edgeWest = myboard.getEdge(edgeCounter);
-    //            edgeCounter++;
-    //            edgeEast = myboard.getEdge(edgeCounter);
-    //            edgeCounter++;
-    //        }
-    //        else
-    //        {
-    //            edgeNorthSouth = myboard.getEdge(edgeCounter);
-    //            edgeCounter++;
-    //        }
-    //    }
-    //}
-
     public int getEdgeType()
     {
         return edgeColour;

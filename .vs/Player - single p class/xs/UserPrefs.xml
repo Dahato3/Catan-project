@@ -1,18 +1,18 @@
 ﻿<Properties StartupConfiguration="{C4A68F9D-C7D4-0569-A38C-99AEBBCEDC38}|">
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/Scripts/build.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/Scripts/Player.cs">
     <Files>
-      <File FileName="Assets/Scripts/Board.cs" Line="196" Column="64" IsPinned="True" />
-      <File FileName="Assets/Scripts/ShowPanel.cs" IsPinned="True" />
-      <File FileName="Assets/Scripts/Player.cs" />
-      <File FileName="Assets/Scripts/Node.cs" Line="294" Column="1" />
-      <File FileName="Assets/Scripts/Edge.cs" Line="1" Column="1" />
-      <File FileName="Assets/Scripts/PlayerStateManager.cs" Line="310" Column="1" />
-      <File FileName="Assets/Scripts/DiceRoller.cs" Line="312" Column="1" />
-      <File FileName="Assets/Scripts/TimerScript.cs" />
-      <File FileName="Assets/Scripts/CurrentPlayer.cs" Line="1" Column="1" />
-      <File FileName="Assets/Scripts/Trade.cs" Line="48" Column="39" />
-      <File FileName="Assets/Scripts/build.cs" Line="46" Column="14" />
-      <File FileName="Assets/Scripts/Robber.cs" Line="142" Column="1" />
+      <File FileName="Assets/Scripts/ShowPanel.cs" Line="14" Column="1" IsPinned="True" />
+      <File FileName="Assets/Scripts/Board.cs" Line="98" Column="101" />
+      <File FileName="Assets/Scripts/Player.cs" Line="4" Column="22" />
+      <File FileName="Assets/Scripts/Node.cs" Line="321" Column="6" />
+      <File FileName="Assets/Scripts/Edge.cs" Line="23" Column="1" />
+      <File FileName="Assets/Scripts/PlayerStateManager.cs" Line="1" Column="1" />
+      <File FileName="Assets/Scripts/DiceRoller.cs" Line="76" Column="48" />
+      <File FileName="Assets/Scripts/TimerScript.cs" Line="25" Column="72" />
+      <File FileName="Assets/Scripts/CurrentPlayer.cs" Line="11" Column="1" />
+      <File FileName="Assets/Scripts/Trade.cs" Line="32" Column="47" />
+      <File FileName="Assets/Scripts/build.cs" />
+      <File FileName="Assets/Scripts/Robber.cs" Line="10" Column="36" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
@@ -20,7 +20,7 @@
           <Node name="Player - single p class" expanded="True">
             <Node name="Assets" expanded="True">
               <Node name="Scripts" expanded="True">
-                <Node name="build.cs" selected="True" />
+                <Node name="Player.cs" selected="True" />
               </Node>
             </Node>
           </Node>
@@ -30,7 +30,7 @@
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.PinnedWatches />
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.ItemProperties.Assembly-CSharp PreferredExecutionTarget="0a83516c-688f-44f0-979b-2f3f1445ab62" />
+  <MonoDevelop.Ide.ItemProperties.Assembly-CSharp PreferredExecutionTarget="b24d9814-2b6b-46a8-ba3b-9826cb293faf" />
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
     <BreakpointStore />
   </MonoDevelop.Ide.DebuggingService.Breakpoints>

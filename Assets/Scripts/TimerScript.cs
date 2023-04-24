@@ -14,8 +14,6 @@ public class TimerScript : MonoBehaviour
     public bool timerOn = false;
     public bool test = false;
 
-    public Text timerText;
-
     // The awake() function allows the above variable to have access to the corrosponding
     // classes script
     void Awake()
@@ -24,13 +22,13 @@ public class TimerScript : MonoBehaviour
         myBoard = board.GetComponent<Board>();
     }
 
+    // Start is the first method called to initialize various variables
     void Start()
     {
         
     }
 
     // Update is called once per frame
-
     // Decrements the timer timer internally
     void Update()
     {
@@ -62,6 +60,6 @@ public class TimerScript : MonoBehaviour
         float minutes = Mathf.FloorToInt(currentTime / 60);
         float seconds = Mathf.FloorToInt(currentTime % 60);
 
-        timerText.text = string.Format("Time: " + "{0:00} : {1:00}", minutes, seconds);
+        GameObject.Find("Timer").GetComponent<Text>().text = string.Format("Time: " + "{0:00} : {1:00}", minutes, seconds);
     }
 }
