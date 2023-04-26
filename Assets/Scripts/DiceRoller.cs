@@ -1,61 +1,19 @@
-using System.Collections;
-using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.EventSystems;
+using System.Collections;
+using System.Collections.Generic;
 
 public class DiceRoller : MonoBehaviour
 {
-
-    [SerializeField] GameObject halfResourcePanelG;
-
-    Board board;
-
+    // Variables to help us access properties from other classes
     [SerializeField] GameObject myBoard;
-
+    [SerializeField] GameObject player;
+    [SerializeField] GameObject halfResourcePanelG;
+    Board board;
     PlayerStateManager playerStateManager;
 
-    [SerializeField] GameObject player;
-
-    public bool sevenRolled;
-
-    public bool rolled = false;
-
-    public static int initialPlayerToRemove;
-
-    public static int totalSelected;
-
-    public static int toRemove;
-
-    public static int lumberSelected;
-    public static int grainSelected;
-    public static int brickSelected;
-    public static int oreSelected;
-    public static int woolSelected;
-
-
-    void Awake()
-    {
-        board = myBoard.GetComponent<Board>();
-        playerStateManager = player.GetComponent<PlayerStateManager>();
-
-    }
-    // Start is called before the first frame update
-    void Start()
-    {
-        // initialzing out array here
-        diceValues = new int[2];
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        totalSelected = lumberSelected + grainSelected + brickSelected + oreSelected + woolSelected;
-    }
-
-    public int[] diceValues;
-    public int diceTotal;
-
+    // These are sprite variables used to show the on screen representation of which dice values are rolled
     public Sprite diceImageOne;
     public Sprite diceImageTwo;
     public Sprite diceImageThree;
@@ -63,7 +21,47 @@ public class DiceRoller : MonoBehaviour
     public Sprite diceImageFive;
     public Sprite diceImageSix;
 
-    // Method to actually roll the dice, Stores 2 random integers in the range of 1 to 6 into out diceValues array.
+    // Variabes to help with the dice functionality
+    public bool sevenRolled;
+    public bool rolled = false;
+    public static int initialPlayerToRemove;
+    public static int totalSelected;
+    public static int toRemove;
+    public int diceTotal;
+
+    public int[] diceValues;
+
+    public static int lumberSelected;
+    public static int grainSelected;
+    public static int brickSelected;
+    public static int oreSelected;
+    public static int woolSelected;
+
+    // Awake function called before start to initialse the GameObject we use to access other classes
+    void Awake()
+    {
+        board = myBoard.GetComponent<Board>();
+        playerStateManager = player.GetComponent<PlayerStateManager>();
+    }
+    // Start is called before the first frame update
+    void Start()
+    {
+        diceValues = new int[2];
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+        // Keeps the totalSelected variables updated at all times
+        totalSelected = lumberSelected + grainSelected + brickSelected + oreSelected + woolSelected;
+
+        GameObject.Find("DiceRollTotal").GetComponent<Text>().text = "= " + diceTotal;
+    }
+
+    // Method to actually roll the dice, Stores 2 random integers in the range of 1 to 6 into out diceValues array, sets the corrosponding on screen
+    // sprites, adds them together and displays the total
+
+    // NOTE- it's in this method where we operate some of the robber functionality as we are able to easil identify when a 7 is rolled
     public void RollDice()
     {
         GameObject.Find("RollDiceButton").GetComponent<Button>().interactable = false;
@@ -112,68 +110,7 @@ public class DiceRoller : MonoBehaviour
         }
         if (diceTotal == 7)
         {
-            initialPlayerToRemove = playerStateManager.currentPlayerNumber;
-            if (playerStateManager.getCurrentPlayer(playerStateManager.currentPlayerNumber).totalResources > 7)
-            {
-                Debug.Log(playerStateManager.getCurrentPlayer(playerStateManager.currentPlayerNumber).totalResources);
-                toRemove = playerStateManager.getCurrentPlayer(playerStateManager.currentPlayerNumber).totalResources / 2;
-                if (halfResourcePanelG != null)
-                {
-                    if (halfResourcePanelG.activeInHierarchy == false)
-                    {
-                        halfResourcePanelG.SetActive(true);
-                        return;
-                    }
-                }
-            }
-            else
-            {
-                playerStateManager.SwitchState();
-            }
-            if (playerStateManager.getCurrentPlayer(playerStateManager.currentPlayerNumber).totalResources > 7)
-            {
-                toRemove = playerStateManager.getCurrentPlayer(playerStateManager.currentPlayerNumber).totalResources / 2;
-                if (halfResourcePanelG.activeInHierarchy == false)
-                {
-                    halfResourcePanelG.SetActive(true);
-                    return;
-                }
-            }
-            else
-            {
-                playerStateManager.SwitchState();
-            }
-            if (playerStateManager.getCurrentPlayer(playerStateManager.currentPlayerNumber).totalResources > 7)
-            {
-                toRemove = playerStateManager.getCurrentPlayer(playerStateManager.currentPlayerNumber).totalResources / 2;
-                if (halfResourcePanelG.activeInHierarchy == false)
-                {
-                    halfResourcePanelG.SetActive(true);
-                    return;
-                }
-            }
-            else
-            {
-                playerStateManager.SwitchState();
-            }
-            if (playerStateManager.getCurrentPlayer(playerStateManager.currentPlayerNumber).totalResources > 7)
-            {
-                toRemove = playerStateManager.getCurrentPlayer(playerStateManager.currentPlayerNumber).totalResources / 2;
-                if (halfResourcePanelG.activeInHierarchy == false)
-                {
-                    halfResourcePanelG.SetActive(true);
-                    return;
-                }
-            }
-            else
-            {
-                playerStateManager.SwitchState();
-            }
-            GameObject.Find("RollDiceButton").GetComponent<Button>().interactable = false;
-
-            Debug.Log("Please relocate the robber");
-
-            GameObject.Find("End Turn Button").GetComponent<Button>().interactable = false;
+            halfResources();
         }
         else
         {
@@ -181,6 +118,8 @@ public class DiceRoller : MonoBehaviour
         }
     }
 
+    // This is the method that's linked to the buttons for a player who rolled a 7 to select half their resources to remove.
+    // It was important for the player to be able to choose this
     public void incrementSelected()
     {
         if (gameObject.name == "LumberSelected")
@@ -275,14 +214,13 @@ public class DiceRoller : MonoBehaviour
         }
     }
 
+    // This method will be linked to the "confirm" button on the panel where the player selects half their resources to be removed.
     public void confirmSelected()
     {
         if (toRemove != totalSelected)
         {
             return;
-
         }
-
         playerStateManager.getCurrentPlayer(playerStateManager.currentPlayerNumber).currencyLumber -= lumberSelected;
         playerStateManager.getCurrentPlayer(playerStateManager.currentPlayerNumber).currencyGrain -= grainSelected;
         playerStateManager.getCurrentPlayer(playerStateManager.currentPlayerNumber).currencyBrick -= brickSelected;
@@ -435,6 +373,8 @@ public class DiceRoller : MonoBehaviour
         }
     }
 
+    // This method is called right at the end of the roll dice method, it is not called when a 7 is rolled as no resources are allocated in this scenario.
+    // On any other dice roll it's called, it checks every node to see if the dice total matches a hexagon value adjacent to a players settlemnet / city
     public void checkIncrease()
     {
         for (int i = 0; i < board.boardNodes.Length; i++)
@@ -729,4 +669,70 @@ public class DiceRoller : MonoBehaviour
             }
         }  
     }
+
+    public void halfResources()
+    {
+        Debug.Log("HITS");
+        // We remember which player rolled the 7
+        initialPlayerToRemove = playerStateManager.currentPlayerNumber;
+        if (playerStateManager.getCurrentPlayer(playerStateManager.currentPlayerNumber).totalResources > 7)
+        {
+            toRemove = playerStateManager.getCurrentPlayer(playerStateManager.currentPlayerNumber).totalResources / 2;
+            if (halfResourcePanelG != null)
+            {
+                if (halfResourcePanelG.activeInHierarchy == false)
+                {
+                    halfResourcePanelG.SetActive(true);
+                    return;
+                }
+            }
+        }
+        else
+        {
+            playerStateManager.SwitchState();
+        }
+        if (playerStateManager.getCurrentPlayer(playerStateManager.currentPlayerNumber).totalResources > 7)
+        {
+            toRemove = playerStateManager.getCurrentPlayer(playerStateManager.currentPlayerNumber).totalResources / 2;
+            if (halfResourcePanelG.activeInHierarchy == false)
+            {
+                halfResourcePanelG.SetActive(true);
+                return;
+            }
+        }
+        else
+        {
+            playerStateManager.SwitchState();
+        }
+        if (playerStateManager.getCurrentPlayer(playerStateManager.currentPlayerNumber).totalResources > 7)
+        {
+            toRemove = playerStateManager.getCurrentPlayer(playerStateManager.currentPlayerNumber).totalResources / 2;
+            if (halfResourcePanelG.activeInHierarchy == false)
+            {
+                halfResourcePanelG.SetActive(true);
+                return;
+            }
+        }
+        else
+        {
+            playerStateManager.SwitchState();
+        }
+        if (playerStateManager.getCurrentPlayer(playerStateManager.currentPlayerNumber).totalResources > 7)
+        {
+            toRemove = playerStateManager.getCurrentPlayer(playerStateManager.currentPlayerNumber).totalResources / 2;
+            if (halfResourcePanelG.activeInHierarchy == false)
+            {
+                halfResourcePanelG.SetActive(true);
+                return;
+            }
+        }
+        else
+        {
+            playerStateManager.SwitchState();
+        }
+        GameObject.Find("RollDiceButton").GetComponent<Button>().interactable = false;
+        Debug.Log("Please relocate the robber");
+        GameObject.Find("End Turn Button").GetComponent<Button>().interactable = false;
+    }
 }
+

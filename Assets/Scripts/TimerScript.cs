@@ -4,11 +4,11 @@ using UnityEngine.UI;
 public class TimerScript : MonoBehaviour
 {
     // Variables to access other classes
-    PlayerStateManager playerStateManager;
-    Board myBoard;
     [SerializeField] GameObject player;
     [SerializeField] GameObject board;
-
+    PlayerStateManager playerStateManager;
+    Board myBoard;
+    
     // Variables to implement the timer functionality
     public float timeLeft;
     public bool timerOn = false;

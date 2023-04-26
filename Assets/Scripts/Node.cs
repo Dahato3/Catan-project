@@ -1,51 +1,50 @@
 using System;
+using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
 using UnityEngine.UIElements;
 
 public class Node
 {
-    public Board myboard = GameObject.Find("Board").GetComponent<Board>();
-
+    // Prefab gameobjects of the settlement and cities
     public GameObject settlementHex;
     public GameObject city;
 
-    public int boardLocation;
-
+    // Variables to help us access properties from other classes
     public Player player;
-
     public PlayerStateManager state;
+    public Board myboard = GameObject.Find("Board").GetComponent<Board>();
 
     public Node nodeNorthSouth; // oHex
     public Node nodeEast; // rHex
     public Node nodeWest; //lHex
 
-    public Edge edgeNorthSouth;
-    public Edge edgeEast;
-    public Edge edgeWest;
+    public Edge edgeNorthSouth; // Top / bottom edge
+    public Edge edgeEast; // Right most edge
+    public Edge edgeWest; // Left most edge
 
     public int houseType; // 0 - none, 1 - settlement, 2 - city
     public int houseColour; // 1 - white, 2 - red, 3 - yellow, 4 - blue
 
     static int edgeCounter = 0;
+    public int boardLocation;
+
+    public bool checkedLongestRoad;
 
     public int lHexLocation;
     public int lHex;
     public String lHexResource;
-
     public int rHexLocation;
     public int rHex;
     public String rHexResource;
-
     public int oHexLocation;
     public int oHex;
     public String oHexResource;
 
     bool canPlace;
-
     public bool hasRobber;
 
+    // Constructor
     public Node()
     {
         houseColour = 0;
@@ -54,6 +53,7 @@ public class Node
         hasRobber = false;
     }
 
+    // This method is called in the setup of the board and will take in a node index / board location and assign it's corosponding nodeWest, nodeEast and nodeNorthSouth
     public void SetNode(int index)
     {
         myboard.checkWidth(index);
@@ -93,7 +93,6 @@ public class Node
                 nodeEast = myboard.getNode(index + myboard.getCWidth() + 1);
                 nodeNorthSouth = myboard.getNode(index - myboard.getCWidth());
             }
-
         }
         else if (myboard.getCHeight() > myboard.getHeight() / 2)
         {
@@ -132,6 +131,8 @@ public class Node
         }
     }
 
+    // Similar to the method above this method is used in the setup of the board and takes a node index / board location as a parameter. It will ssign it's
+    // corrosponding edgeWest, edgeEast and edgeNorthSouth.
     public void setNodeEdge(int index)
     {
         myboard.checkWidth(index);
@@ -141,7 +142,6 @@ public class Node
             // Case where index is on the first row
             if (myboard.cHeight == 1)
             {
-
                 edgeWest = myboard.getEdge(edgeCounter);
                 edgeCounter++;
                 edgeEast = myboard.getEdge(edgeCounter);
@@ -184,7 +184,6 @@ public class Node
                 edgeNorthSouth = myboard.getEdge(edgeCounter);
                 edgeCounter++;
             }
-
         }
         else if (myboard.getCHeight() > myboard.getHeight() / 2)
         {
@@ -287,42 +286,52 @@ public class Node
     {
         return houseColour;
     }
+
     public int getHouseType()
     {
         return houseType;
     }
+
     public Node getNodeEast()
     {
         return nodeEast;
     }
+
     public Node getNodeWest()
     {
         return nodeWest;
     }
+    
     public Node getNodeNorthSouth()
     {
         return nodeNorthSouth;
     }
+
     public Edge getEdgeEast()
     {
         return edgeEast;
     }
+
     public Edge getEdgeWest()
     {
         return edgeWest;
     }
+
     public Edge getEdgeNorthSouth()
     {
         return edgeNorthSouth;
-    } 
+    }
+
     public void setSettlementHex(GameObject g)
     {
         settlementHex = g;
     }
+
     public GameObject getSettlementHex()
     {
         return settlementHex;
     }
+
     public void setCity(GameObject g)
     {
         city = g;
@@ -332,5 +341,4 @@ public class Node
     {
         return city;
     }
-
 }

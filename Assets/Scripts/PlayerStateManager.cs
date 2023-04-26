@@ -1,27 +1,27 @@
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 
-
 public class PlayerStateManager : MonoBehaviour
 {
-
     //TODO: NEED TO ADD FUNCTIONALITY TO NOT LET PLAYERS BUILD MORE THAN:-
     // 5 settlements, 4 cities and 15 roads IN TOTAL
-
-
 
     // Variables to access other relevent classes
     TimerScript timeScript;
     Board board;
-
     Player player;
 
     //"SerializeField" means the variable is still private but is viewable in the unity editor
     // i had some problems with this however and did a slightly worse way but worked
     [SerializeField] GameObject timer;
-    [SerializeField] GameObject panel;
+    [SerializeField] GameObject tradePanel;
+    [SerializeField] GameObject halfResourcePanel;
+    [SerializeField] GameObject receivedTradePanel;
+    [SerializeField] GameObject stealResourcePanel;
+    [SerializeField] GameObject fromBankPanel;
+    [SerializeField] GameObject stealAllOfOneResourcePanel;
     [SerializeField] GameObject myBoard;
-
 
     // A variable to store each player object in the game
     public Player player1; // White
@@ -32,6 +32,16 @@ public class PlayerStateManager : MonoBehaviour
     // A varaible of the current players number
     public int currentPlayerNumber;
 
+    Vector3 player1OriginalLoc;
+    Vector3 player2OriginalLoc;
+    Vector3 player3OriginalLoc;
+    Vector3 player4OriginalLoc;
+
+    Vector3 player1UpdatedLoc;
+    Vector3 player2UpdatedLoc;
+    Vector3 player3UpdatedLoc;
+    Vector3 player4UpdatedLoc;
+
 
     // When assigning componants we tend to try and do so in an awake function (Called before start)
     // Still leave variable initilization in start() though
@@ -39,7 +49,6 @@ public class PlayerStateManager : MonoBehaviour
     {
         timeScript = timer.GetComponent<TimerScript>();
         board = myBoard.GetComponent<Board>();
-
     }
 
     // Start is called before the first frame update
@@ -55,6 +64,8 @@ public class PlayerStateManager : MonoBehaviour
         player1.currencyBrick = 0;
         player1.currencyOre = 0;
         player1.currencyWool = 0;
+
+        player1.victoryPoints = 7;
 
         player2 = new Player();
         player2.playerNumber = 2;
@@ -84,63 +95,247 @@ public class PlayerStateManager : MonoBehaviour
         player4.currencyWool = 0;
 
         currentPlayerNumber = 1;
+
+        player1OriginalLoc = GameObject.Find("Player1 stats").transform.position;
+        player2OriginalLoc = GameObject.Find("Player2 stats").transform.position;
+        player3OriginalLoc = GameObject.Find("Player3 stats").transform.position;
+        player4OriginalLoc = GameObject.Find("Player4 stats").transform.position;
+
+        player1UpdatedLoc = GameObject.Find("Player1 stats").transform.position;
+        player2UpdatedLoc = GameObject.Find("Player2 stats").transform.position;
+        player3UpdatedLoc = GameObject.Find("Player3 stats").transform.position;
+        player4UpdatedLoc = GameObject.Find("Player4 stats").transform.position;
+
+        player1UpdatedLoc[1] = player1UpdatedLoc[1] - 425;
+        player2UpdatedLoc[1] = player2UpdatedLoc[1] - 425;
+        player3UpdatedLoc[1] = player3UpdatedLoc[1] - 425;
+        player4UpdatedLoc[1] = player4UpdatedLoc[1] - 425;
     }
 
     // Update is called once per frame
     void Update()
     {
         updateResources();
-
         player1.totalResources = player1.currencyLumber + player1.currencyGrain + player1.currencyBrick + player1.currencyOre + player1.currencyWool;
         player2.totalResources = player2.currencyLumber + player2.currencyGrain + player2.currencyBrick + player2.currencyOre + player2.currencyWool;
         player3.totalResources = player3.currencyLumber + player3.currencyGrain + player3.currencyBrick + player3.currencyOre + player3.currencyWool;
         player4.totalResources = player4.currencyLumber + player4.currencyGrain + player4.currencyBrick + player4.currencyOre + player4.currencyWool;
-    }
 
-    //public void callBuildSettlementCity(int i)
-    //{
-    //    player.buildSettlementCity(i);
-    //}
+        player1.longetRoad = player1.findLongestRoad();
+        Debug.Log("P1: " + player1.longetRoad);
+        player2.longetRoad = player2.findLongestRoad();
+        Debug.Log("P2: " + player2.longetRoad);
+        player3.longetRoad = player3.findLongestRoad();
+        Debug.Log("P3: " + player3.longetRoad);
+        player4.longetRoad = player4.findLongestRoad();
+        Debug.Log("P4: " + player4.longetRoad);
+
+        // Updates "other player" VP and total resources
+        GameObject.Find("Player1 stats").GetComponent<Text>().text = "Player 1\nVP: " + player1.victoryPoints + "\nLongest road: " + player1.longetRoad + "\nKnight: " + player1.usedKnights + "\nTotal resources: " + player1.totalResources;
+        GameObject.Find("Player2 stats").GetComponent<Text>().text = "Player 2\nVP: " + player2.victoryPoints + "\nLongest road: " + player2.longetRoad + "\nKnight: " + player2.usedKnights + "\nTotal resources: " + player2.totalResources; 
+        GameObject.Find("Player3 stats").GetComponent<Text>().text = "Player 3\nVP: " + player3.victoryPoints + "\nLongest road: " + player3.longetRoad + "\nKnight: " + player3.usedKnights + "\nTotal resources: " + player3.totalResources;
+        GameObject.Find("Player4 stats").GetComponent<Text>().text = "Player 4\nVP: " + player4.victoryPoints + "\nLongest road: " + player4.longetRoad + "\nKnight: " + player4.usedKnights + "\nTotal resources: " + player4.totalResources;
+
+        GameObject.Find("avalibleKnights").GetComponent<Text>().text = "" + getCurrentPlayer(currentPlayerNumber).avalibleKnights;
+        GameObject.Find("usedKnights").GetComponent<Text>().text = "" + getCurrentPlayer(currentPlayerNumber).usedKnights;
+
+        // Shows other players stats and keeps them updated
+        if (board.introTurn == false)
+        {
+            if (halfResourcePanel.activeInHierarchy == true || tradePanel.activeInHierarchy == true
+                || halfResourcePanel.activeInHierarchy == true || receivedTradePanel.activeInHierarchy == true
+                || fromBankPanel.activeInHierarchy == true || stealAllOfOneResourcePanel.activeInHierarchy == true)
+            {
+                GameObject.Find("Player1 stats").transform.position = player1UpdatedLoc;
+                GameObject.Find("Player2 stats").transform.position = player2UpdatedLoc;
+                GameObject.Find("Player3 stats").transform.position = player3UpdatedLoc;
+                GameObject.Find("Player4 stats").transform.position = player4UpdatedLoc;
+            }
+            else if (currentPlayerNumber == 1)
+            {
+                GameObject.Find("Player1 stats").GetComponent<CanvasRenderer>().SetAlpha(0);
+
+                GameObject.Find("Player2 stats").GetComponent<CanvasRenderer>().SetAlpha(1);
+                GameObject.Find("Player2 stats").transform.position = new Vector3(880, 320, 0);
+
+                GameObject.Find("Player3 stats").GetComponent<CanvasRenderer>().SetAlpha(1);
+                GameObject.Find("Player3 stats").transform.position = new Vector3(880, 235, 0);
+
+                GameObject.Find("Player4 stats").GetComponent<CanvasRenderer>().SetAlpha(1);
+                GameObject.Find("Player4 stats").transform.position = new Vector3(880, 150, 0);
+            }
+            else if (currentPlayerNumber == 2)
+            {
+                GameObject.Find("Player1 stats").GetComponent<CanvasRenderer>().SetAlpha(1);
+                GameObject.Find("Player1 stats").transform.position = new Vector3(880, 320, 0);
+
+                GameObject.Find("Player2 stats").GetComponent<CanvasRenderer>().SetAlpha(0);
+
+                GameObject.Find("Player3 stats").GetComponent<CanvasRenderer>().SetAlpha(1);
+                GameObject.Find("Player3 stats").transform.position = new Vector3(880, 235, 0);
+
+                GameObject.Find("Player4 stats").GetComponent<CanvasRenderer>().SetAlpha(1);
+                GameObject.Find("Player4 stats").transform.position = new Vector3(880, 150, 0);
+            }
+            else if (currentPlayerNumber == 3)
+            {
+                GameObject.Find("Player1 stats").GetComponent<CanvasRenderer>().SetAlpha(1);
+                GameObject.Find("Player1 stats").transform.position = new Vector3(880, 320, 0);
+
+                GameObject.Find("Player2 stats").GetComponent<CanvasRenderer>().SetAlpha(1);
+                GameObject.Find("Player2 stats").transform.position = new Vector3(880, 235, 0);
+
+                GameObject.Find("Player3 stats").GetComponent<CanvasRenderer>().SetAlpha(0);
+
+                GameObject.Find("Player4 stats").GetComponent<CanvasRenderer>().SetAlpha(1);
+                GameObject.Find("Player4 stats").transform.position = new Vector3(880, 150, 0);
+            }
+            else if (currentPlayerNumber == 4)
+            {
+                GameObject.Find("Player1 stats").GetComponent<CanvasRenderer>().SetAlpha(1);
+                GameObject.Find("Player1 stats").transform.position = new Vector3(880, 320, 0);
+
+                GameObject.Find("Player2 stats").GetComponent<CanvasRenderer>().SetAlpha(1);
+                GameObject.Find("Player2 stats").transform.position = new Vector3(880, 235, 0);
+
+                GameObject.Find("Player3 stats").GetComponent<CanvasRenderer>().SetAlpha(1);
+                GameObject.Find("Player3 stats").transform.position = new Vector3(880, 150, 0);
+
+                GameObject.Find("Player4 stats").GetComponent<CanvasRenderer>().SetAlpha(0);
+            }
+        }
+
+        if (getCurrentPlayer(1).usedKnights > getCurrentPlayer(2).usedKnights
+            && getCurrentPlayer(1).usedKnights > getCurrentPlayer(3).usedKnights
+            && getCurrentPlayer(1).usedKnights > getCurrentPlayer(4).usedKnights)
+        {
+            getCurrentPlayer(1).HASLargestArmy = true;
+            //getCurrentPlayer(1).HADLargestArmy = true;
+            getCurrentPlayer(1).victoryPoints += 2;
+
+            if (getCurrentPlayer(2).HASLargestArmy == true)
+            {
+                getCurrentPlayer(2).HASLargestArmy = false;
+                getCurrentPlayer(2).victoryPoints -= 2;
+            }
+            else if (getCurrentPlayer(3).HASLargestArmy == true)
+            {
+                getCurrentPlayer(3).HASLargestArmy = false;
+                getCurrentPlayer(3).victoryPoints -= 2;
+            }
+            else if (getCurrentPlayer(4).HASLargestArmy == true)
+            {
+                getCurrentPlayer(4).HASLargestArmy = false;
+                getCurrentPlayer(4).victoryPoints -= 2;
+            }
+            
+        }
+        else if (getCurrentPlayer(2).usedKnights > getCurrentPlayer(1).usedKnights
+            && getCurrentPlayer(2).usedKnights > getCurrentPlayer(3).usedKnights
+            && getCurrentPlayer(2).usedKnights > getCurrentPlayer(4).usedKnights)
+        {
+            getCurrentPlayer(2).HASLargestArmy = true;
+            //getCurrentPlayer(2).HADLargestArmy = true;
+            getCurrentPlayer(2).victoryPoints += 2;
+
+            if (getCurrentPlayer(1).HASLargestArmy == true)
+            {
+                getCurrentPlayer(1).HASLargestArmy = false;
+                getCurrentPlayer(1).victoryPoints -= 2;
+            }
+            else if (getCurrentPlayer(3).HASLargestArmy == true)
+            {
+                getCurrentPlayer(3).HASLargestArmy = false;
+                getCurrentPlayer(3).victoryPoints -= 2;
+            }
+            else if (getCurrentPlayer(4).HASLargestArmy == true)
+            {
+                getCurrentPlayer(4).HASLargestArmy = false;
+                getCurrentPlayer(4).victoryPoints -= 2;
+            }
+        }
+        else if (getCurrentPlayer(3).usedKnights > getCurrentPlayer(1).usedKnights
+            && getCurrentPlayer(3).usedKnights > getCurrentPlayer(2).usedKnights
+            && getCurrentPlayer(3).usedKnights > getCurrentPlayer(4).usedKnights)
+        {
+            getCurrentPlayer(3).HASLargestArmy = true;
+            //getCurrentPlayer(3).HADLargestArmy = true;
+            getCurrentPlayer(3).victoryPoints += 2;
+
+            if (getCurrentPlayer(1).HASLargestArmy == true)
+            {
+                getCurrentPlayer(1).HASLargestArmy = false;
+                getCurrentPlayer(1).victoryPoints -= 2;
+            }
+            else if (getCurrentPlayer(2).HASLargestArmy == true)
+            {
+                getCurrentPlayer(2).HASLargestArmy = false;
+                getCurrentPlayer(2).victoryPoints -= 2;
+            }
+            else if (getCurrentPlayer(4).HASLargestArmy == true)
+            {
+                getCurrentPlayer(4).HASLargestArmy = false;
+                getCurrentPlayer(4).victoryPoints -= 2;
+            }
+        }
+        else if (getCurrentPlayer(4).usedKnights > getCurrentPlayer(1).usedKnights
+            && getCurrentPlayer(4).usedKnights > getCurrentPlayer(2).usedKnights
+            && getCurrentPlayer(4).usedKnights > getCurrentPlayer(3).usedKnights)
+        {
+            getCurrentPlayer(4).HASLargestArmy = true;
+            //getCurrentPlayer(4).HADLargestArmy = true;
+            getCurrentPlayer(4).victoryPoints += 2;
+
+            if (getCurrentPlayer(1).HASLargestArmy == true)
+            {
+                getCurrentPlayer(1).HASLargestArmy = false;
+                getCurrentPlayer(1).victoryPoints -= 2;
+            }
+            else if (getCurrentPlayer(2).HASLargestArmy == true)
+            {
+                getCurrentPlayer(2).HASLargestArmy = false;
+                getCurrentPlayer(2).victoryPoints -= 2;
+            }
+            else if (getCurrentPlayer(3).HASLargestArmy == true)
+            {
+                getCurrentPlayer(3).HASLargestArmy = false;
+                getCurrentPlayer(3).victoryPoints -= 2;
+            }
+        }
+
+    }
 
     // This method is called when the 'end turn' button on screen is clicked. It will update
     // the current player variable to the next players number
     public void SwitchState()
     {
+        if (board.robberMoved == true)
+        {
+            board.robberMoved = false;
+        }
         GameObject.Find("End Turn Button").GetComponent<Button>().interactable = false;
         GameObject.Find("RollDiceButton").GetComponent<Button>().interactable = true;
-
-        Debug.Log(GameObject.Find("End Turn Button").GetComponent<Button>().interactable);
 
         if (board.introTurn == false)
         {
             // On screen time set to 300 seconds on every new players turn
             timeScript.timeLeft = 300;
         }
-        
-
         if (currentPlayerNumber == 1)
         {
             currentPlayerNumber = 2;
-
-            //player2.EnterState(this);
         }
         else if (currentPlayerNumber == 2)
         {
             currentPlayerNumber = 3;
-
-            //player3.EnterState(this);
         }
         else if (currentPlayerNumber == 3)
         {
             currentPlayerNumber = 4;
-
-            //player4.EnterState(this);
         }
         else if (currentPlayerNumber == 4)
         {
             currentPlayerNumber = 1;
-
-            //player1.EnterState(this);
         }
     }
 
@@ -196,7 +391,7 @@ public class PlayerStateManager : MonoBehaviour
     // This method does the same as the one above but updates the panel which shows other players resources
     public void updateOtherPlayersResources()
     {
-        if(panel.activeInHierarchy == true)
+        if (tradePanel.activeInHierarchy == true)
         {
             // If it's currently player 1's turn
             if (currentPlayerNumber == 1)
@@ -309,33 +504,11 @@ public class PlayerStateManager : MonoBehaviour
                 GameObject.Find("OtherPlayer(C) header").GetComponent<Text>().text = "Player 3";
             }
         }
-        
+
     }
 
-    public Player getCurrentPlayer(int current)
-    {
-        if (current == 1)
-        {
-            return player1;
-        }
-        else if (current == 2)
-        {
-            return player2;
-        }
-        else if (current == 3)
-        {
-            return player3;
-        }
-        else if (current == 4)
-        {
-            return player4;
-        }
-        else
-        {
-            return null;
-        }
-    }
-
+    // This method is used to not allow players resoruces to go below 0
+    // Primarily used in the stealing resource functionality of the robber
     public void checkNegativeResources()
     {
         if (player1.currencyLumber < 0)
@@ -443,13 +616,11 @@ public class PlayerStateManager : MonoBehaviour
         }
     }
 
+    // This method will simple take in a string corrospondin to a resource and a player number so we know which player to incrment
+    // It's used during the first round of the intro turn to allocates a players first set of resources
     public void setResource(string resource, int playerNum)
     {
-
         Player player = getCurrentPlayer(playerNum);
-
-        Debug.Log("initialResource: " + resource);
-        Debug.Log("initialPlayer: " + playerNum);
 
         if (player == player1)
         {
@@ -543,7 +714,51 @@ public class PlayerStateManager : MonoBehaviour
                 player4.currencyWool++;
             }
         }
+    }
 
+    // A method that takes an int and will return the corrosponding player object
+    public Player getCurrentPlayer(int current)
+    {
+        if (current == 1)
+        {
+            return player1;
+        }
+        else if (current == 2)
+        {
+            return player2;
+        }
+        else if (current == 3)
+        {
+            return player3;
+        }
+        else if (current == 4)
+        {
+            return player4;
+        }
+        else
+        {
+            return null;
+        }
+    }
+
+    public void callBuyDevelopmentCard()
+    {
+        if (currentPlayerNumber == 1)
+        {
+            player1.buyDevelopmentCard();
+        }
+        else if (currentPlayerNumber == 2)
+        {
+            player2.buyDevelopmentCard();
+        }
+        else if (currentPlayerNumber == 3)
+        {
+            player3.buyDevelopmentCard();
+        }
+        else if (currentPlayerNumber == 4)
+        {
+            player4.buyDevelopmentCard();
+        }
 
     }
 }

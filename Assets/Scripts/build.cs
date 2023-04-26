@@ -1,22 +1,20 @@
 using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
 using UnityEngine.UIElements;
+using UnityEngine;
 using UnityEngine.EventSystems;
-using Unity.VisualScripting;
 
 public class build : MonoBehaviour
 {
+    // Variables to help us access properties from other classes
     [SerializeField] GameObject playerState;
-    PlayerStateManager state;
-
     [SerializeField] GameObject dice;
-    DiceRoller diceRoller;
-
     [SerializeField] GameObject rob;
+    PlayerStateManager state;
+    DiceRoller diceRoller;
     Robber robber;
 
-
+    // Awake function called before start to initialse the GameObject we use to access other classes
     void Awake()
     {
         playerState = GameObject.Find("End Turn Button");
@@ -40,6 +38,9 @@ public class build : MonoBehaviour
         
     }
 
+    // This method detects if the gameobject the script is linked to has had the mouse / cursor move over it, it then only proceeds if the mouse when clicked.
+    // If so, we first check if the dice total is a seven and if so we can implement the steal functionality of the robber (where a random resource is stolen from the hex where the robber was mopved to)
+    // Additionally, it will set the colour the settlement / city / road and call the corrosponding build method.
     public void OnMouseOver()
     {
         if (Input.GetMouseButtonDown(0))
@@ -163,10 +164,6 @@ public class build : MonoBehaviour
             {
                 state.getCurrentPlayer(state.currentPlayerNumber).buildSettlementCity(gameObject);
             }
-            //else if (gameObject.tag == "city")
-            //{
-            //    state.getCurrentPlayer(state.currentPlayerNumber).buildSettlementCity(gameObject);
-            //}
             else if (gameObject.tag == "road")
             {
                 state.getCurrentPlayer(state.currentPlayerNumber).buildRoad(gameObject);
@@ -175,7 +172,6 @@ public class build : MonoBehaviour
             {
                 return;
             }
-           
         }
     }
 }

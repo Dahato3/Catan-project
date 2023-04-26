@@ -1,8 +1,7 @@
-using JetBrains.Annotations;
-using TMPro;
-using Unity.VisualScripting.Dependencies.NCalc;
 using UnityEngine;
 using UnityEngine.UI;
+using JetBrains.Annotations;
+using Unity.VisualScripting.Dependencies.NCalc;
 
 public class Board : MonoBehaviour
 {
@@ -75,6 +74,9 @@ public class Board : MonoBehaviour
     public bool introTurn;
     public bool placedIntroSettlements;
     public bool placedIntroRoads;
+    public bool gameover = false;
+
+    public bool robberMoved = false;
 
     public int edgeNum;
 
@@ -125,7 +127,7 @@ public class Board : MonoBehaviour
         boardNodes = new Node[54];
 
         // Here we initialize our resource and value array that will hod the types / values of the hexagons / numbers and also the development card array
-        developmentCards = new string[25] { "knight", "knight", "knight", "knight", "knight", "knight", "knight", "knight", "knight", "knight", "knight", "knight", "knight", "knight", "road", "road", "yearofplenty", "yearofplenty", "monopoly", "monopoly", "university", "market", "greathall", "chapel", "library" };
+        developmentCards = new string[25] { "knight", "knight", "knight", "knight", "knight", "knight", "knight", "knight", "knight", "knight", "knight", "knight", "knight", "knight", "road building", "road building", "yearofplenty", "yearofplenty", "monopoly", "monopoly", "university", "market", "greathall", "chapel", "library" };
         resourceSet = new string[18] { "wool", "wool", "wool", "wool", "lumber", "lumber", "lumber", "lumber", "grain", "grain", "grain", "grain", "brick", "brick", "brick", "ore", "ore", "ore" };
         // We do 2 checks here to allow variable sized boards if implementation possible, otherwise uses the default size (3)
         if (width == 3)
@@ -179,11 +181,22 @@ public class Board : MonoBehaviour
         GameObject.Find("EndTurn").GetComponent<CanvasRenderer>().SetAlpha(0);
         GameObject.Find("Timer").GetComponent<CanvasRenderer>().SetAlpha(0);
         GameObject.Find("VP").GetComponent<CanvasRenderer>().SetAlpha(0);
+        
+        GameObject.Find("Player1 stats").GetComponent<CanvasRenderer>().SetAlpha(0);
+        GameObject.Find("Player2 stats").GetComponent<CanvasRenderer>().SetAlpha(0);
+        GameObject.Find("Player3 stats").GetComponent<CanvasRenderer>().SetAlpha(0);
+        GameObject.Find("Player4 stats").GetComponent<CanvasRenderer>().SetAlpha(0);
+        GameObject.Find("Player1Win").GetComponent<CanvasRenderer>().SetAlpha(0);
+        GameObject.Find("Player2Win").GetComponent<CanvasRenderer>().SetAlpha(0);
+        GameObject.Find("Player3Win").GetComponent<CanvasRenderer>().SetAlpha(0);
+        GameObject.Find("Player4Win").GetComponent<CanvasRenderer>().SetAlpha(0);
         GameObject.Find("PlayerTrade").GetComponent<CanvasGroup>().alpha = 0f;
         GameObject.Find("Resources").GetComponent<CanvasGroup>().alpha = 0f;
         GameObject.Find("RollDiceButton").GetComponent<CanvasGroup>().alpha = 0f;
         GameObject.Find("End Turn Button").GetComponent<CanvasGroup>().alpha = 0f;
         GameObject.Find("BuildingCosts").GetComponent<CanvasGroup>().alpha = 0f;
+        GameObject.Find("BuyDevelopmentCard").GetComponent<CanvasGroup>().alpha = 0f;
+        GameObject.Find("Knight").GetComponent<CanvasGroup>().alpha = 0f;
         GameObject.Find("CurrentPlayer").transform.position = new Vector3(170, 385, 0);
         GameObject.Find("CurrentPlayer").GetComponent<Text>().fontSize = 28;
 
@@ -198,7 +211,41 @@ public class Board : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (state.getCurrentPlayer(1).victoryPoints == 10)
+        {
+            // Remove game componants, display player x won on screen
 
+            GameObject.Find("Player1Win").GetComponent<CanvasRenderer>().SetAlpha(1);
+
+            GameObject.Find("Timer").GetComponent<CanvasRenderer>().SetAlpha(0);
+            GameObject.Find("VP").GetComponent<CanvasRenderer>().SetAlpha(0);
+            GameObject.Find("EndTurn").GetComponent<CanvasRenderer>().SetAlpha(0);
+            GameObject.Find("Player1 stats").GetComponent<CanvasRenderer>().SetAlpha(0);
+            GameObject.Find("Player2 stats").GetComponent<CanvasRenderer>().SetAlpha(0);
+            GameObject.Find("Player3 stats").GetComponent<CanvasRenderer>().SetAlpha(0);
+            GameObject.Find("Player4 stats").GetComponent<CanvasRenderer>().SetAlpha(0);
+            GameObject.Find("PlayerTrade").GetComponent<CanvasGroup>().alpha = 0f;
+            GameObject.Find("Resources").GetComponent<CanvasGroup>().alpha = 0f;
+            GameObject.Find("RollDiceButton").GetComponent<CanvasGroup>().alpha = 0f;
+            GameObject.Find("End Turn Button").GetComponent<CanvasGroup>().alpha = 0f;
+            GameObject.Find("BuildingCosts").GetComponent<CanvasGroup>().alpha = 0f;
+            GameObject.Find("BuyDevelopmentCard").GetComponent<CanvasGroup>().alpha = 0f;
+            GameObject.Find("Knight").GetComponent<CanvasGroup>().alpha = 0f;
+            GameObject.Find("CurrentPlayer").transform.position = new Vector3(170, 385, 0);
+            GameObject.Find("CurrentPlayer").GetComponent<Text>().fontSize = 28;
+        }
+        else if (state.getCurrentPlayer(2).victoryPoints == 10)
+        {
+
+        }
+        else if (state.getCurrentPlayer(3).victoryPoints == 10)
+        {
+
+        }
+        else if (state.getCurrentPlayer(4).victoryPoints == 10)
+        {
+
+        }
     }
 
     // Generate board will fill up the node array with a new node at each position
