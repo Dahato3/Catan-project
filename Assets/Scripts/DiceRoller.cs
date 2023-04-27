@@ -64,6 +64,7 @@ public class DiceRoller : MonoBehaviour
     // NOTE- it's in this method where we operate some of the robber functionality as we are able to easil identify when a 7 is rolled
     public void RollDice()
     {
+        Debug.Log("rll dice called");
         GameObject.Find("RollDiceButton").GetComponent<Button>().interactable = false;
         GameObject.Find("End Turn Button").GetComponent<Button>().interactable = true;
 
@@ -111,10 +112,12 @@ public class DiceRoller : MonoBehaviour
         if (diceTotal == 7)
         {
             halfResources();
+            
         }
         else
         {
             checkIncrease();
+            
         }
     }
 
@@ -672,8 +675,8 @@ public class DiceRoller : MonoBehaviour
 
     public void halfResources()
     {
-        Debug.Log("HITS");
         // We remember which player rolled the 7
+        GameObject.Find("DiceRollTotal").GetComponent<Text>().text = "= " + diceTotal;
         initialPlayerToRemove = playerStateManager.currentPlayerNumber;
         if (playerStateManager.getCurrentPlayer(playerStateManager.currentPlayerNumber).totalResources > 7)
         {

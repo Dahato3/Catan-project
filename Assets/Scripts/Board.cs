@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using JetBrains.Annotations;
 using Unity.VisualScripting.Dependencies.NCalc;
+using UnityEngine.EventSystems;
 
 public class Board : MonoBehaviour
 {
@@ -200,52 +201,61 @@ public class Board : MonoBehaviour
         GameObject.Find("CurrentPlayer").transform.position = new Vector3(170, 385, 0);
         GameObject.Find("CurrentPlayer").GetComponent<Text>().fontSize = 28;
 
+        GameObject.Find("TradePanel").SetActive(false);
+        GameObject.Find("ReceivedTradePanel").SetActive(false);
+        GameObject.Find("HalfResourcePanel").SetActive(false);
+        GameObject.Find("StealResourcePanel").SetActive(false);
+        GameObject.Find("stealAllOf1Type").SetActive(false);
+        GameObject.Find("yearoplentyPanel").SetActive(false);
+
         // Pop up to say player 1 build house
         Debug.Log("Player 1 please build a settlement");
 
         // Here we set two of our panels to not active as they are not required at the start
-        receivedTradePanel.SetActive(false);
-        stealResourcePanel.SetActive(false);
+        //receivedTradePanel.SetActive(false);
+        //stealResourcePanel.SetActive(false);
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (state.getCurrentPlayer(1).victoryPoints == 10)
-        {
-            // Remove game componants, display player x won on screen
+        //if (state.getCurrentPlayer(1).victoryPoints == 10)
+        //{
+        //    // Remove game componants, display player x won on screen
 
-            GameObject.Find("Player1Win").GetComponent<CanvasRenderer>().SetAlpha(1);
+        //    GameObject.Find("Player1Win").GetComponent<CanvasRenderer>().SetAlpha(1);
 
-            GameObject.Find("Timer").GetComponent<CanvasRenderer>().SetAlpha(0);
-            GameObject.Find("VP").GetComponent<CanvasRenderer>().SetAlpha(0);
-            GameObject.Find("EndTurn").GetComponent<CanvasRenderer>().SetAlpha(0);
-            GameObject.Find("Player1 stats").GetComponent<CanvasRenderer>().SetAlpha(0);
-            GameObject.Find("Player2 stats").GetComponent<CanvasRenderer>().SetAlpha(0);
-            GameObject.Find("Player3 stats").GetComponent<CanvasRenderer>().SetAlpha(0);
-            GameObject.Find("Player4 stats").GetComponent<CanvasRenderer>().SetAlpha(0);
-            GameObject.Find("PlayerTrade").GetComponent<CanvasGroup>().alpha = 0f;
-            GameObject.Find("Resources").GetComponent<CanvasGroup>().alpha = 0f;
-            GameObject.Find("RollDiceButton").GetComponent<CanvasGroup>().alpha = 0f;
-            GameObject.Find("End Turn Button").GetComponent<CanvasGroup>().alpha = 0f;
-            GameObject.Find("BuildingCosts").GetComponent<CanvasGroup>().alpha = 0f;
-            GameObject.Find("BuyDevelopmentCard").GetComponent<CanvasGroup>().alpha = 0f;
-            GameObject.Find("Knight").GetComponent<CanvasGroup>().alpha = 0f;
-            GameObject.Find("CurrentPlayer").transform.position = new Vector3(170, 385, 0);
-            GameObject.Find("CurrentPlayer").GetComponent<Text>().fontSize = 28;
-        }
-        else if (state.getCurrentPlayer(2).victoryPoints == 10)
-        {
+        //    GameObject.Find("Timer").GetComponent<CanvasRenderer>().SetAlpha(0);
+        //    GameObject.Find("VP").GetComponent<CanvasRenderer>().SetAlpha(0);
+        //    GameObject.Find("EndTurn").GetComponent<CanvasRenderer>().SetAlpha(0);
+        //    GameObject.Find("Player1 stats").GetComponent<CanvasRenderer>().SetAlpha(0);
+        //    GameObject.Find("Player2 stats").GetComponent<CanvasRenderer>().SetAlpha(0);
+        //    GameObject.Find("Player3 stats").GetComponent<CanvasRenderer>().SetAlpha(0);
+        //    GameObject.Find("Player4 stats").GetComponent<CanvasRenderer>().SetAlpha(0);
+        //    GameObject.Find("PlayerTrade").GetComponent<CanvasGroup>().alpha = 0f;
+        //    GameObject.Find("Resources").GetComponent<CanvasGroup>().alpha = 0f;
+        //    GameObject.Find("RollDiceButton").GetComponent<CanvasGroup>().alpha = 0f;
+        //    GameObject.Find("End Turn Button").GetComponent<CanvasGroup>().alpha = 0f;
+        //    GameObject.Find("BuildingCosts").GetComponent<CanvasGroup>().alpha = 0f;
+        //    GameObject.Find("BuyDevelopmentCard").GetComponent<CanvasGroup>().alpha = 0f;
+        //    GameObject.Find("Knight").GetComponent<CanvasGroup>().alpha = 0f;
+        //    GameObject.Find("CurrentPlayer").transform.position = new Vector3(170, 385, 0);
+        //    GameObject.Find("CurrentPlayer").GetComponent<Text>().fontSize = 28;
+        //}
+        //else if (state.getCurrentPlayer(2).victoryPoints == 10)
+        //{
 
-        }
-        else if (state.getCurrentPlayer(3).victoryPoints == 10)
-        {
+        //}
+        //else if (state.getCurrentPlayer(3).victoryPoints == 10)
+        //{
 
-        }
-        else if (state.getCurrentPlayer(4).victoryPoints == 10)
-        {
+        //}
+        //else if (state.getCurrentPlayer(4).victoryPoints == 10)
+        //{
 
-        }
+        //}
+
+
     }
 
     // Generate board will fill up the node array with a new node at each position
@@ -692,6 +702,11 @@ public class Board : MonoBehaviour
             temp.GetComponent<Robber>().stealPlayer2Button = GameObject.Find("player2Button");
             temp.GetComponent<Robber>().stealPlayer3Button = GameObject.Find("player3Button");
             temp.GetComponent<Robber>().stealPlayer4Button = GameObject.Find("player4Button");
+            temp.GetComponent<Robber>().halfResourcePanel = GameObject.Find("HalfResourcePanel");
+            temp.GetComponent<Robber>().tradePanel = GameObject.Find("TradePanel");
+            temp.GetComponent<Robber>().receivedTradePanel = GameObject.Find("ReceivedTradePanel");
+            temp.GetComponent<Robber>().fromBankPanel = GameObject.Find("yearoplentyPanel");
+            temp.GetComponent<Robber>().stealAllOfOneResourcePanel = GameObject.Find("stealAllOf1Type");
 
             GameObject temp2 = Instantiate(settlementCityPrefab, temp.transform);
             temp2.transform.localPosition = new Vector3(-2, 0.335f, -0.92f);
@@ -751,6 +766,11 @@ public class Board : MonoBehaviour
             temp.GetComponent<Robber>().stealPlayer2Button = GameObject.Find("player2Button");
             temp.GetComponent<Robber>().stealPlayer3Button = GameObject.Find("player3Button");
             temp.GetComponent<Robber>().stealPlayer4Button = GameObject.Find("player4Button");
+            temp.GetComponent<Robber>().halfResourcePanel = GameObject.Find("HalfResourcePanel");
+            temp.GetComponent<Robber>().tradePanel = GameObject.Find("TradePanel");
+            temp.GetComponent<Robber>().receivedTradePanel = GameObject.Find("ReceivedTradePanel");
+            temp.GetComponent<Robber>().fromBankPanel = GameObject.Find("yearoplentyPanel");
+            temp.GetComponent<Robber>().stealAllOfOneResourcePanel = GameObject.Find("stealAllOf1Type");
 
             GameObject temp2 = Instantiate(settlementCityPrefab, temp.transform);
             temp2.transform.localPosition = new Vector3(-2, 0.335f, -0.92f);
@@ -810,6 +830,11 @@ public class Board : MonoBehaviour
             temp.GetComponent<Robber>().stealPlayer2Button = GameObject.Find("player2Button");
             temp.GetComponent<Robber>().stealPlayer3Button = GameObject.Find("player3Button");
             temp.GetComponent<Robber>().stealPlayer4Button = GameObject.Find("player4Button");
+            temp.GetComponent<Robber>().halfResourcePanel = GameObject.Find("HalfResourcePanel");
+            temp.GetComponent<Robber>().tradePanel = GameObject.Find("TradePanel");
+            temp.GetComponent<Robber>().receivedTradePanel = GameObject.Find("ReceivedTradePanel");
+            temp.GetComponent<Robber>().fromBankPanel = GameObject.Find("yearoplentyPanel");
+            temp.GetComponent<Robber>().stealAllOfOneResourcePanel = GameObject.Find("stealAllOf1Type");
 
             GameObject temp2 = Instantiate(settlementCityPrefab, temp.transform);
             temp2.transform.localPosition = new Vector3(-2, 0.335f, -0.92f);
@@ -888,6 +913,11 @@ public class Board : MonoBehaviour
             temp.GetComponent<Robber>().stealPlayer2Button = GameObject.Find("player2Button");
             temp.GetComponent<Robber>().stealPlayer3Button = GameObject.Find("player3Button");
             temp.GetComponent<Robber>().stealPlayer4Button = GameObject.Find("player4Button");
+            temp.GetComponent<Robber>().halfResourcePanel = GameObject.Find("HalfResourcePanel");
+            temp.GetComponent<Robber>().tradePanel = GameObject.Find("TradePanel");
+            temp.GetComponent<Robber>().receivedTradePanel = GameObject.Find("ReceivedTradePanel");
+            temp.GetComponent<Robber>().fromBankPanel = GameObject.Find("yearoplentyPanel");
+            temp.GetComponent<Robber>().stealAllOfOneResourcePanel = GameObject.Find("stealAllOf1Type");
 
             GameObject temp2 = Instantiate(settlementCityPrefab, temp.transform);
             temp2.transform.localPosition = new Vector3(-2, 0.335f, -0.92f);
@@ -947,6 +977,11 @@ public class Board : MonoBehaviour
             temp.GetComponent<Robber>().stealPlayer2Button = GameObject.Find("player2Button");
             temp.GetComponent<Robber>().stealPlayer3Button = GameObject.Find("player3Button");
             temp.GetComponent<Robber>().stealPlayer4Button = GameObject.Find("player4Button");
+            temp.GetComponent<Robber>().halfResourcePanel = GameObject.Find("HalfResourcePanel");
+            temp.GetComponent<Robber>().tradePanel = GameObject.Find("TradePanel");
+            temp.GetComponent<Robber>().receivedTradePanel = GameObject.Find("ReceivedTradePanel");
+            temp.GetComponent<Robber>().fromBankPanel = GameObject.Find("yearoplentyPanel");
+            temp.GetComponent<Robber>().stealAllOfOneResourcePanel = GameObject.Find("stealAllOf1Type");
 
             GameObject temp2 = Instantiate(settlementCityPrefab, temp.transform);
             temp2.transform.localPosition = new Vector3(-2, 0.335f, -0.92f);
@@ -1006,6 +1041,11 @@ public class Board : MonoBehaviour
             temp.GetComponent<Robber>().stealPlayer2Button = GameObject.Find("player2Button");
             temp.GetComponent<Robber>().stealPlayer3Button = GameObject.Find("player3Button");
             temp.GetComponent<Robber>().stealPlayer4Button = GameObject.Find("player4Button");
+            temp.GetComponent<Robber>().halfResourcePanel = GameObject.Find("HalfResourcePanel");
+            temp.GetComponent<Robber>().tradePanel = GameObject.Find("TradePanel");
+            temp.GetComponent<Robber>().receivedTradePanel = GameObject.Find("ReceivedTradePanel");
+            temp.GetComponent<Robber>().fromBankPanel = GameObject.Find("yearoplentyPanel");
+            temp.GetComponent<Robber>().stealAllOfOneResourcePanel = GameObject.Find("stealAllOf1Type");
 
             GameObject temp2 = Instantiate(settlementCityPrefab, temp.transform);
             temp2.transform.localPosition = new Vector3(-2, 0.335f, -0.92f);
@@ -1065,6 +1105,11 @@ public class Board : MonoBehaviour
             temp.GetComponent<Robber>().stealPlayer2Button = GameObject.Find("player2Button");
             temp.GetComponent<Robber>().stealPlayer3Button = GameObject.Find("player3Button");
             temp.GetComponent<Robber>().stealPlayer4Button = GameObject.Find("player4Button");
+            temp.GetComponent<Robber>().halfResourcePanel = GameObject.Find("HalfResourcePanel");
+            temp.GetComponent<Robber>().tradePanel = GameObject.Find("TradePanel");
+            temp.GetComponent<Robber>().receivedTradePanel = GameObject.Find("ReceivedTradePanel");
+            temp.GetComponent<Robber>().fromBankPanel = GameObject.Find("yearoplentyPanel");
+            temp.GetComponent<Robber>().stealAllOfOneResourcePanel = GameObject.Find("stealAllOf1Type");
 
             GameObject temp2 = Instantiate(settlementCityPrefab, temp.transform);
             temp2.transform.localPosition = new Vector3(-2, 0.335f, -0.92f);
@@ -1143,6 +1188,11 @@ public class Board : MonoBehaviour
             temp.GetComponent<Robber>().stealPlayer2Button = GameObject.Find("player2Button");
             temp.GetComponent<Robber>().stealPlayer3Button = GameObject.Find("player3Button");
             temp.GetComponent<Robber>().stealPlayer4Button = GameObject.Find("player4Button");
+            temp.GetComponent<Robber>().halfResourcePanel = GameObject.Find("HalfResourcePanel");
+            temp.GetComponent<Robber>().tradePanel = GameObject.Find("TradePanel");
+            temp.GetComponent<Robber>().receivedTradePanel = GameObject.Find("ReceivedTradePanel");
+            temp.GetComponent<Robber>().fromBankPanel = GameObject.Find("yearoplentyPanel");
+            temp.GetComponent<Robber>().stealAllOfOneResourcePanel = GameObject.Find("stealAllOf1Type");
 
             GameObject temp2 = Instantiate(settlementCityPrefab, temp.transform);
             temp2.transform.localPosition = new Vector3(-2, 0.335f, -0.92f);
@@ -1240,6 +1290,11 @@ public class Board : MonoBehaviour
             temp.GetComponent<Robber>().stealPlayer2Button = GameObject.Find("player2Button");
             temp.GetComponent<Robber>().stealPlayer3Button = GameObject.Find("player3Button");
             temp.GetComponent<Robber>().stealPlayer4Button = GameObject.Find("player4Button");
+            temp.GetComponent<Robber>().halfResourcePanel = GameObject.Find("HalfResourcePanel");
+            temp.GetComponent<Robber>().tradePanel = GameObject.Find("TradePanel");
+            temp.GetComponent<Robber>().receivedTradePanel = GameObject.Find("ReceivedTradePanel");
+            temp.GetComponent<Robber>().fromBankPanel = GameObject.Find("yearoplentyPanel");
+            temp.GetComponent<Robber>().stealAllOfOneResourcePanel = GameObject.Find("stealAllOf1Type");
 
             GameObject temp2 = Instantiate(settlementCityPrefab, temp.transform);
             temp2.transform.localPosition = new Vector3(-2, 0.335f, -0.92f);
@@ -1338,6 +1393,11 @@ public class Board : MonoBehaviour
             temp.GetComponent<Robber>().stealPlayer2Button = GameObject.Find("player2Button");
             temp.GetComponent<Robber>().stealPlayer3Button = GameObject.Find("player3Button");
             temp.GetComponent<Robber>().stealPlayer4Button = GameObject.Find("player4Button");
+            temp.GetComponent<Robber>().halfResourcePanel = GameObject.Find("HalfResourcePanel");
+            temp.GetComponent<Robber>().tradePanel = GameObject.Find("TradePanel");
+            temp.GetComponent<Robber>().receivedTradePanel = GameObject.Find("ReceivedTradePanel");
+            temp.GetComponent<Robber>().fromBankPanel = GameObject.Find("yearoplentyPanel");
+            temp.GetComponent<Robber>().stealAllOfOneResourcePanel = GameObject.Find("stealAllOf1Type");
 
             //GameObject robberTemp = Instantiate(robber, temp.transform);
             //robberTemp.transform.localPosition = new Vector3(-2f, 0.32f, 0.005f);
@@ -1440,6 +1500,11 @@ public class Board : MonoBehaviour
             temp.GetComponent<Robber>().stealPlayer2Button = GameObject.Find("player2Button");
             temp.GetComponent<Robber>().stealPlayer3Button = GameObject.Find("player3Button");
             temp.GetComponent<Robber>().stealPlayer4Button = GameObject.Find("player4Button");
+            temp.GetComponent<Robber>().halfResourcePanel = GameObject.Find("HalfResourcePanel");
+            temp.GetComponent<Robber>().tradePanel = GameObject.Find("TradePanel");
+            temp.GetComponent<Robber>().receivedTradePanel = GameObject.Find("ReceivedTradePanel");
+            temp.GetComponent<Robber>().fromBankPanel = GameObject.Find("yearoplentyPanel");
+            temp.GetComponent<Robber>().stealAllOfOneResourcePanel = GameObject.Find("stealAllOf1Type");
 
             GameObject temp2 = Instantiate(settlementCityPrefab, temp.transform);
             temp2.transform.localPosition = new Vector3(-2, 0.335f, -0.92f);
@@ -1537,6 +1602,11 @@ public class Board : MonoBehaviour
             temp.GetComponent<Robber>().stealPlayer2Button = GameObject.Find("player2Button");
             temp.GetComponent<Robber>().stealPlayer3Button = GameObject.Find("player3Button");
             temp.GetComponent<Robber>().stealPlayer4Button = GameObject.Find("player4Button");
+            temp.GetComponent<Robber>().halfResourcePanel = GameObject.Find("HalfResourcePanel");
+            temp.GetComponent<Robber>().tradePanel = GameObject.Find("TradePanel");
+            temp.GetComponent<Robber>().receivedTradePanel = GameObject.Find("ReceivedTradePanel");
+            temp.GetComponent<Robber>().fromBankPanel = GameObject.Find("yearoplentyPanel");
+            temp.GetComponent<Robber>().stealAllOfOneResourcePanel = GameObject.Find("stealAllOf1Type");
 
             GameObject temp2 = Instantiate(settlementCityPrefab, temp.transform);
             temp2.transform.localPosition = new Vector3(-2, 0.335f, -0.92f);
@@ -1665,6 +1735,11 @@ public class Board : MonoBehaviour
             temp.GetComponent<Robber>().stealPlayer2Button = GameObject.Find("player2Button");
             temp.GetComponent<Robber>().stealPlayer3Button = GameObject.Find("player3Button");
             temp.GetComponent<Robber>().stealPlayer4Button = GameObject.Find("player4Button");
+            temp.GetComponent<Robber>().halfResourcePanel = GameObject.Find("HalfResourcePanel");
+            temp.GetComponent<Robber>().tradePanel = GameObject.Find("TradePanel");
+            temp.GetComponent<Robber>().receivedTradePanel = GameObject.Find("ReceivedTradePanel");
+            temp.GetComponent<Robber>().fromBankPanel = GameObject.Find("yearoplentyPanel");
+            temp.GetComponent<Robber>().stealAllOfOneResourcePanel = GameObject.Find("stealAllOf1Type");
 
             GameObject temp2 = Instantiate(settlementCityPrefab, temp.transform);
             temp2.transform.localPosition = new Vector3(-2, 0.335f, 0.92f);
@@ -1724,6 +1799,11 @@ public class Board : MonoBehaviour
             temp.GetComponent<Robber>().stealPlayer2Button = GameObject.Find("player2Button");
             temp.GetComponent<Robber>().stealPlayer3Button = GameObject.Find("player3Button");
             temp.GetComponent<Robber>().stealPlayer4Button = GameObject.Find("player4Button");
+            temp.GetComponent<Robber>().halfResourcePanel = GameObject.Find("HalfResourcePanel");
+            temp.GetComponent<Robber>().tradePanel = GameObject.Find("TradePanel");
+            temp.GetComponent<Robber>().receivedTradePanel = GameObject.Find("ReceivedTradePanel");
+            temp.GetComponent<Robber>().fromBankPanel = GameObject.Find("yearoplentyPanel");
+            temp.GetComponent<Robber>().stealAllOfOneResourcePanel = GameObject.Find("stealAllOf1Type");
 
             GameObject temp2 = Instantiate(settlementCityPrefab, temp.transform);
             temp2.transform.localPosition = new Vector3(-2, 0.335f, 0.92f);
@@ -1784,6 +1864,11 @@ public class Board : MonoBehaviour
             temp.GetComponent<Robber>().stealPlayer2Button = GameObject.Find("player2Button");
             temp.GetComponent<Robber>().stealPlayer3Button = GameObject.Find("player3Button");
             temp.GetComponent<Robber>().stealPlayer4Button = GameObject.Find("player4Button");
+            temp.GetComponent<Robber>().halfResourcePanel = GameObject.Find("HalfResourcePanel");
+            temp.GetComponent<Robber>().tradePanel = GameObject.Find("TradePanel");
+            temp.GetComponent<Robber>().receivedTradePanel = GameObject.Find("ReceivedTradePanel");
+            temp.GetComponent<Robber>().fromBankPanel = GameObject.Find("yearoplentyPanel");
+            temp.GetComponent<Robber>().stealAllOfOneResourcePanel = GameObject.Find("stealAllOf1Type");
 
             GameObject temp2 = Instantiate(settlementCityPrefab, temp.transform);
             temp2.transform.localPosition = new Vector3(-2, 0.335f, 0.92f);
@@ -1843,6 +1928,11 @@ public class Board : MonoBehaviour
             temp.GetComponent<Robber>().stealPlayer2Button = GameObject.Find("player2Button");
             temp.GetComponent<Robber>().stealPlayer3Button = GameObject.Find("player3Button");
             temp.GetComponent<Robber>().stealPlayer4Button = GameObject.Find("player4Button");
+            temp.GetComponent<Robber>().halfResourcePanel = GameObject.Find("HalfResourcePanel");
+            temp.GetComponent<Robber>().tradePanel = GameObject.Find("TradePanel");
+            temp.GetComponent<Robber>().receivedTradePanel = GameObject.Find("ReceivedTradePanel");
+            temp.GetComponent<Robber>().fromBankPanel = GameObject.Find("yearoplentyPanel");
+            temp.GetComponent<Robber>().stealAllOfOneResourcePanel = GameObject.Find("stealAllOf1Type");
 
             GameObject temp2 = Instantiate(settlementCityPrefab, temp.transform);
             temp2.transform.localPosition = new Vector3(-2, 0.335f, 0.92f);
@@ -1921,6 +2011,11 @@ public class Board : MonoBehaviour
             temp.GetComponent<Robber>().stealPlayer2Button = GameObject.Find("player2Button");
             temp.GetComponent<Robber>().stealPlayer3Button = GameObject.Find("player3Button");
             temp.GetComponent<Robber>().stealPlayer4Button = GameObject.Find("player4Button");
+            temp.GetComponent<Robber>().halfResourcePanel = GameObject.Find("HalfResourcePanel");
+            temp.GetComponent<Robber>().tradePanel = GameObject.Find("TradePanel");
+            temp.GetComponent<Robber>().receivedTradePanel = GameObject.Find("ReceivedTradePanel");
+            temp.GetComponent<Robber>().fromBankPanel = GameObject.Find("yearoplentyPanel");
+            temp.GetComponent<Robber>().stealAllOfOneResourcePanel = GameObject.Find("stealAllOf1Type");
 
             GameObject temp2 = Instantiate(settlementCityPrefab, temp.transform);
             temp2.transform.localPosition = new Vector3(-2, 0.335f, 0.92f);
@@ -1980,6 +2075,11 @@ public class Board : MonoBehaviour
             temp.GetComponent<Robber>().stealPlayer2Button = GameObject.Find("player2Button");
             temp.GetComponent<Robber>().stealPlayer3Button = GameObject.Find("player3Button");
             temp.GetComponent<Robber>().stealPlayer4Button = GameObject.Find("player4Button");
+            temp.GetComponent<Robber>().halfResourcePanel = GameObject.Find("HalfResourcePanel");
+            temp.GetComponent<Robber>().tradePanel = GameObject.Find("TradePanel");
+            temp.GetComponent<Robber>().receivedTradePanel = GameObject.Find("ReceivedTradePanel");
+            temp.GetComponent<Robber>().fromBankPanel = GameObject.Find("yearoplentyPanel");
+            temp.GetComponent<Robber>().stealAllOfOneResourcePanel = GameObject.Find("stealAllOf1Type");
 
             GameObject temp2 = Instantiate(settlementCityPrefab, temp.transform);
             temp2.transform.localPosition = new Vector3(-2, 0.335f, 0.92f);
@@ -2039,6 +2139,11 @@ public class Board : MonoBehaviour
             temp.GetComponent<Robber>().stealPlayer2Button = GameObject.Find("player2Button");
             temp.GetComponent<Robber>().stealPlayer3Button = GameObject.Find("player3Button");
             temp.GetComponent<Robber>().stealPlayer4Button = GameObject.Find("player4Button");
+            temp.GetComponent<Robber>().halfResourcePanel = GameObject.Find("HalfResourcePanel");
+            temp.GetComponent<Robber>().tradePanel = GameObject.Find("TradePanel");
+            temp.GetComponent<Robber>().receivedTradePanel = GameObject.Find("ReceivedTradePanel");
+            temp.GetComponent<Robber>().fromBankPanel = GameObject.Find("yearoplentyPanel");
+            temp.GetComponent<Robber>().stealAllOfOneResourcePanel = GameObject.Find("stealAllOf1Type");
 
             GameObject temp2 = Instantiate(settlementCityPrefab, temp.transform);
             temp2.transform.localPosition = new Vector3(-2, 0.335f, 0.92f);
@@ -2126,6 +2231,11 @@ public class Board : MonoBehaviour
             temp.GetComponent<Robber>().stealPlayer2Button = GameObject.Find("player2Button");
             temp.GetComponent<Robber>().stealPlayer3Button = GameObject.Find("player3Button");
             temp.GetComponent<Robber>().stealPlayer4Button = GameObject.Find("player4Button");
+            temp.GetComponent<Robber>().halfResourcePanel = GameObject.Find("HalfResourcePanel");
+            temp.GetComponent<Robber>().tradePanel = GameObject.Find("TradePanel");
+            temp.GetComponent<Robber>().receivedTradePanel = GameObject.Find("ReceivedTradePanel");
+            temp.GetComponent<Robber>().fromBankPanel = GameObject.Find("yearoplentyPanel");
+            temp.GetComponent<Robber>().stealAllOfOneResourcePanel = GameObject.Find("stealAllOf1Type");
         }
         else if (nodePosition == 1)
         {
@@ -2139,6 +2249,11 @@ public class Board : MonoBehaviour
             temp.GetComponent<Robber>().stealPlayer2Button = GameObject.Find("player2Button");
             temp.GetComponent<Robber>().stealPlayer3Button = GameObject.Find("player3Button");
             temp.GetComponent<Robber>().stealPlayer4Button = GameObject.Find("player4Button");
+            temp.GetComponent<Robber>().halfResourcePanel = GameObject.Find("HalfResourcePanel");
+            temp.GetComponent<Robber>().tradePanel = GameObject.Find("TradePanel");
+            temp.GetComponent<Robber>().receivedTradePanel = GameObject.Find("ReceivedTradePanel");
+            temp.GetComponent<Robber>().fromBankPanel = GameObject.Find("yearoplentyPanel");
+            temp.GetComponent<Robber>().stealAllOfOneResourcePanel = GameObject.Find("stealAllOf1Type");
         }
         else if (nodePosition == 2)
         {
@@ -2152,6 +2267,11 @@ public class Board : MonoBehaviour
             temp.GetComponent<Robber>().stealPlayer2Button = GameObject.Find("player2Button");
             temp.GetComponent<Robber>().stealPlayer3Button = GameObject.Find("player3Button");
             temp.GetComponent<Robber>().stealPlayer4Button = GameObject.Find("player4Button");
+            temp.GetComponent<Robber>().halfResourcePanel = GameObject.Find("HalfResourcePanel");
+            temp.GetComponent<Robber>().tradePanel = GameObject.Find("TradePanel");
+            temp.GetComponent<Robber>().receivedTradePanel = GameObject.Find("ReceivedTradePanel");
+            temp.GetComponent<Robber>().fromBankPanel = GameObject.Find("yearoplentyPanel");
+            temp.GetComponent<Robber>().stealAllOfOneResourcePanel = GameObject.Find("stealAllOf1Type");
         }
         else if (nodePosition == 7)
         {
@@ -2165,6 +2285,11 @@ public class Board : MonoBehaviour
             temp.GetComponent<Robber>().stealPlayer2Button = GameObject.Find("player2Button");
             temp.GetComponent<Robber>().stealPlayer3Button = GameObject.Find("player3Button");
             temp.GetComponent<Robber>().stealPlayer4Button = GameObject.Find("player4Button");
+            temp.GetComponent<Robber>().halfResourcePanel = GameObject.Find("HalfResourcePanel");
+            temp.GetComponent<Robber>().tradePanel = GameObject.Find("TradePanel");
+            temp.GetComponent<Robber>().receivedTradePanel = GameObject.Find("ReceivedTradePanel");
+            temp.GetComponent<Robber>().fromBankPanel = GameObject.Find("yearoplentyPanel");
+            temp.GetComponent<Robber>().stealAllOfOneResourcePanel = GameObject.Find("stealAllOf1Type");
         }
         else if (nodePosition == 8)
         {
@@ -2178,6 +2303,11 @@ public class Board : MonoBehaviour
             temp.GetComponent<Robber>().stealPlayer2Button = GameObject.Find("player2Button");
             temp.GetComponent<Robber>().stealPlayer3Button = GameObject.Find("player3Button");
             temp.GetComponent<Robber>().stealPlayer4Button = GameObject.Find("player4Button");
+            temp.GetComponent<Robber>().halfResourcePanel = GameObject.Find("HalfResourcePanel");
+            temp.GetComponent<Robber>().tradePanel = GameObject.Find("TradePanel");
+            temp.GetComponent<Robber>().receivedTradePanel = GameObject.Find("ReceivedTradePanel");
+            temp.GetComponent<Robber>().fromBankPanel = GameObject.Find("yearoplentyPanel");
+            temp.GetComponent<Robber>().stealAllOfOneResourcePanel = GameObject.Find("stealAllOf1Type");
         }
         else if (nodePosition == 9)
         {
@@ -2191,6 +2321,11 @@ public class Board : MonoBehaviour
             temp.GetComponent<Robber>().stealPlayer2Button = GameObject.Find("player2Button");
             temp.GetComponent<Robber>().stealPlayer3Button = GameObject.Find("player3Button");
             temp.GetComponent<Robber>().stealPlayer4Button = GameObject.Find("player4Button");
+            temp.GetComponent<Robber>().halfResourcePanel = GameObject.Find("HalfResourcePanel");
+            temp.GetComponent<Robber>().tradePanel = GameObject.Find("TradePanel");
+            temp.GetComponent<Robber>().receivedTradePanel = GameObject.Find("ReceivedTradePanel");
+            temp.GetComponent<Robber>().fromBankPanel = GameObject.Find("yearoplentyPanel");
+            temp.GetComponent<Robber>().stealAllOfOneResourcePanel = GameObject.Find("stealAllOf1Type");
         }
         else if (nodePosition == 10)
         {
@@ -2204,6 +2339,11 @@ public class Board : MonoBehaviour
             temp.GetComponent<Robber>().stealPlayer2Button = GameObject.Find("player2Button");
             temp.GetComponent<Robber>().stealPlayer3Button = GameObject.Find("player3Button");
             temp.GetComponent<Robber>().stealPlayer4Button = GameObject.Find("player4Button");
+            temp.GetComponent<Robber>().halfResourcePanel = GameObject.Find("HalfResourcePanel");
+            temp.GetComponent<Robber>().tradePanel = GameObject.Find("TradePanel");
+            temp.GetComponent<Robber>().receivedTradePanel = GameObject.Find("ReceivedTradePanel");
+            temp.GetComponent<Robber>().fromBankPanel = GameObject.Find("yearoplentyPanel");
+            temp.GetComponent<Robber>().stealAllOfOneResourcePanel = GameObject.Find("stealAllOf1Type");
         }
         else if (nodePosition == 16)
         {
@@ -2217,6 +2357,11 @@ public class Board : MonoBehaviour
             temp.GetComponent<Robber>().stealPlayer2Button = GameObject.Find("player2Button");
             temp.GetComponent<Robber>().stealPlayer3Button = GameObject.Find("player3Button");
             temp.GetComponent<Robber>().stealPlayer4Button = GameObject.Find("player4Button");
+            temp.GetComponent<Robber>().halfResourcePanel = GameObject.Find("HalfResourcePanel");
+            temp.GetComponent<Robber>().tradePanel = GameObject.Find("TradePanel");
+            temp.GetComponent<Robber>().receivedTradePanel = GameObject.Find("ReceivedTradePanel");
+            temp.GetComponent<Robber>().fromBankPanel = GameObject.Find("yearoplentyPanel");
+            temp.GetComponent<Robber>().stealAllOfOneResourcePanel = GameObject.Find("stealAllOf1Type");
         }
         else if (nodePosition == 17)
         {
@@ -2230,6 +2375,11 @@ public class Board : MonoBehaviour
             temp.GetComponent<Robber>().stealPlayer2Button = GameObject.Find("player2Button");
             temp.GetComponent<Robber>().stealPlayer3Button = GameObject.Find("player3Button");
             temp.GetComponent<Robber>().stealPlayer4Button = GameObject.Find("player4Button");
+            temp.GetComponent<Robber>().halfResourcePanel = GameObject.Find("HalfResourcePanel");
+            temp.GetComponent<Robber>().tradePanel = GameObject.Find("TradePanel");
+            temp.GetComponent<Robber>().receivedTradePanel = GameObject.Find("ReceivedTradePanel");
+            temp.GetComponent<Robber>().fromBankPanel = GameObject.Find("yearoplentyPanel");
+            temp.GetComponent<Robber>().stealAllOfOneResourcePanel = GameObject.Find("stealAllOf1Type");
         }
         else if (nodePosition == 18)
         {
@@ -2247,6 +2397,11 @@ public class Board : MonoBehaviour
             temp.GetComponent<Robber>().stealPlayer2Button = GameObject.Find("player2Button");
             temp.GetComponent<Robber>().stealPlayer3Button = GameObject.Find("player3Button");
             temp.GetComponent<Robber>().stealPlayer4Button = GameObject.Find("player4Button");
+            temp.GetComponent<Robber>().halfResourcePanel = GameObject.Find("HalfResourcePanel");
+            temp.GetComponent<Robber>().tradePanel = GameObject.Find("TradePanel");
+            temp.GetComponent<Robber>().receivedTradePanel = GameObject.Find("ReceivedTradePanel");
+            temp.GetComponent<Robber>().fromBankPanel = GameObject.Find("yearoplentyPanel");
+            temp.GetComponent<Robber>().stealAllOfOneResourcePanel = GameObject.Find("stealAllOf1Type");
         }
         else if (nodePosition == 20)
         {
@@ -2260,6 +2415,11 @@ public class Board : MonoBehaviour
             temp.GetComponent<Robber>().stealPlayer2Button = GameObject.Find("player2Button");
             temp.GetComponent<Robber>().stealPlayer3Button = GameObject.Find("player3Button");
             temp.GetComponent<Robber>().stealPlayer4Button = GameObject.Find("player4Button");
+            temp.GetComponent<Robber>().halfResourcePanel = GameObject.Find("HalfResourcePanel");
+            temp.GetComponent<Robber>().tradePanel = GameObject.Find("TradePanel");
+            temp.GetComponent<Robber>().receivedTradePanel = GameObject.Find("ReceivedTradePanel");
+            temp.GetComponent<Robber>().fromBankPanel = GameObject.Find("yearoplentyPanel");
+            temp.GetComponent<Robber>().stealAllOfOneResourcePanel = GameObject.Find("stealAllOf1Type");
         }
         else if (nodePosition == 43)
         {
@@ -2281,6 +2441,11 @@ public class Board : MonoBehaviour
             temp.GetComponent<Robber>().stealPlayer2Button = GameObject.Find("player2Button");
             temp.GetComponent<Robber>().stealPlayer3Button = GameObject.Find("player3Button");
             temp.GetComponent<Robber>().stealPlayer4Button = GameObject.Find("player4Button");
+            temp.GetComponent<Robber>().halfResourcePanel = GameObject.Find("HalfResourcePanel");
+            temp.GetComponent<Robber>().tradePanel = GameObject.Find("TradePanel");
+            temp.GetComponent<Robber>().receivedTradePanel = GameObject.Find("ReceivedTradePanel");
+            temp.GetComponent<Robber>().fromBankPanel = GameObject.Find("yearoplentyPanel");
+            temp.GetComponent<Robber>().stealAllOfOneResourcePanel = GameObject.Find("stealAllOf1Type");
         }
         else if (nodePosition == 45)
         {
@@ -2294,6 +2459,11 @@ public class Board : MonoBehaviour
             temp.GetComponent<Robber>().stealPlayer2Button = GameObject.Find("player2Button");
             temp.GetComponent<Robber>().stealPlayer3Button = GameObject.Find("player3Button");
             temp.GetComponent<Robber>().stealPlayer4Button = GameObject.Find("player4Button");
+            temp.GetComponent<Robber>().halfResourcePanel = GameObject.Find("HalfResourcePanel");
+            temp.GetComponent<Robber>().tradePanel = GameObject.Find("TradePanel");
+            temp.GetComponent<Robber>().receivedTradePanel = GameObject.Find("ReceivedTradePanel");
+            temp.GetComponent<Robber>().fromBankPanel = GameObject.Find("yearoplentyPanel");
+            temp.GetComponent<Robber>().stealAllOfOneResourcePanel = GameObject.Find("stealAllOf1Type");
         }
         else if (nodePosition == 46)
         {
@@ -2307,6 +2477,11 @@ public class Board : MonoBehaviour
             temp.GetComponent<Robber>().stealPlayer2Button = GameObject.Find("player2Button");
             temp.GetComponent<Robber>().stealPlayer3Button = GameObject.Find("player3Button");
             temp.GetComponent<Robber>().stealPlayer4Button = GameObject.Find("player4Button");
+            temp.GetComponent<Robber>().halfResourcePanel = GameObject.Find("HalfResourcePanel");
+            temp.GetComponent<Robber>().tradePanel = GameObject.Find("TradePanel");
+            temp.GetComponent<Robber>().receivedTradePanel = GameObject.Find("ReceivedTradePanel");
+            temp.GetComponent<Robber>().fromBankPanel = GameObject.Find("yearoplentyPanel");
+            temp.GetComponent<Robber>().stealAllOfOneResourcePanel = GameObject.Find("stealAllOf1Type");
         }
         if (nodePosition == 51)
         {
@@ -2320,6 +2495,11 @@ public class Board : MonoBehaviour
             temp.GetComponent<Robber>().stealPlayer2Button = GameObject.Find("player2Button");
             temp.GetComponent<Robber>().stealPlayer3Button = GameObject.Find("player3Button");
             temp.GetComponent<Robber>().stealPlayer4Button = GameObject.Find("player4Button");
+            temp.GetComponent<Robber>().halfResourcePanel = GameObject.Find("HalfResourcePanel");
+            temp.GetComponent<Robber>().tradePanel = GameObject.Find("TradePanel");
+            temp.GetComponent<Robber>().receivedTradePanel = GameObject.Find("ReceivedTradePanel");
+            temp.GetComponent<Robber>().fromBankPanel = GameObject.Find("yearoplentyPanel");
+            temp.GetComponent<Robber>().stealAllOfOneResourcePanel = GameObject.Find("stealAllOf1Type");
         }
         else if (nodePosition == 52)
         {
@@ -2333,6 +2513,11 @@ public class Board : MonoBehaviour
             temp.GetComponent<Robber>().stealPlayer2Button = GameObject.Find("player2Button");
             temp.GetComponent<Robber>().stealPlayer3Button = GameObject.Find("player3Button");
             temp.GetComponent<Robber>().stealPlayer4Button = GameObject.Find("player4Button");
+            temp.GetComponent<Robber>().halfResourcePanel = GameObject.Find("HalfResourcePanel");
+            temp.GetComponent<Robber>().tradePanel = GameObject.Find("TradePanel");
+            temp.GetComponent<Robber>().receivedTradePanel = GameObject.Find("ReceivedTradePanel");
+            temp.GetComponent<Robber>().fromBankPanel = GameObject.Find("yearoplentyPanel");
+            temp.GetComponent<Robber>().stealAllOfOneResourcePanel = GameObject.Find("stealAllOf1Type");
         }
         else if (nodePosition == 53)
         {
@@ -2346,6 +2531,11 @@ public class Board : MonoBehaviour
             temp.GetComponent<Robber>().stealPlayer2Button = GameObject.Find("player2Button");
             temp.GetComponent<Robber>().stealPlayer3Button = GameObject.Find("player3Button");
             temp.GetComponent<Robber>().stealPlayer4Button = GameObject.Find("player4Button");
+            temp.GetComponent<Robber>().halfResourcePanel = GameObject.Find("HalfResourcePanel");
+            temp.GetComponent<Robber>().tradePanel = GameObject.Find("TradePanel");
+            temp.GetComponent<Robber>().receivedTradePanel = GameObject.Find("ReceivedTradePanel");
+            temp.GetComponent<Robber>().fromBankPanel = GameObject.Find("yearoplentyPanel");
+            temp.GetComponent<Robber>().stealAllOfOneResourcePanel = GameObject.Find("stealAllOf1Type");
         }
     }
 

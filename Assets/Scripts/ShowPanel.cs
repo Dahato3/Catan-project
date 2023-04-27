@@ -11,7 +11,7 @@ public class ShowPanel : MonoBehaviour
     // Simple sets the linked panel to "not active" at the start of the game
     private void Start()
     {
-        panel.SetActive(false);
+        //panel.SetActive(false);
     }
 
 }

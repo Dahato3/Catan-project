@@ -10,6 +10,7 @@ public class Trade : MonoBehaviour
     [SerializeField] GameObject theInitialTradePanel;
     [SerializeField] GameObject receivedTradePanel;
     [SerializeField] GameObject fromBankPanel;
+    [SerializeField] GameObject stealAllOf1Resource;
     [SerializeField] GameObject player;
 
     PlayerStateManager playerStateManager;
@@ -43,6 +44,8 @@ public class Trade : MonoBehaviour
     public static int fromBankWool = 0;
 
     public static bool isCounterOffer = false;
+
+    public static bool calledFromFunction = false;
 
     // Awake function called before start to initialse the GameObject we use to access other classes
     void Awake()
@@ -523,7 +526,7 @@ public class Trade : MonoBehaviour
                 totalToSteal = playerStateManager.getCurrentPlayer(2).currencyBrick + playerStateManager.getCurrentPlayer(3).currencyBrick
                     + playerStateManager.getCurrentPlayer(4).currencyBrick;
 
-                playerStateManager.getCurrentPlayer(1).currencyLumber += totalToSteal;
+                playerStateManager.getCurrentPlayer(1).currencyBrick += totalToSteal;
 
                 playerStateManager.getCurrentPlayer(2).currencyBrick = 0;
                 playerStateManager.getCurrentPlayer(3).currencyBrick = 0;
@@ -534,7 +537,7 @@ public class Trade : MonoBehaviour
                 totalToSteal = playerStateManager.getCurrentPlayer(2).currencyOre + playerStateManager.getCurrentPlayer(3).currencyOre
                     + playerStateManager.getCurrentPlayer(4).currencyOre;
 
-                playerStateManager.getCurrentPlayer(1).currencyLumber += totalToSteal;
+                playerStateManager.getCurrentPlayer(1).currencyOre += totalToSteal;
 
                 playerStateManager.getCurrentPlayer(2).currencyOre = 0;
                 playerStateManager.getCurrentPlayer(3).currencyOre = 0;
@@ -545,7 +548,7 @@ public class Trade : MonoBehaviour
                 totalToSteal = playerStateManager.getCurrentPlayer(2).currencyWool + playerStateManager.getCurrentPlayer(3).currencyWool
                     + playerStateManager.getCurrentPlayer(4).currencyWool;
 
-                playerStateManager.getCurrentPlayer(1).currencyLumber += totalToSteal;
+                playerStateManager.getCurrentPlayer(1).currencyWool += totalToSteal;
 
                 playerStateManager.getCurrentPlayer(2).currencyWool = 0;
                 playerStateManager.getCurrentPlayer(3).currencyWool = 0;
@@ -582,7 +585,7 @@ public class Trade : MonoBehaviour
                 totalToSteal = playerStateManager.getCurrentPlayer(1).currencyBrick + playerStateManager.getCurrentPlayer(3).currencyBrick
                     + playerStateManager.getCurrentPlayer(4).currencyBrick;
 
-                playerStateManager.getCurrentPlayer(2).currencyLumber += totalToSteal;
+                playerStateManager.getCurrentPlayer(2).currencyBrick += totalToSteal;
 
                 playerStateManager.getCurrentPlayer(1).currencyBrick = 0;
                 playerStateManager.getCurrentPlayer(3).currencyBrick = 0;
@@ -593,7 +596,7 @@ public class Trade : MonoBehaviour
                 totalToSteal = playerStateManager.getCurrentPlayer(1).currencyOre + playerStateManager.getCurrentPlayer(3).currencyOre
                     + playerStateManager.getCurrentPlayer(4).currencyOre;
 
-                playerStateManager.getCurrentPlayer(2).currencyLumber += totalToSteal;
+                playerStateManager.getCurrentPlayer(2).currencyOre += totalToSteal;
 
                 playerStateManager.getCurrentPlayer(1).currencyOre = 0;
                 playerStateManager.getCurrentPlayer(3).currencyOre = 0;
@@ -604,7 +607,7 @@ public class Trade : MonoBehaviour
                 totalToSteal = playerStateManager.getCurrentPlayer(1).currencyWool + playerStateManager.getCurrentPlayer(3).currencyWool
                     + playerStateManager.getCurrentPlayer(4).currencyWool;
 
-                playerStateManager.getCurrentPlayer(2).currencyLumber += totalToSteal;
+                playerStateManager.getCurrentPlayer(2).currencyWool += totalToSteal;
 
                 playerStateManager.getCurrentPlayer(1).currencyWool = 0;
                 playerStateManager.getCurrentPlayer(3).currencyWool = 0;
@@ -641,7 +644,7 @@ public class Trade : MonoBehaviour
                 totalToSteal = playerStateManager.getCurrentPlayer(1).currencyBrick + playerStateManager.getCurrentPlayer(2).currencyBrick
                     + playerStateManager.getCurrentPlayer(4).currencyBrick;
 
-                playerStateManager.getCurrentPlayer(3).currencyLumber += totalToSteal;
+                playerStateManager.getCurrentPlayer(3).currencyBrick += totalToSteal;
 
                 playerStateManager.getCurrentPlayer(1).currencyBrick = 0;
                 playerStateManager.getCurrentPlayer(2).currencyBrick = 0;
@@ -652,7 +655,7 @@ public class Trade : MonoBehaviour
                 totalToSteal = playerStateManager.getCurrentPlayer(1).currencyOre + playerStateManager.getCurrentPlayer(2).currencyOre
                     + playerStateManager.getCurrentPlayer(4).currencyOre;
 
-                playerStateManager.getCurrentPlayer(3).currencyLumber += totalToSteal;
+                playerStateManager.getCurrentPlayer(3).currencyOre += totalToSteal;
 
                 playerStateManager.getCurrentPlayer(1).currencyOre = 0;
                 playerStateManager.getCurrentPlayer(2).currencyOre = 0;
@@ -663,7 +666,7 @@ public class Trade : MonoBehaviour
                 totalToSteal = playerStateManager.getCurrentPlayer(1).currencyWool + playerStateManager.getCurrentPlayer(2).currencyWool
                     + playerStateManager.getCurrentPlayer(4).currencyWool;
 
-                playerStateManager.getCurrentPlayer(3).currencyLumber += totalToSteal;
+                playerStateManager.getCurrentPlayer(3).currencyWool += totalToSteal;
 
                 playerStateManager.getCurrentPlayer(1).currencyWool = 0;
                 playerStateManager.getCurrentPlayer(2).currencyWool = 0;
@@ -700,7 +703,7 @@ public class Trade : MonoBehaviour
                 totalToSteal = playerStateManager.getCurrentPlayer(1).currencyBrick + playerStateManager.getCurrentPlayer(2).currencyBrick
                     + playerStateManager.getCurrentPlayer(3).currencyBrick;
 
-                playerStateManager.getCurrentPlayer(4).currencyLumber += totalToSteal;
+                playerStateManager.getCurrentPlayer(4).currencyBrick += totalToSteal;
 
                 playerStateManager.getCurrentPlayer(1).currencyBrick = 0;
                 playerStateManager.getCurrentPlayer(2).currencyBrick = 0;
@@ -729,6 +732,6 @@ public class Trade : MonoBehaviour
                 playerStateManager.getCurrentPlayer(3).currencyWool = 0;
             }
         }
-
+        stealAllOf1Resource.SetActive(false);
     }
 }

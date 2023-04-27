@@ -1,29 +1,41 @@
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.EventSystems;
+//using UnityEngine.UIElements;
 
 public class PlayerStateManager : MonoBehaviour
 {
-    //TODO: NEED TO ADD FUNCTIONALITY TO NOT LET PLAYERS BUILD MORE THAN:-
-    // 5 settlements, 4 cities and 15 roads IN TOTAL
 
     // Variables to access other relevent classes
     TimerScript timeScript;
     Board board;
     Player player;
+    DiceRoller diceRoller;
+    Trade trade;
+
+    //PlayerNumScript playerNum;
+    //CpuNumScript CpuNum;
+    //StartUpMenu startMenu;
 
     //"SerializeField" means the variable is still private but is viewable in the unity editor
     // i had some problems with this however and did a slightly worse way but worked
     [SerializeField] GameObject timer;
+    [SerializeField] GameObject myBoard;
+    [SerializeField] GameObject dice;
+    //[SerializeField] GameObject numPlayer;
+    //[SerializeField] GameObject numCpu;
+    //[SerializeField] GameObject menuStart;
+
     [SerializeField] GameObject tradePanel;
     [SerializeField] GameObject halfResourcePanel;
     [SerializeField] GameObject receivedTradePanel;
     [SerializeField] GameObject stealResourcePanel;
     [SerializeField] GameObject fromBankPanel;
     [SerializeField] GameObject stealAllOfOneResourcePanel;
-    [SerializeField] GameObject myBoard;
 
-    // A variable to store each player object in the game
+
+    //A variable to store each player object in the game
     public Player player1; // White
     public Player player2; // Red
     public Player player3; // Yellow
@@ -31,6 +43,9 @@ public class PlayerStateManager : MonoBehaviour
 
     // A varaible of the current players number
     public int currentPlayerNumber;
+
+    //public Player[] players;
+    //public AI[] AIs;
 
     Vector3 player1OriginalLoc;
     Vector3 player2OriginalLoc;
@@ -42,6 +57,8 @@ public class PlayerStateManager : MonoBehaviour
     Vector3 player3UpdatedLoc;
     Vector3 player4UpdatedLoc;
 
+    
+
 
     // When assigning componants we tend to try and do so in an awake function (Called before start)
     // Still leave variable initilization in start() though
@@ -49,6 +66,11 @@ public class PlayerStateManager : MonoBehaviour
     {
         timeScript = timer.GetComponent<TimerScript>();
         board = myBoard.GetComponent<Board>();
+        diceRoller = dice.GetComponent<DiceRoller>();
+
+        //playerNum = numPlayer.GetComponent<PlayerNumScript>();
+        //CpuNum = numCpu.GetComponent<CpuNumScript>();
+        //startMenu = menuStart.GetComponent<StartUpMenu>();
     }
 
     // Start is called before the first frame update
@@ -56,6 +78,146 @@ public class PlayerStateManager : MonoBehaviour
     // current player number is intialized to 1 as that will be the first player
     void Start()
     {
+        //players = new Player[4];
+        //AIs = new AI[3];
+
+
+        //if (playerNum.NumHumanPlayers == 4)
+        //{
+        //    Player player1 = new Player();
+        //    player1.playerNumber = 1;
+        //    player1.playerColour = 1;
+
+        //    Player player2 = new Player();
+        //    player2.playerNumber = 2;
+        //    player2.playerColour = 2;
+
+        //    Player player3 = new Player();
+        //    player3.playerNumber = 3;
+        //    player3.playerColour = 3;
+
+        //    Player player4 = new Player();
+        //    player4.playerNumber = 4;
+        //    player4.playerColour = 4;
+        //}
+        //else if (playerNum.NumHumanPlayers == 3)
+        //{
+        //    Player player1 = new Player();
+        //    player1.playerNumber = 1;
+        //    player1.playerColour = 1;
+
+        //    Player player2 = new Player();
+        //    player2.playerNumber = 2;
+        //    player2.playerColour = 2;
+
+        //    Player player3 = new Player();
+        //    player3.playerNumber = 3;
+        //    player3.playerColour = 3;
+
+        //}
+        //else if (playerNum.NumHumanPlayers == 2)
+        //{
+        //    Player player1 = new Player();
+        //    player1.playerNumber = 1;
+        //    player1.playerColour = 1;
+
+        //    Player player2 = new Player();
+        //    player2.playerNumber = 2;
+        //    player2.playerColour = 2;
+
+        //}
+        //else if (playerNum.NumHumanPlayers == 1)
+        //{
+        //    Player player1 = new Player();
+        //    player1.playerNumber = 1;
+        //    player1.playerColour = 1;
+        //}
+
+
+        //if (playerNum.NumHumanPlayers == 4)
+        //{
+        //    AI player1 = new AI();
+        //    player1.playerNumber = 1;
+        //    player1.playerColour = 1;
+
+        //    Player player2 = new Player();
+        //    player2.playerNumber = 2;
+        //    player2.playerColour = 2;
+
+        //    Player player3 = new Player();
+        //    player3.playerNumber = 3;
+        //    player3.playerColour = 3;
+
+        //    Player player4 = new Player();
+        //    player4.playerNumber = 4;
+        //    player4.playerColour = 4;
+        //}
+        //else if (playerNum.NumHumanPlayers == 3)
+        //{
+        //    Player player1 = new Player();
+        //    player1.playerNumber = 1;
+        //    player1.playerColour = 1;
+
+        //    Player player2 = new Player();
+        //    player2.playerNumber = 2;
+        //    player2.playerColour = 2;
+
+        //    Player player3 = new Player();
+        //    player3.playerNumber = 3;
+        //    player3.playerColour = 3;
+
+        //}
+        //else if (playerNum.NumHumanPlayers == 2)
+        //{
+        //    Player player1 = new Player();
+        //    player1.playerNumber = 1;
+        //    player1.playerColour = 1;
+
+        //    Player player2 = new Player();
+        //    player2.playerNumber = 2;
+        //    player2.playerColour = 2;
+
+        //}
+        //else if (playerNum.NumHumanPlayers == 1)
+        //{
+        //    Player player1 = new Player();
+        //    player1.playerNumber = 1;
+        //    player1.playerColour = 1;
+        //}
+
+
+
+
+
+
+        //for (int i = 0; i < startMenu.TotalPlayerNum; i++)
+        //{
+
+        //    Player player1 = new Player();
+
+
+
+        //    players[i] = new Player();
+        //    players[i].playerNumber = i;
+        //    players[i].playerNumber++;
+        //    players[i].playerColour = i;
+        //    players[i].playerColour++;
+        //}
+        //for (int i = 0; i < CpuNum.NumCpuPlayers; i++)
+        //{
+        //    AIs[i] = new AI();
+        //    AIs[i].playerNumber = startMenu.TotalPlayerNum;
+        //    AIs[i].playerNumber += i;
+        //    AIs[i].playerNumber++;
+        //    AIs[i].playerColour = startMenu.TotalPlayerNum;
+        //    AIs[i].playerNumber += i;
+        //    AIs[i].playerColour++;
+        //}
+
+
+
+
+
         player1 = new Player();
         player1.playerNumber = 1;
         player1.playerColour = 1;
@@ -65,7 +227,6 @@ public class PlayerStateManager : MonoBehaviour
         player1.currencyOre = 0;
         player1.currencyWool = 0;
 
-        player1.victoryPoints = 7;
 
         player2 = new Player();
         player2.playerNumber = 2;
@@ -116,19 +277,76 @@ public class PlayerStateManager : MonoBehaviour
     void Update()
     {
         updateResources();
+
+        int numCPU = CpuNumScript.instance.NumCpuPlayers;
+
+
+        if (numCPU == 1)
+        {
+            if (currentPlayerNumber == 4)
+            {
+                Debug.Log("CALLED");
+                player4.takeTurn();
+            }
+        }
+        else if (numCPU == 2)
+        {
+            if (currentPlayerNumber == 4)
+            {
+                Debug.Log("CALLED1");
+                player4.takeTurn();
+            }
+            if (currentPlayerNumber == 3)
+            {
+                Debug.Log("CALLED2");
+                player4.takeTurn();
+            }
+        }
+        else if (numCPU == 3)
+        {
+            if (currentPlayerNumber == 4)
+            {
+                Debug.Log("CALLED11");
+                player4.takeTurn();
+            }
+            else if (currentPlayerNumber == 4)
+            {
+                Debug.Log("CALLED22");
+                player4.takeTurn();
+            }
+            else if (numCPU == 4)
+            {
+                Debug.Log("CALLED33");
+                player4.takeTurn();
+            }
+        }
+
+
         player1.totalResources = player1.currencyLumber + player1.currencyGrain + player1.currencyBrick + player1.currencyOre + player1.currencyWool;
         player2.totalResources = player2.currencyLumber + player2.currencyGrain + player2.currencyBrick + player2.currencyOre + player2.currencyWool;
         player3.totalResources = player3.currencyLumber + player3.currencyGrain + player3.currencyBrick + player3.currencyOre + player3.currencyWool;
         player4.totalResources = player4.currencyLumber + player4.currencyGrain + player4.currencyBrick + player4.currencyOre + player4.currencyWool;
 
-        player1.longetRoad = player1.findLongestRoad();
-        Debug.Log("P1: " + player1.longetRoad);
-        player2.longetRoad = player2.findLongestRoad();
-        Debug.Log("P2: " + player2.longetRoad);
-        player3.longetRoad = player3.findLongestRoad();
-        Debug.Log("P3: " + player3.longetRoad);
-        player4.longetRoad = player4.findLongestRoad();
-        Debug.Log("P4: " + player4.longetRoad);
+        if (currentPlayerNumber == 1)
+        {
+            GameObject.Find("avalibleKnights").GetComponent<Text>().text = "avalible: " + player1.avalibleKnights;
+            GameObject.Find("usedKnights").GetComponent<Text>().text = "used: " + player1.usedKnights;
+        }
+        else if (currentPlayerNumber == 2)
+        {
+            GameObject.Find("avalibleKnights").GetComponent<Text>().text = "avalible: " + player2.avalibleKnights;
+            GameObject.Find("usedKnights").GetComponent<Text>().text = "used: " + player2.usedKnights;
+        }
+        else if (currentPlayerNumber == 3)
+        {
+            GameObject.Find("avalibleKnights").GetComponent<Text>().text = "avalible: " + player3.avalibleKnights;
+            GameObject.Find("usedKnights").GetComponent<Text>().text = "used: " + player3.usedKnights;
+        }
+        else if (currentPlayerNumber == 4)
+        {
+            GameObject.Find("avalibleKnights").GetComponent<Text>().text = "avalible: " + player4.avalibleKnights;
+            GameObject.Find("usedKnights").GetComponent<Text>().text = "used: " + player4.usedKnights;
+        }
 
         // Updates "other player" VP and total resources
         GameObject.Find("Player1 stats").GetComponent<Text>().text = "Player 1\nVP: " + player1.victoryPoints + "\nLongest road: " + player1.longetRoad + "\nKnight: " + player1.usedKnights + "\nTotal resources: " + player1.totalResources;
@@ -136,6 +354,7 @@ public class PlayerStateManager : MonoBehaviour
         GameObject.Find("Player3 stats").GetComponent<Text>().text = "Player 3\nVP: " + player3.victoryPoints + "\nLongest road: " + player3.longetRoad + "\nKnight: " + player3.usedKnights + "\nTotal resources: " + player3.totalResources;
         GameObject.Find("Player4 stats").GetComponent<Text>().text = "Player 4\nVP: " + player4.victoryPoints + "\nLongest road: " + player4.longetRoad + "\nKnight: " + player4.usedKnights + "\nTotal resources: " + player4.totalResources;
 
+        //Debug.Log(getCurrentPlayer(currentPlayerNumber).avalibleKnights);
         GameObject.Find("avalibleKnights").GetComponent<Text>().text = "" + getCurrentPlayer(currentPlayerNumber).avalibleKnights;
         GameObject.Find("usedKnights").GetComponent<Text>().text = "" + getCurrentPlayer(currentPlayerNumber).usedKnights;
 
@@ -303,6 +522,8 @@ public class PlayerStateManager : MonoBehaviour
             }
         }
 
+        //Debug.Log("LLL:" + player1.longetRoad);
+
     }
 
     // This method is called when the 'end turn' button on screen is clicked. It will update
@@ -313,14 +534,17 @@ public class PlayerStateManager : MonoBehaviour
         {
             board.robberMoved = false;
         }
+
         GameObject.Find("End Turn Button").GetComponent<Button>().interactable = false;
         GameObject.Find("RollDiceButton").GetComponent<Button>().interactable = true;
+
 
         if (board.introTurn == false)
         {
             // On screen time set to 300 seconds on every new players turn
             timeScript.timeLeft = 300;
         }
+
         if (currentPlayerNumber == 1)
         {
             currentPlayerNumber = 2;
@@ -550,17 +774,17 @@ public class PlayerStateManager : MonoBehaviour
         else if (player2.currencyBrick < 0)
         {
             Debug.Log("Player 2 brick went below 0");
-            player1.currencyBrick = 0;
+            player2.currencyBrick = 0;
         }
         else if (player2.currencyOre < 0)
         {
             Debug.Log("Player 2 ore went below 0");
-            player1.currencyOre = 0;
+            player2.currencyOre = 0;
         }
         else if (player2.currencyWool < 0)
         {
             Debug.Log("Player 2 wool went below 0");
-            player1.currencyWool = 0;
+            player2.currencyWool = 0;
         }
 
         else if (player3.currencyLumber < 0)
@@ -597,7 +821,7 @@ public class PlayerStateManager : MonoBehaviour
         else if (player4.currencyGrain < 0)
         {
             Debug.Log("Player 4 grain went below 0");
-            player2.currencyGrain = 0;
+            player4.currencyGrain = 0;
         }
         else if (player4.currencyBrick < 0)
         {

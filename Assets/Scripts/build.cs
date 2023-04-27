@@ -14,6 +14,13 @@ public class build : MonoBehaviour
     DiceRoller diceRoller;
     Robber robber;
 
+    public GameObject stealResourcePanel;
+    public GameObject halfResourcePanel;
+    public GameObject tradePanel;
+    public GameObject receivedTradePanel;
+    public GameObject fromBankPanel;
+    public GameObject stealAllOfOneResourcePanel;
+
     // Awake function called before start to initialse the GameObject we use to access other classes
     void Awake()
     {
@@ -25,6 +32,13 @@ public class build : MonoBehaviour
 
         rob = GameObject.Find("1");
         robber = rob.GetComponent<Robber>();
+
+        stealResourcePanel = GameObject.Find("StealResourcePanel");
+        halfResourcePanel = GameObject.Find("HalfResourcePanel");
+        tradePanel = GameObject.Find("TradePanel");
+        receivedTradePanel = GameObject.Find("ReceivedTradePanel");
+        fromBankPanel = GameObject.Find("yearoplentyPanel");
+        stealAllOfOneResourcePanel = GameObject.Find("stealAllOf1Type");
     }
     // Start is called before the first frame update
     void Start()
@@ -45,7 +59,9 @@ public class build : MonoBehaviour
     {
         if (Input.GetMouseButtonDown(0))
         {
-            if (EventSystem.current.IsPointerOverGameObject() && gameObject.name != "settlementCity(Clone)" && gameObject.name != "road(Clone)")
+            if (stealResourcePanel.activeInHierarchy == true || tradePanel.activeInHierarchy == true
+                || halfResourcePanel.activeInHierarchy == true || receivedTradePanel.activeInHierarchy == true
+                || fromBankPanel.activeInHierarchy == true || stealAllOfOneResourcePanel.activeInHierarchy == true)
             {
                 return;
             }
@@ -142,22 +158,22 @@ public class build : MonoBehaviour
                     }
                 }
             }
-            if (state.currentPlayerNumber == 1)
-            {
-                gameObject.GetComponent<MeshRenderer>().material.color = Color.white;
-            }
-            else if (state.currentPlayerNumber == 2)
-            {
-                gameObject.GetComponent<MeshRenderer>().material.color = Color.red;
-            }
-            else if (state.currentPlayerNumber == 3)
-            {
-                gameObject.GetComponent<MeshRenderer>().material.color = Color.yellow;
-            }
-            else if (state.currentPlayerNumber == 4)
-            {
-                gameObject.GetComponent<MeshRenderer>().material.color = Color.blue;
-            }
+            //if (state.currentPlayerNumber == 1)
+            //{
+            //    gameObject.GetComponent<MeshRenderer>().material.color = Color.white;
+            //}
+            //else if (state.currentPlayerNumber == 2)
+            //{
+            //    gameObject.GetComponent<MeshRenderer>().material.color = Color.red;
+            //}
+            //else if (state.currentPlayerNumber == 3)
+            //{
+            //    gameObject.GetComponent<MeshRenderer>().material.color = Color.yellow;
+            //}
+            //else if (state.currentPlayerNumber == 4)
+            //{
+            //    gameObject.GetComponent<MeshRenderer>().material.color = Color.blue;
+            //}
 
 
             if (gameObject.tag == "settlementCity")

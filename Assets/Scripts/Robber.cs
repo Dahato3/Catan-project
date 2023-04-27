@@ -19,6 +19,11 @@ public class Robber : MonoBehaviour
     public GameObject robberN;
 
     public GameObject stealResourcePanel;
+    public GameObject halfResourcePanel;
+    public GameObject tradePanel;
+    public GameObject receivedTradePanel;
+    public GameObject fromBankPanel;
+    public GameObject stealAllOfOneResourcePanel;
 
     public GameObject stealPlayer1Button;
     public GameObject stealPlayer2Button;
@@ -34,7 +39,7 @@ public class Robber : MonoBehaviour
     // Awake function called before start to initialse the GameObject we use to access other classes
     public void Awake()
     {
-        stealResourcePanel = GameObject.Find("StealResourcePanel");
+        //stealResourcePanel = GameObject.Find("StealResourcePanel");
 
         robber = (GameObject)Resources.Load("robber");
         robberN = (GameObject)Resources.Load("robber");
@@ -77,16 +82,14 @@ public class Robber : MonoBehaviour
     {
         if (Input.GetMouseButtonDown(0))
         {
-            if (myBoard.robberMoved == true)
+            if (myBoard.robberMoved == true || stealResourcePanel.activeInHierarchy == true || tradePanel.activeInHierarchy == true
+                || halfResourcePanel.activeInHierarchy == true || receivedTradePanel.activeInHierarchy == true
+                || fromBankPanel.activeInHierarchy == true || stealAllOfOneResourcePanel.activeInHierarchy == true)
             {
                 return;
             }
             else
             {
-                if (EventSystem.current.IsPointerOverGameObject())
-                {
-                    return;
-                }
                 if (myBoard.introTurn == true || diceRoller.diceTotal != 7)
                 {
                     return;
@@ -95,7 +98,6 @@ public class Robber : MonoBehaviour
                 {
                     GameObject.Find("initialRobber").GetComponent<MeshRenderer>().enabled = false;
                 }
-
                 if (GameObject.Find("robberMain") == null)
                 {
                     robberN = Instantiate(robber);
@@ -341,20 +343,20 @@ public class Robber : MonoBehaviour
         playerState.getCurrentPlayer(playerState.currentPlayerNumber).usedKnights++;
         playerState.getCurrentPlayer(playerState.currentPlayerNumber).avalibleKnights--;
 
-        if (playerState.getCurrentPlayer(playerState.currentPlayerNumber).inventory[0] == "" || playerState.getCurrentPlayer(playerState.currentPlayerNumber).inventory[0] == null)
+        if (playerState.getCurrentPlayer(playerState.currentPlayerNumber).avalibleKnights == 0)
         {
             Debug.Log("No knights in your inventory");
         }
-        else
-        {
-            for (int i = 0; i < playerState.getCurrentPlayer(playerState.currentPlayerNumber).inventory.Length; i++)
-            {
-                if (playerState.getCurrentPlayer(playerState.currentPlayerNumber).inventory[i] == "" || playerState.getCurrentPlayer(playerState.currentPlayerNumber).inventory[i] == null)
-                {
-                    playerState.getCurrentPlayer(playerState.currentPlayerNumber).inventory[i - 1] = "";
-                }
-            }
-           
-        }
+        //else
+        //{
+        //    for (int i = 0; i < playerState.getCurrentPlayer(playerState.currentPlayerNumber).inventory.Length; i++)
+        //    {
+        //        if (playerState.getCurrentPlayer(playerState.currentPlayerNumber).inventory[i] == "" || playerState.getCurrentPlayer(playerState.currentPlayerNumber).inventory[i] == null)
+        //        {
+        //            playerState.getCurrentPlayer(playerState.currentPlayerNumber).inventory[i - 1] = "";
+        //        }
+        //    }
+
+        //}
     }
 }
