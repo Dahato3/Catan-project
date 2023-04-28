@@ -5,6 +5,11 @@ using UnityEngine;
 public class AI : Player
 {
 
+    // FUNCTIONALITY FROM THIS CLASS MOVED TO PLAYER CLASS
+    // REASON - due to the how the game was coded we needed the the players / AIs to be of the DataType Player
+    // Kept for reference
+
+
     GameObject PlayerState;
     PlayerStateManager state;
 
@@ -28,7 +33,4 @@ public class AI : Player
         state = PlayerState.GetComponent<PlayerStateManager>();
 
     }
-
-
-    
 }

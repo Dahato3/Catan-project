@@ -157,24 +157,7 @@ public class build : MonoBehaviour
                         state.getCurrentPlayer(state.currentPlayerNumber).currencyWool++;
                     }
                 }
-            }
-            //if (state.currentPlayerNumber == 1)
-            //{
-            //    gameObject.GetComponent<MeshRenderer>().material.color = Color.white;
-            //}
-            //else if (state.currentPlayerNumber == 2)
-            //{
-            //    gameObject.GetComponent<MeshRenderer>().material.color = Color.red;
-            //}
-            //else if (state.currentPlayerNumber == 3)
-            //{
-            //    gameObject.GetComponent<MeshRenderer>().material.color = Color.yellow;
-            //}
-            //else if (state.currentPlayerNumber == 4)
-            //{
-            //    gameObject.GetComponent<MeshRenderer>().material.color = Color.blue;
-            //}
-
+            }  
 
             if (gameObject.tag == "settlementCity")
             {

@@ -56,8 +56,6 @@ public class Player
         currencyOre = 0;
         currencyWool = 0;
 
-        //inventory = new string[14];
-
         board = GameObject.Find("Board");
         myboard = board.GetComponent<Board>();
 
@@ -123,18 +121,7 @@ public class Player
             if (setCard == "knight")
             {
                 Debug.Log("You received: " + setCard);
-                //Debug.Log("POS0: " + inventory[0]);
-                //Debug.Log("bool: " + inventory[0] == "");
-                //for (int j = 0; j < inventory.Length; j++)
-                //{
-                //    if (inventory[j] == "" || inventory[j] == null)
-                //    {
-                //        inventory[j] = setCard;
-                //        latestKnightSpot = j;
-                //        latestKnightSpot++;
-                //    }
-                //}
-                //Debug.Log("HH: " + latestKnightSpot);
+
                 state.getCurrentPlayer(state.currentPlayerNumber).avalibleKnights++;
             }
             else if (setCard == "road building")
@@ -1211,13 +1198,10 @@ public class Player
                             GameObject.Find("DiceRolls").GetComponent<CanvasRenderer>().SetAlpha(1);
                             GameObject.Find("DiceRollTotal").GetComponent<CanvasRenderer>().SetAlpha(1);
 
-
-
                             GameObject.Find("PlayerTrade").GetComponent<CanvasRenderer>().SetAlpha(1);
                             GameObject.Find("playersResources").GetComponent<CanvasRenderer>().SetAlpha(1);
 
                             
-
                             GameObject.Find("BuildingCosts").GetComponent<CanvasGroup>().alpha = 1f;
                             GameObject.Find("BuyDevelopmentCard").GetComponent<CanvasGroup>().alpha = 1f;
 
@@ -1230,7 +1214,6 @@ public class Player
 
                             GameObject.Find("End Turn Button").GetComponent<Button>().interactable = false;
                             GameObject.Find("RollDiceButton").GetComponent<Button>().interactable = true;
-
                         }
                         state.SwitchState();
                     }
@@ -1296,10 +1279,7 @@ public class Player
                         myboard.edgeList[cEdge.edgeBoardLocation].road.GetComponent<MeshRenderer>().enabled = true;
                         myboard.edgeList[cEdge.edgeBoardLocation].edgeColour = playerNumber;
 
-                        Debug.Log("resourceBuild");
                         findLongestRoad();
-
-
                         // Instantiate road object at this node position / activate road that will already be created there (at every edge)
                     }
                     else
@@ -1394,7 +1374,6 @@ public class Player
                         currentEdge = currentNode.getEdgeWest();
                         currentEdge.checkedLongestRoad = true;
 
-
                         if (currentEdge.getNode1() == currentNode)
                         {
                             currentNode = currentEdge.getNode2();
@@ -1411,7 +1390,6 @@ public class Player
                         currentEdge = currentNode.getEdgeEast();
                         currentEdge.checkedLongestRoad = true;
 
-
                         if (currentEdge.getNode1() == currentNode)
                         {
                             currentNode = currentEdge.getNode2();
@@ -1427,8 +1405,6 @@ public class Player
             }
         }
     }
-
-
 
     public void setObj()
     {

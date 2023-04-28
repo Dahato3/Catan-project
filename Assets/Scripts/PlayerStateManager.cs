@@ -283,7 +283,6 @@ public class PlayerStateManager : MonoBehaviour
             && getCurrentPlayer(1).usedKnights > getCurrentPlayer(4).usedKnights)
         {
             getCurrentPlayer(1).HASLargestArmy = true;
-            //getCurrentPlayer(1).HADLargestArmy = true;
             getCurrentPlayer(1).victoryPoints += 2;
 
             if (getCurrentPlayer(2).HASLargestArmy == true)
@@ -308,7 +307,6 @@ public class PlayerStateManager : MonoBehaviour
             && getCurrentPlayer(2).usedKnights > getCurrentPlayer(4).usedKnights)
         {
             getCurrentPlayer(2).HASLargestArmy = true;
-            //getCurrentPlayer(2).HADLargestArmy = true;
             getCurrentPlayer(2).victoryPoints += 2;
 
             if (getCurrentPlayer(1).HASLargestArmy == true)
@@ -332,7 +330,6 @@ public class PlayerStateManager : MonoBehaviour
             && getCurrentPlayer(3).usedKnights > getCurrentPlayer(4).usedKnights)
         {
             getCurrentPlayer(3).HASLargestArmy = true;
-            //getCurrentPlayer(3).HADLargestArmy = true;
             getCurrentPlayer(3).victoryPoints += 2;
 
             if (getCurrentPlayer(1).HASLargestArmy == true)
@@ -356,7 +353,6 @@ public class PlayerStateManager : MonoBehaviour
             && getCurrentPlayer(4).usedKnights > getCurrentPlayer(3).usedKnights)
         {
             getCurrentPlayer(4).HASLargestArmy = true;
-            //getCurrentPlayer(4).HADLargestArmy = true;
             getCurrentPlayer(4).victoryPoints += 2;
 
             if (getCurrentPlayer(1).HASLargestArmy == true)
@@ -375,9 +371,6 @@ public class PlayerStateManager : MonoBehaviour
                 getCurrentPlayer(3).victoryPoints -= 2;
             }
         }
-
-        //Debug.Log("LLL:" + player1.longetRoad);
-
     }
 
     // This method is called when the 'end turn' button on screen is clicked. It will update
@@ -391,7 +384,6 @@ public class PlayerStateManager : MonoBehaviour
 
         GameObject.Find("End Turn Button").GetComponent<Button>().interactable = false;
         GameObject.Find("RollDiceButton").GetComponent<Button>().interactable = true;
-
 
         if (board.introTurn == false)
         {
@@ -819,6 +811,7 @@ public class PlayerStateManager : MonoBehaviour
         }
     }
 
+    // This method was created so we could call the "buy development card" method from the current player
     public void callBuyDevelopmentCard()
     {
         if (currentPlayerNumber == 1)

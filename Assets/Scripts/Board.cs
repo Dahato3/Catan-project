@@ -192,7 +192,6 @@ public class Board : MonoBehaviour
         GameObject.Find("Player3Win").GetComponent<CanvasRenderer>().SetAlpha(0);
         GameObject.Find("Player4Win").GetComponent<CanvasRenderer>().SetAlpha(0);
 
-
         GameObject.Find("PlayerTrade").GetComponent<CanvasRenderer>().SetAlpha(0);
         GameObject.Find("playersResources").GetComponent<CanvasRenderer>().SetAlpha(0);
 
@@ -210,14 +209,12 @@ public class Board : MonoBehaviour
         GameObject.Find("MyOreAmount").GetComponent<CanvasRenderer>().SetAlpha(0);
         GameObject.Find("MyWoolAmount").GetComponent<CanvasRenderer>().SetAlpha(0);
 
-
         GameObject.Find("RollDiceButton").GetComponent<CanvasRenderer>().SetAlpha(0);
         GameObject.Find("RollDice").GetComponent<CanvasRenderer>().SetAlpha(0);
         GameObject.Find("Dice1").GetComponent<CanvasRenderer>().SetAlpha(0);
         GameObject.Find("Dice2").GetComponent<CanvasRenderer>().SetAlpha(0);
         GameObject.Find("DiceRolls").GetComponent<CanvasRenderer>().SetAlpha(0);
         GameObject.Find("DiceRollTotal").GetComponent<CanvasRenderer>().SetAlpha(0);
-
 
         GameObject.Find("End Turn Button").GetComponent<CanvasRenderer>().SetAlpha(0);
         GameObject.Find("EndTurn").GetComponent<CanvasRenderer>().SetAlpha(0);
@@ -230,15 +227,6 @@ public class Board : MonoBehaviour
         GameObject.Find("avalibleKnights").GetComponent<CanvasRenderer>().SetAlpha(0);
         GameObject.Find("usedKnights").GetComponent<CanvasRenderer>().SetAlpha(0);
 
-
-
-        //GameObject.Find("PlayerTrade").GetComponent<CanvasGroup>().alpha = 0f;
-        //GameObject.Find("Resources").GetComponent<CanvasGroup>().alpha = 0f;
-        //GameObject.Find("RollDiceButton").GetComponent<CanvasGroup>().alpha = 0f;
-        //GameObject.Find("End Turn Button").GetComponent<CanvasGroup>().alpha = 0f;
-        //GameObject.Find("BuildingCosts").GetComponent<CanvasGroup>().alpha = 0f;
-        //GameObject.Find("BuyDevelopmentCard").GetComponent<CanvasGroup>().alpha = 0f;
-        //GameObject.Find("Knight").GetComponent<CanvasGroup>().alpha = 0f;
         GameObject.Find("CurrentPlayer").transform.position = new Vector3(170, 385, 0);
         GameObject.Find("CurrentPlayer").GetComponent<Text>().fontSize = 28;
 
@@ -253,8 +241,6 @@ public class Board : MonoBehaviour
         Debug.Log("Player 1 please build a settlement");
 
         // Here we set two of our panels to not active as they are not required at the start
-        //receivedTradePanel.SetActive(false);
-        //stealResourcePanel.SetActive(false);
     }
 
     // Update is called once per frame

@@ -116,7 +116,6 @@ public class DiceRoller : MonoBehaviour
         else
         {
             checkIncrease();
-            
         }
     }
 
@@ -672,6 +671,7 @@ public class DiceRoller : MonoBehaviour
         }  
     }
 
+    // This method is called once a 7 is rolled and will check which players total resoruces are above 7 
     public void halfResources()
     {
         // We remember which player rolled the 7
