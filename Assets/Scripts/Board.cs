@@ -224,7 +224,7 @@ public class Board : MonoBehaviour
         GameObject.Find("BuildingCosts").GetComponent<CanvasRenderer>().SetAlpha(0);
 
         GameObject.Find("BuyDevelopmentCard").GetComponent<CanvasRenderer>().SetAlpha(0);
-        GameObject.Find("buyDevCad").GetComponent<CanvasRenderer>().SetAlpha(0);
+        GameObject.Find("buyDevCard").GetComponent<CanvasRenderer>().SetAlpha(0);
 
         GameObject.Find("Knight").GetComponent<CanvasRenderer>().SetAlpha(0);
         GameObject.Find("avalibleKnights").GetComponent<CanvasRenderer>().SetAlpha(0);
