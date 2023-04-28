@@ -191,13 +191,54 @@ public class Board : MonoBehaviour
         GameObject.Find("Player2Win").GetComponent<CanvasRenderer>().SetAlpha(0);
         GameObject.Find("Player3Win").GetComponent<CanvasRenderer>().SetAlpha(0);
         GameObject.Find("Player4Win").GetComponent<CanvasRenderer>().SetAlpha(0);
-        GameObject.Find("PlayerTrade").GetComponent<CanvasGroup>().alpha = 0f;
-        GameObject.Find("Resources").GetComponent<CanvasGroup>().alpha = 0f;
-        GameObject.Find("RollDiceButton").GetComponent<CanvasGroup>().alpha = 0f;
-        GameObject.Find("End Turn Button").GetComponent<CanvasGroup>().alpha = 0f;
-        GameObject.Find("BuildingCosts").GetComponent<CanvasGroup>().alpha = 0f;
-        GameObject.Find("BuyDevelopmentCard").GetComponent<CanvasGroup>().alpha = 0f;
-        GameObject.Find("Knight").GetComponent<CanvasGroup>().alpha = 0f;
+
+
+        GameObject.Find("PlayerTrade").GetComponent<CanvasRenderer>().SetAlpha(0);
+        GameObject.Find("playersResources").GetComponent<CanvasRenderer>().SetAlpha(0);
+
+        GameObject.Find("Resources").GetComponent<CanvasRenderer>().SetAlpha(0);
+
+        GameObject.Find("Lumber").GetComponent<CanvasRenderer>().SetAlpha(0);
+        GameObject.Find("Grain").GetComponent<CanvasRenderer>().SetAlpha(0);
+        GameObject.Find("Brick").GetComponent<CanvasRenderer>().SetAlpha(0);
+        GameObject.Find("Ore").GetComponent<CanvasRenderer>().SetAlpha(0);
+        GameObject.Find("Wool").GetComponent<CanvasRenderer>().SetAlpha(0);
+
+        GameObject.Find("MyLumberAmount").GetComponent<CanvasRenderer>().SetAlpha(0);
+        GameObject.Find("MyGrainAmount").GetComponent<CanvasRenderer>().SetAlpha(0);
+        GameObject.Find("MyBrickAmount").GetComponent<CanvasRenderer>().SetAlpha(0);
+        GameObject.Find("MyOreAmount").GetComponent<CanvasRenderer>().SetAlpha(0);
+        GameObject.Find("MyWoolAmount").GetComponent<CanvasRenderer>().SetAlpha(0);
+
+
+        GameObject.Find("RollDiceButton").GetComponent<CanvasRenderer>().SetAlpha(0);
+        GameObject.Find("RollDice").GetComponent<CanvasRenderer>().SetAlpha(0);
+        GameObject.Find("Dice1").GetComponent<CanvasRenderer>().SetAlpha(0);
+        GameObject.Find("Dice2").GetComponent<CanvasRenderer>().SetAlpha(0);
+        GameObject.Find("DiceRolls").GetComponent<CanvasRenderer>().SetAlpha(0);
+        GameObject.Find("DiceRollTotal").GetComponent<CanvasRenderer>().SetAlpha(0);
+
+
+        GameObject.Find("End Turn Button").GetComponent<CanvasRenderer>().SetAlpha(0);
+        GameObject.Find("EndTurn").GetComponent<CanvasRenderer>().SetAlpha(0);
+        GameObject.Find("BuildingCosts").GetComponent<CanvasRenderer>().SetAlpha(0);
+
+        GameObject.Find("BuyDevelopmentCard").GetComponent<CanvasRenderer>().SetAlpha(0);
+        GameObject.Find("buyDevCad").GetComponent<CanvasRenderer>().SetAlpha(0);
+
+        GameObject.Find("Knight").GetComponent<CanvasRenderer>().SetAlpha(0);
+        GameObject.Find("avalibleKnights").GetComponent<CanvasRenderer>().SetAlpha(0);
+        GameObject.Find("usedKnights").GetComponent<CanvasRenderer>().SetAlpha(0);
+
+
+
+        //GameObject.Find("PlayerTrade").GetComponent<CanvasGroup>().alpha = 0f;
+        //GameObject.Find("Resources").GetComponent<CanvasGroup>().alpha = 0f;
+        //GameObject.Find("RollDiceButton").GetComponent<CanvasGroup>().alpha = 0f;
+        //GameObject.Find("End Turn Button").GetComponent<CanvasGroup>().alpha = 0f;
+        //GameObject.Find("BuildingCosts").GetComponent<CanvasGroup>().alpha = 0f;
+        //GameObject.Find("BuyDevelopmentCard").GetComponent<CanvasGroup>().alpha = 0f;
+        //GameObject.Find("Knight").GetComponent<CanvasGroup>().alpha = 0f;
         GameObject.Find("CurrentPlayer").transform.position = new Vector3(170, 385, 0);
         GameObject.Find("CurrentPlayer").GetComponent<Text>().fontSize = 28;
 
@@ -219,43 +260,136 @@ public class Board : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        //if (state.getCurrentPlayer(1).victoryPoints == 10)
-        //{
-        //    // Remove game componants, display player x won on screen
+        if (state.getCurrentPlayer(1).victoryPoints == 10)
+        {
+            // Remove game componants, display player x won on screen
 
-        //    GameObject.Find("Player1Win").GetComponent<CanvasRenderer>().SetAlpha(1);
+            GameObject.Find("Player1Win").GetComponent<CanvasRenderer>().SetAlpha(1);
 
-        //    GameObject.Find("Timer").GetComponent<CanvasRenderer>().SetAlpha(0);
-        //    GameObject.Find("VP").GetComponent<CanvasRenderer>().SetAlpha(0);
-        //    GameObject.Find("EndTurn").GetComponent<CanvasRenderer>().SetAlpha(0);
-        //    GameObject.Find("Player1 stats").GetComponent<CanvasRenderer>().SetAlpha(0);
-        //    GameObject.Find("Player2 stats").GetComponent<CanvasRenderer>().SetAlpha(0);
-        //    GameObject.Find("Player3 stats").GetComponent<CanvasRenderer>().SetAlpha(0);
-        //    GameObject.Find("Player4 stats").GetComponent<CanvasRenderer>().SetAlpha(0);
-        //    GameObject.Find("PlayerTrade").GetComponent<CanvasGroup>().alpha = 0f;
-        //    GameObject.Find("Resources").GetComponent<CanvasGroup>().alpha = 0f;
-        //    GameObject.Find("RollDiceButton").GetComponent<CanvasGroup>().alpha = 0f;
-        //    GameObject.Find("End Turn Button").GetComponent<CanvasGroup>().alpha = 0f;
-        //    GameObject.Find("BuildingCosts").GetComponent<CanvasGroup>().alpha = 0f;
-        //    GameObject.Find("BuyDevelopmentCard").GetComponent<CanvasGroup>().alpha = 0f;
-        //    GameObject.Find("Knight").GetComponent<CanvasGroup>().alpha = 0f;
-        //    GameObject.Find("CurrentPlayer").transform.position = new Vector3(170, 385, 0);
-        //    GameObject.Find("CurrentPlayer").GetComponent<Text>().fontSize = 28;
-        //}
-        //else if (state.getCurrentPlayer(2).victoryPoints == 10)
-        //{
+            GameObject.Find("Timer").GetComponent<CanvasRenderer>().SetAlpha(0);
+            GameObject.Find("VP").GetComponent<CanvasRenderer>().SetAlpha(0);
+            GameObject.Find("EndTurn").GetComponent<CanvasRenderer>().SetAlpha(0);
 
-        //}
-        //else if (state.getCurrentPlayer(3).victoryPoints == 10)
-        //{
+            GameObject.Find("Player1 stats").GetComponent<CanvasGroup>().alpha = 0f;
+            GameObject.Find("Player2 stats").GetComponent<CanvasGroup>().alpha= 0f;
+            GameObject.Find("Player3 stats").GetComponent<CanvasGroup>().alpha = 0f;
+            GameObject.Find("Player4 stats").GetComponent<CanvasGroup>().alpha = 0f;
 
-        //}
-        //else if (state.getCurrentPlayer(4).victoryPoints == 10)
-        //{
+            GameObject.Find("CurrentPlayer").GetComponent<CanvasRenderer>().SetAlpha(0);
 
-        //}
+            GameObject.Find("PlayerTrade").GetComponent<CanvasGroup>().alpha = 0f;
+            GameObject.Find("Resources").GetComponent<CanvasGroup>().alpha = 0f;
+            GameObject.Find("RollDiceButton").GetComponent<CanvasGroup>().alpha = 0f;
+            GameObject.Find("End Turn Button").GetComponent<CanvasGroup>().alpha = 0f;
+            GameObject.Find("BuildingCosts").GetComponent<CanvasGroup>().alpha = 0f;
+            GameObject.Find("BuyDevelopmentCard").GetComponent<CanvasGroup>().alpha = 0f;
+            GameObject.Find("Knight").GetComponent<CanvasGroup>().alpha = 0f;
 
+            Destroy(GameObject.FindWithTag("HEX"));
+            Destroy(GameObject.FindWithTag("HEXNUMBER"));
+            Destroy(GameObject.Find("initialRobber"));
 
+            if (GameObject.Find("RobberMain") != null)
+            {
+                Destroy(GameObject.Find("robberMain"));
+            }
+        }
+        else if (state.getCurrentPlayer(2).victoryPoints == 10)
+        {
+            GameObject.Find("Player2Win").GetComponent<CanvasRenderer>().SetAlpha(1);
+
+            GameObject.Find("Timer").GetComponent<CanvasRenderer>().SetAlpha(0);
+            GameObject.Find("VP").GetComponent<CanvasRenderer>().SetAlpha(0);
+            GameObject.Find("EndTurn").GetComponent<CanvasRenderer>().SetAlpha(0);
+
+            GameObject.Find("Player1 stats").GetComponent<CanvasGroup>().alpha = 0f;
+            GameObject.Find("Player2 stats").GetComponent<CanvasGroup>().alpha = 0f;
+            GameObject.Find("Player3 stats").GetComponent<CanvasGroup>().alpha = 0f;
+            GameObject.Find("Player4 stats").GetComponent<CanvasGroup>().alpha = 0f;
+
+            GameObject.Find("CurrentPlayer").GetComponent<CanvasRenderer>().SetAlpha(0);
+
+            GameObject.Find("PlayerTrade").GetComponent<CanvasGroup>().alpha = 0f;
+            GameObject.Find("Resources").GetComponent<CanvasGroup>().alpha = 0f;
+            GameObject.Find("RollDiceButton").GetComponent<CanvasGroup>().alpha = 0f;
+            GameObject.Find("End Turn Button").GetComponent<CanvasGroup>().alpha = 0f;
+            GameObject.Find("BuildingCosts").GetComponent<CanvasGroup>().alpha = 0f;
+            GameObject.Find("BuyDevelopmentCard").GetComponent<CanvasGroup>().alpha = 0f;
+            GameObject.Find("Knight").GetComponent<CanvasGroup>().alpha = 0f;
+
+            Destroy(GameObject.FindWithTag("HEX"));
+            Destroy(GameObject.FindWithTag("HEXNUMBER"));
+            Destroy(GameObject.Find("initialRobber"));
+
+            if (GameObject.Find("RobberMain") != null)
+            {
+                Destroy(GameObject.Find("robberMain"));
+            }
+        }
+        else if (state.getCurrentPlayer(3).victoryPoints == 10)
+        {
+            GameObject.Find("Player3Win").GetComponent<CanvasRenderer>().SetAlpha(1);
+
+            GameObject.Find("Timer").GetComponent<CanvasRenderer>().SetAlpha(0);
+            GameObject.Find("VP").GetComponent<CanvasRenderer>().SetAlpha(0);
+            GameObject.Find("EndTurn").GetComponent<CanvasRenderer>().SetAlpha(0);
+
+            GameObject.Find("Player1 stats").GetComponent<CanvasGroup>().alpha = 0f;
+            GameObject.Find("Player2 stats").GetComponent<CanvasGroup>().alpha = 0f;
+            GameObject.Find("Player3 stats").GetComponent<CanvasGroup>().alpha = 0f;
+            GameObject.Find("Player4 stats").GetComponent<CanvasGroup>().alpha = 0f;
+
+            GameObject.Find("CurrentPlayer").GetComponent<CanvasRenderer>().SetAlpha(0);
+
+            GameObject.Find("PlayerTrade").GetComponent<CanvasGroup>().alpha = 0f;
+            GameObject.Find("Resources").GetComponent<CanvasGroup>().alpha = 0f;
+            GameObject.Find("RollDiceButton").GetComponent<CanvasGroup>().alpha = 0f;
+            GameObject.Find("End Turn Button").GetComponent<CanvasGroup>().alpha = 0f;
+            GameObject.Find("BuildingCosts").GetComponent<CanvasGroup>().alpha = 0f;
+            GameObject.Find("BuyDevelopmentCard").GetComponent<CanvasGroup>().alpha = 0f;
+            GameObject.Find("Knight").GetComponent<CanvasGroup>().alpha = 0f;
+
+            Destroy(GameObject.FindWithTag("HEX"));
+            Destroy(GameObject.FindWithTag("HEXNUMBER"));
+            Destroy(GameObject.Find("initialRobber"));
+
+            if (GameObject.Find("RobberMain") != null)
+            {
+                Destroy(GameObject.Find("robberMain"));
+            }
+        }
+        else if (state.getCurrentPlayer(4).victoryPoints == 10)
+        {
+            GameObject.Find("Player4Win").GetComponent<CanvasRenderer>().SetAlpha(1);
+
+            GameObject.Find("Timer").GetComponent<CanvasRenderer>().SetAlpha(0);
+            GameObject.Find("VP").GetComponent<CanvasRenderer>().SetAlpha(0);
+            GameObject.Find("EndTurn").GetComponent<CanvasRenderer>().SetAlpha(0);
+
+            GameObject.Find("Player1 stats").GetComponent<CanvasGroup>().alpha = 0f;
+            GameObject.Find("Player2 stats").GetComponent<CanvasGroup>().alpha = 0f;
+            GameObject.Find("Player3 stats").GetComponent<CanvasGroup>().alpha = 0f;
+            GameObject.Find("Player4 stats").GetComponent<CanvasGroup>().alpha = 0f;
+
+            GameObject.Find("CurrentPlayer").GetComponent<CanvasRenderer>().SetAlpha(0);
+
+            GameObject.Find("PlayerTrade").GetComponent<CanvasGroup>().alpha = 0f;
+            GameObject.Find("Resources").GetComponent<CanvasGroup>().alpha = 0f;
+            GameObject.Find("RollDiceButton").GetComponent<CanvasGroup>().alpha = 0f;
+            GameObject.Find("End Turn Button").GetComponent<CanvasGroup>().alpha = 0f;
+            GameObject.Find("BuildingCosts").GetComponent<CanvasGroup>().alpha = 0f;
+            GameObject.Find("BuyDevelopmentCard").GetComponent<CanvasGroup>().alpha = 0f;
+            GameObject.Find("Knight").GetComponent<CanvasGroup>().alpha = 0f;
+
+            Destroy(GameObject.FindWithTag("HEX"));
+            Destroy(GameObject.FindWithTag("HEXNUMBER"));
+            Destroy(GameObject.Find("initialRobber"));
+
+            if (GameObject.Find("RobberMain") != null)
+            {
+                Destroy(GameObject.Find("robberMain"));
+            }
+        }
     }
 
     // Generate board will fill up the node array with a new node at each position
@@ -707,6 +841,7 @@ public class Board : MonoBehaviour
             temp.GetComponent<Robber>().receivedTradePanel = GameObject.Find("ReceivedTradePanel");
             temp.GetComponent<Robber>().fromBankPanel = GameObject.Find("yearoplentyPanel");
             temp.GetComponent<Robber>().stealAllOfOneResourcePanel = GameObject.Find("stealAllOf1Type");
+            temp.AddComponent<CanvasGroup>();
 
             GameObject temp2 = Instantiate(settlementCityPrefab, temp.transform);
             temp2.transform.localPosition = new Vector3(-2, 0.335f, -0.92f);
@@ -1382,6 +1517,9 @@ public class Board : MonoBehaviour
         else if (nodeIndex == 18)
         {
             temp = Instantiate(desertHexPrefab, new Vector3(100, 0, 0), transform.rotation);
+
+            temp.tag = "HEX";
+
             temp.transform.localScale = new Vector3(50, 50, 50);
             temp.transform.name = "10";
 
@@ -2565,6 +2703,9 @@ public class Board : MonoBehaviour
             temp = Instantiate(woolHexPrefab);
         }
         temp.transform.localScale = new Vector3(50, 50, 50);
+
+        temp.tag = "HEX";
+
         return temp;
     }
 
@@ -2614,6 +2755,9 @@ public class Board : MonoBehaviour
         }
         temp.transform.localScale = new Vector3(17.5f, 17.5f, 17.5f);
         temp.transform.Rotate(0f, 180f, 0);
+
+        temp.tag = "HEXNUMBER";
+
         return temp;
     }
 

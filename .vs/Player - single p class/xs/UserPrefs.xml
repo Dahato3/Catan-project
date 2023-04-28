@@ -2,46 +2,39 @@
   <MonoDevelop.Ide.Workbench ActiveDocument="Assets/Scripts/BankTrade.cs">
     <Files>
       <File FileName="Assets/Scripts/ShowPanel.cs" Line="14" Column="34" IsPinned="True" />
-      <File FileName="Assets/Scripts/Player.cs" Line="1606" Column="22" IsPinned="True" />
-      <File FileName="Assets/Scripts/Edge.cs" Line="1" Column="1" IsPinned="True" />
-      <File FileName="Assets/Scripts/Board.cs" Line="256" Column="12" />
+      <File FileName="Assets/Scripts/Player.cs" IsPinned="True" />
+      <File FileName="Assets/Scripts/Edge.cs" IsPinned="True" />
+      <File FileName="Assets/Scripts/Board.cs" Line="234" Column="80" />
       <File FileName="Assets/Scripts/Node.cs" />
-      <File FileName="Assets/Scripts/PlayerStateManager.cs" Line="289" Column="25" />
-      <File FileName="Assets/Scripts/DiceRoller.cs" Line="12" Column="52" />
-      <File FileName="Assets/Scripts/TimerScript.cs" Line="1" Column="1" />
+      <File FileName="Assets/Scripts/PlayerStateManager.cs" />
+      <File FileName="Assets/Scripts/DiceRoller.cs" />
+      <File FileName="Assets/Scripts/TimerScript.cs" />
       <File FileName="Assets/Scripts/CurrentPlayer.cs" />
-      <File FileName="Assets/Scripts/Trade.cs" Line="48" Column="51" />
-      <File FileName="Assets/Scripts/build.cs" Line="185" Column="87" />
-      <File FileName="Assets/Scripts/Robber.cs" Line="126" Column="36" />
-      <File FileName="Assets/Scripts/RollTotal.cs" Line="1" Column="1" />
-      <File FileName="Assets/Scripts/AI.cs" Line="31" Column="1" />
-      <File FileName="Assets/Scripts/StartUpMenu.cs" Line="47" Column="57" />
-      <File FileName="Assets/Scripts/PlayerNumScript.cs" Line="1" Column="1" />
-      <File FileName="Assets/Scripts/CpuNumScript.cs" Line="16" Column="6" />
-      <File FileName="Assets/Scripts/BankTrade.cs" Line="240" Column="2" />
+      <File FileName="Assets/Scripts/Trade.cs" />
+      <File FileName="Assets/Scripts/build.cs" />
+      <File FileName="Assets/Scripts/Robber.cs" />
+      <File FileName="Assets/Scripts/RollTotal.cs" />
+      <File FileName="Assets/Scripts/AI.cs" />
+      <File FileName="Assets/Scripts/StartUpMenu.cs" />
+      <File FileName="Assets/Scripts/PlayerNumScript.cs" />
+      <File FileName="Assets/Scripts/CpuNumScript.cs" />
+      <File FileName="Assets/Scripts/BankTrade.cs" Line="198" Column="47" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
         <State name="__root__">
           <Node name="Player - single p class" expanded="True">
-            <Node name="Assets" expanded="True">
-              <Node name="Scripts" expanded="True">
-                <Node name="BankTrade.cs" selected="True" />
-              </Node>
+            <Node name="Assets" expanded="True" selected="True">
+              <Node name="Scripts" expanded="True" />
             </Node>
           </Node>
-        </State>
-      </Pad>
-      <Pad Id="ClassPad">
-        <State name="__root__">
-          <Node name="Player - single p class" expanded="True" selected="True" />
         </State>
       </Pad>
     </Pads>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.PinnedWatches />
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.ItemProperties.Assembly-CSharp PreferredExecutionTarget="83b1b8a2-fc0f-4e4f-a86e-2e1caa870efc" />
+  <MonoDevelop.Ide.ItemProperties.Assembly-CSharp PreferredExecutionTarget="21716e1f-9cac-4cca-94a2-1cc812cfa910" />
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
     <BreakpointStore />
   </MonoDevelop.Ide.DebuggingService.Breakpoints>

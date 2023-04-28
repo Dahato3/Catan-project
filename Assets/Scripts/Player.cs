@@ -164,10 +164,6 @@ public class Player
         Debug.Log("Not enough resources");
     }
 
-    // TODO: 2 elements NOT yet implemented - roll dice to see who places first AND 2nd round of placing
-    // is meant to be in reverse order
-
-
     // An important method that is called whenever a node game object is clicked (located on every hexagon corner). It will do a few things when clicked:
     // Firstly, it will check to see what hexagons are located around the clicked (RightOtherLeft / LeftRight / LeftOther / RightOther) node so it can then see if it possible to build.
     // After checking if building is possible it will check if it is the "introTurn" as if so, the buils will be free and every player will build 2 settlements and 2 roads.
@@ -179,6 +175,7 @@ public class Player
     // it indicates a city is trying to be built
     public void buildSettlementCity(GameObject g)
     {
+        Debug.Log(myboard.boardNodes[50] == null);
         if (myboard.introCounter % 2 == 1 && myboard.introCounter != 0)
         {
             Debug.Log("Cannot build a settlement yet");
@@ -194,7 +191,7 @@ public class Player
                     && cNode.getNodeWest().getHouseType() == 0
                     && cNode.getNodeEast().getHouseType() == 0)
                 {
-                    if (myboard.introTurn)
+                    if (myboard.introTurn == true)
                     {
                         if (myboard.introCounter == 0 || myboard.introCounter == 8)
                         {
@@ -320,7 +317,7 @@ public class Player
                     // Case where we build a settlement, not apart of the intro
                     else
                     {
-                        if (currencyLumber >= 1 && currencyBrick >= 1 && currencyGrain >= 1 && currencyWool >= 1
+                        if ((currencyLumber >= 1 && currencyBrick >= 1 && currencyGrain >= 1 && currencyWool >= 1)
                             && (cNode.getEdgeNorthSouth().getEdgeType() == getPlayerNumber()
                             || cNode.getEdgeWest().getEdgeType() == getPlayerNumber()
                             || cNode.getEdgeEast().getEdgeType() == getPlayerNumber())
@@ -356,7 +353,7 @@ public class Player
                         }
                         else
                         {
-                            Debug.Log("Cannot build here");
+                            Debug.Log("Cannot build");
                         }
                     }
                 }
@@ -1116,8 +1113,8 @@ public class Player
         {
             // If the either of the two nodes of the inputted edge has a settlement or city of the same players number
             if (cEdge.getNode1().getHouseColour() == state.currentPlayerNumber || cEdge.getNode2().getHouseColour() == state.currentPlayerNumber
-                || cEdge.getNode1().edgeEast.edgeColour == state.currentPlayerNumber || cEdge.getNode1().edgeWest.edgeColour == state.currentPlayerNumber || cEdge.getNode1().edgeNorthSouth.edgeColour == state.currentPlayerNumber
-                || cEdge.getNode2().edgeEast.edgeColour == state.currentPlayerNumber || cEdge.getNode2().edgeWest.edgeColour == state.currentPlayerNumber || cEdge.getNode2().edgeNorthSouth.edgeColour == state.currentPlayerNumber)
+                || (cEdge.getNode1().edgeEast != null && cEdge.getNode1().edgeEast.edgeColour == state.currentPlayerNumber) || (cEdge.getNode1().edgeWest != null && cEdge.getNode1().edgeWest.edgeColour == state.currentPlayerNumber) || (cEdge.getNode1().edgeNorthSouth != null && cEdge.getNode1().edgeNorthSouth.edgeColour == state.currentPlayerNumber)
+                || (cEdge.getNode2().edgeEast != null && cEdge.getNode2().edgeEast.edgeColour == state.currentPlayerNumber) || (cEdge.getNode2().edgeWest != null && cEdge.getNode2().edgeWest.edgeColour == state.currentPlayerNumber) || (cEdge.getNode2().edgeNorthSouth != null && cEdge.getNode2().edgeNorthSouth.edgeColour == state.currentPlayerNumber))
 
             {
                 if (myboard.introTurn)
@@ -1183,23 +1180,57 @@ public class Player
                             myboard.introTurn = false;
                             Debug.Log("Intro turn ended");
 
-                            GameObject.Find("End Turn Button").GetComponent<CanvasGroup>().alpha = 1f;
+                            GameObject.Find("End Turn Button").GetComponent<CanvasRenderer>().SetAlpha(1);
+                            GameObject.Find("EndTurn").GetComponent<CanvasRenderer>().SetAlpha(1);
+                            GameObject.Find("BuildingCosts").GetComponent<CanvasRenderer>().SetAlpha(1);
+
+
                             GameObject.Find("EndTurn").GetComponent<CanvasRenderer>().SetAlpha(1);
                             GameObject.Find("Timer").GetComponent<CanvasRenderer>().SetAlpha(1);
                             GameObject.Find("VP").GetComponent<CanvasRenderer>().SetAlpha(1);
                             GameObject.Find("BuyDevelopmentCard").GetComponent<CanvasRenderer>().SetAlpha(1);
-                            GameObject.Find("Resources").GetComponent<CanvasGroup>().alpha = 1f;
-                            GameObject.Find("RollDiceButton").GetComponent<CanvasGroup>().alpha = 1f;
-                            GameObject.Find("PlayerTrade").GetComponent<CanvasGroup>().alpha = 1f;
+                            GameObject.Find("buyDevCard").GetComponent<CanvasRenderer>().SetAlpha(1);
+
+                            GameObject.Find("Resources").GetComponent<CanvasRenderer>().SetAlpha(1);
+                            GameObject.Find("Lumber").GetComponent<CanvasRenderer>().SetAlpha(1);
+                            GameObject.Find("Grain").GetComponent<CanvasRenderer>().SetAlpha(1);
+                            GameObject.Find("Brick").GetComponent<CanvasRenderer>().SetAlpha(1);
+                            GameObject.Find("Ore").GetComponent<CanvasRenderer>().SetAlpha(1);
+                            GameObject.Find("Wool").GetComponent<CanvasRenderer>().SetAlpha(1);
+
+                            GameObject.Find("MyLumberAmount").GetComponent<CanvasRenderer>().SetAlpha(1);
+                            GameObject.Find("MyGrainAmount").GetComponent<CanvasRenderer>().SetAlpha(1);
+                            GameObject.Find("MyBrickAmount").GetComponent<CanvasRenderer>().SetAlpha(1);
+                            GameObject.Find("MyOreAmount").GetComponent<CanvasRenderer>().SetAlpha(1);
+                            GameObject.Find("MyWoolAmount").GetComponent<CanvasRenderer>().SetAlpha(1);
+
+                            GameObject.Find("RollDiceButton").GetComponent<CanvasRenderer>().SetAlpha(1);
+                            GameObject.Find("RollDice").GetComponent<CanvasRenderer>().SetAlpha(1);
+                            GameObject.Find("Dice1").GetComponent<CanvasRenderer>().SetAlpha(1);
+                            GameObject.Find("Dice2").GetComponent<CanvasRenderer>().SetAlpha(1);
+                            GameObject.Find("DiceRolls").GetComponent<CanvasRenderer>().SetAlpha(1);
+                            GameObject.Find("DiceRollTotal").GetComponent<CanvasRenderer>().SetAlpha(1);
+
+
+
+                            GameObject.Find("PlayerTrade").GetComponent<CanvasRenderer>().SetAlpha(1);
+                            GameObject.Find("playersResources").GetComponent<CanvasRenderer>().SetAlpha(1);
+
+                            
+
                             GameObject.Find("BuildingCosts").GetComponent<CanvasGroup>().alpha = 1f;
                             GameObject.Find("BuyDevelopmentCard").GetComponent<CanvasGroup>().alpha = 1f;
-                            GameObject.Find("Knight").GetComponent<CanvasGroup>().alpha = 1f;
+
+                            GameObject.Find("Knight").GetComponent<CanvasRenderer>().SetAlpha(1);
+                            GameObject.Find("avalibleKnights").GetComponent<CanvasRenderer>().SetAlpha(1);
+                            GameObject.Find("usedKnights").GetComponent<CanvasRenderer>().SetAlpha(1);
 
                             GameObject.Find("CurrentPlayer").transform.position = new Vector3(750, -40, 0);
                             GameObject.Find("CurrentPlayer").GetComponent<Text>().fontSize = 20;
 
                             GameObject.Find("End Turn Button").GetComponent<Button>().interactable = false;
                             GameObject.Find("RollDiceButton").GetComponent<Button>().interactable = true;
+
                         }
                         state.SwitchState();
                     }
@@ -1319,17 +1350,6 @@ public class Player
             {
                 currentNode = myboard.boardNodes[i];
 
-
-                // Good to here
-                //Debug.Log("Hits");
-                //Debug.Log("NULL: " + currentNode.getEdgeNorthSouth() != null);
-                //Debug.Log(currentNode.getEdgeNorthSouth().edgeColour == state.getCurrentPlayer(playerNumber).playerNumber);
-                //Debug.Log(currentNode.getEdgeNorthSouth().getEdgeType());
-                //Debug.Log(state.getCurrentPlayer(playerNumber).playerNumber);
-                //Debug.Log(currentNode.boardLocation);
-                //Debug.Log(currentNode.getEdgeNorthSouth().edgeBoardLocation);
-                //Debug.Log(currentNode.getEdgeNorthSouth() != currentEdge);
-
                 while ((currentNode.getEdgeNorthSouth() != null && currentNode.getEdgeNorthSouth().edgeColour == state.getCurrentPlayer(playerNumber).playerNumber && currentNode.getEdgeNorthSouth() != currentEdge)
                     || (currentNode.getEdgeWest() != null && currentNode.getEdgeWest().edgeColour == state.getCurrentPlayer(playerNumber).playerNumber && currentNode.getEdgeWest() != currentEdge)
                     || (currentNode.getEdgeEast() != null && currentNode.getEdgeEast().edgeColour == state.getCurrentPlayer(playerNumber).playerNumber && currentNode.getEdgeEast() != currentEdge))
@@ -1345,17 +1365,12 @@ public class Player
                         || (currentNode.getEdgeWest() != null && currentNode.getEdgeWest().edgeColour == state.getCurrentPlayer(playerNumber).playerNumber && currentNode.getEdgeEast() != null && currentNode.getEdgeEast().edgeColour == state.getCurrentPlayer(playerNumber).playerNumber && currentNode.getEdgeWest() != currentEdge)
                         || (currentNode.getEdgeWest() != null && currentNode.getEdgeWest().edgeColour == state.getCurrentPlayer(playerNumber).playerNumber && currentNode.getEdgeNorthSouth() != null && currentNode.getEdgeNorthSouth().edgeColour == state.getCurrentPlayer(playerNumber).playerNumber && currentNode.getEdgeWest() != currentEdge)))
                     {
-                        Debug.Log("passes");
                         currentLongestRoad++;
                     }
                     if (currentLongestRoad > longetRoad)
                     {
-                        Debug.Log("CC:" + currentLongestRoad);
                         longetRoad = currentLongestRoad;
                     }
-
-                    Debug.Log("PN: " + playerNumber);
-                    Debug.Log("CLR: " + currentLongestRoad);
 
                     if (currentNode.getEdgeNorthSouth() != null && currentNode.getEdgeNorthSouth().edgeColour == state.getCurrentPlayer(playerNumber).playerNumber && currentNode.getEdgeNorthSouth() != currentEdge)
                     {
@@ -1413,148 +1428,10 @@ public class Player
         }
     }
 
-    //public void findLongestRoad()
-    //{
-    //    Node currentNode = null;
-    //    Edge currentEdge = null;
-
-
-    //    Debug.Log("YESSS");
-
-    //    for (int j = 0; j < myboard.edgeList.Length; j++)
-    //    {
-    //        myboard.edgeList[j].checkedLongestRoad = false;
-    //        myboard.boardNodes[j].checkedLongestRoad = false;
-    //    }
-
-    //    for (int i = 0; i < myboard.edgeList.Length; i++)
-    //    {
-    //        int currentLongestRoad = 0;
-    //        if (myboard.edgeList[i].edgeColour == state.getCurrentPlayer(playerNumber).playerNumber && myboard.edgeList[i].checkedLongestRoad == false)
-    //        {
-    //            currentEdge = myboard.edgeList[i];
-
-
-    //            // Good to here
-    //            //Debug.Log("Hits");
-    //            //Debug.Log("NULL: " + currentNode.getEdgeNorthSouth() != null);
-    //            //Debug.Log(currentNode.getEdgeNorthSouth().edgeColour == state.getCurrentPlayer(playerNumber).playerNumber);
-    //            //Debug.Log(currentNode.getEdgeNorthSouth().getEdgeType());
-    //            //Debug.Log(state.getCurrentPlayer(playerNumber).playerNumber);
-    //            //Debug.Log(currentNode.boardLocation);
-    //            //Debug.Log(currentNode.getEdgeNorthSouth().edgeBoardLocation);
-    //            //Debug.Log(currentNode.getEdgeNorthSouth() != currentEdge);
-
-    //            while ((currentEdge.getNode1() != null && currentEdge.getNode1().houseColour == state.getCurrentPlayer(playerNumber).playerNumber && currentEdge.getNode1() != currentNode)
-    //                    || (currentEdge.getNode2() != null && currentEdge.getNode2().houseColour == state.getCurrentPlayer(playerNumber).playerNumber && currentEdge.getNode2() != currentNode)
-    //                    || (currentEdge.getNode1().getEdgeNorthSouth().edgeColour == state.getCurrentPlayer(playerNumber).playerNumber && currentEdge.getNode1().houseColour == 0)
-    //                    || (currentEdge.getNode2().getEdgeNorthSouth().edgeColour == state.getCurrentPlayer(playerNumber).playerNumber && currentEdge.getNode2().houseColour == 0))
-
-    //                currentEdge.checkedLongestRoad = true;
-
-    //                currentLongestRoad++;
-
-    //                if (currentLongestRoad > longetRoad)
-    //                {
-    //                    longetRoad = currentLongestRoad;
-    //                }
-
-    //                if (currentEdge.getNode1() != null && currentEdge.getNode1().houseColour == state.getCurrentPlayer(playerNumber).playerNumber && currentEdge.getNode1() != currentNode)
-    //                {
-    //                    currentNode = currentEdge.getNode1();
-    //                    currentNode.checkedLongestRoad = true;
-
-
-    //                    if (currentNode.getEdgeNorthSouth() == currentEdge && currentNode.getEdgeEast().edgeColour == state.getCurrentPlayer(playerNumber).playerNumber
-    //                    && currentNode.getEdgeEast().checkedLongestRoad == false)
-    //                    {
-    //                        currentEdge = currentNode.getEdgeEast();
-    //                        currentEdge.checkedLongestRoad = true;
-    //                    }
-    //                    else if (currentNode.getEdgeNorthSouth() == currentEdge && currentNode.getEdgeWest().edgeColour == state.getCurrentPlayer(playerNumber).playerNumber
-    //                    && currentNode.getEdgeWest().checkedLongestRoad == false)
-    //                    {
-    //                        currentEdge = currentNode.getEdgeWest();
-    //                        currentEdge.checkedLongestRoad = true;
-    //                    }
-    //                    else if (currentNode.getEdgeEast() == currentEdge && currentNode.getEdgeNorthSouth().edgeColour == state.getCurrentPlayer(playerNumber).playerNumber
-    //                    && currentNode.getEdgeNorthSouth().checkedLongestRoad == false)
-    //                    {
-    //                        currentEdge = currentNode.getEdgeNorthSouth();
-    //                        currentEdge.checkedLongestRoad = true;
-    //                    }
-    //                    else if (currentNode.getEdgeEast() == currentEdge && currentNode.getEdgeWest().edgeColour == state.getCurrentPlayer(playerNumber).playerNumber
-    //                    && currentNode.getEdgeWest().checkedLongestRoad == false)
-    //                    {
-    //                        currentEdge = currentNode.getEdgeWest();
-    //                        currentEdge.checkedLongestRoad = true;
-    //                    }
-    //                    else if (currentNode.getEdgeWest() == currentEdge && currentNode.getEdgeNorthSouth().edgeColour == state.getCurrentPlayer(playerNumber).playerNumber
-    //                    && currentNode.getEdgeNorthSouth().checkedLongestRoad == false)
-    //                    {
-    //                        currentEdge = currentNode.getEdgeNorthSouth();
-    //                        currentEdge.checkedLongestRoad = true;
-    //                    }
-    //                    else if (currentNode.getEdgeWest() == currentEdge && currentNode.getEdgeEast().edgeColour == state.getCurrentPlayer(playerNumber).playerNumber
-    //                    && currentNode.getEdgeEast().checkedLongestRoad == false)
-    //                    {
-    //                        currentEdge = currentNode.getEdgeEast();
-    //                        currentEdge.checkedLongestRoad = true;
-    //                    }
-
-    //                else if (currentEdge.getNode2() != null && currentEdge.getNode1().houseColour == state.getCurrentPlayer(playerNumber).playerNumber && currentEdge.getNode2() != currentNode)
-    //                {
-    //                    currentNode = currentEdge.getNode2();
-    //                    currentNode.checkedLongestRoad = true;
-
-
-    //                    if (currentNode.getEdgeNorthSouth() == currentEdge && currentNode.getEdgeEast().edgeColour == state.getCurrentPlayer(playerNumber).playerNumber
-    //                    && currentNode.getEdgeEast().checkedLongestRoad == false)
-    //                    {
-    //                        currentEdge = currentNode.getEdgeEast();
-    //                        currentEdge.checkedLongestRoad = true;
-    //                    }
-    //                    else if (currentNode.getEdgeNorthSouth() == currentEdge && currentNode.getEdgeWest().edgeColour == state.getCurrentPlayer(playerNumber).playerNumber
-    //                    && currentNode.getEdgeWest().checkedLongestRoad == false)
-    //                    {
-    //                        currentEdge = currentNode.getEdgeWest();
-    //                        currentEdge.checkedLongestRoad = true;
-    //                    }
-    //                    else if (currentNode.getEdgeEast() == currentEdge && currentNode.getEdgeNorthSouth().edgeColour == state.getCurrentPlayer(playerNumber).playerNumber
-    //                    && currentNode.getEdgeNorthSouth().checkedLongestRoad == false)
-    //                    {
-    //                        currentEdge = currentNode.getEdgeNorthSouth();
-    //                        currentEdge.checkedLongestRoad = true;
-    //                    }
-    //                    else if (currentNode.getEdgeEast() == currentEdge && currentNode.getEdgeWest().edgeColour == state.getCurrentPlayer(playerNumber).playerNumber
-    //                    && currentNode.getEdgeWest().checkedLongestRoad == false)
-    //                    {
-    //                        currentEdge = currentNode.getEdgeWest();
-    //                        currentEdge.checkedLongestRoad = true;
-    //                    }
-    //                    else if (currentNode.getEdgeWest() == currentEdge && currentNode.getEdgeNorthSouth().edgeColour == state.getCurrentPlayer(playerNumber).playerNumber
-    //                    && currentNode.getEdgeNorthSouth().checkedLongestRoad == false)
-    //                    {
-    //                        currentEdge = currentNode.getEdgeNorthSouth();
-    //                        currentEdge.checkedLongestRoad = true;
-    //                    }
-    //                    else if (currentNode.getEdgeWest() == currentEdge && currentNode.getEdgeEast().edgeColour == state.getCurrentPlayer(playerNumber).playerNumber
-    //                    && currentNode.getEdgeEast().checkedLongestRoad == false)
-    //                    {
-    //                        currentEdge = currentNode.getEdgeEast();
-    //                        currentEdge.checkedLongestRoad = true;
-    //                    }
-    //                }
-    //            }
-    //        }
-    //    }
-    //}
-
 
 
     public void setObj()
     {
-        Debug.Log("called");
         if (myboard.introTurn == true)
         {
             string tempObj = previousObj;
@@ -1578,7 +1455,6 @@ public class Player
 
     public void takeTurn()
     {
-        Debug.Log("LATEST: " + currentObj);
         if (myboard.introTurn == false)
         {
             diceRoller.RollDice();
@@ -1604,7 +1480,6 @@ public class Player
                         buildRoad(myboard.boardNodes[i].getEdgeEast().road);
                         setObj();
                     }
-
                 }
                 else
                 {
@@ -1728,7 +1603,6 @@ public class Player
                 }
             }
         }
-        //state.SwitchState();
     }
 }
 

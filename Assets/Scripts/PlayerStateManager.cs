@@ -78,146 +78,6 @@ public class PlayerStateManager : MonoBehaviour
     // current player number is intialized to 1 as that will be the first player
     void Start()
     {
-        //players = new Player[4];
-        //AIs = new AI[3];
-
-
-        //if (playerNum.NumHumanPlayers == 4)
-        //{
-        //    Player player1 = new Player();
-        //    player1.playerNumber = 1;
-        //    player1.playerColour = 1;
-
-        //    Player player2 = new Player();
-        //    player2.playerNumber = 2;
-        //    player2.playerColour = 2;
-
-        //    Player player3 = new Player();
-        //    player3.playerNumber = 3;
-        //    player3.playerColour = 3;
-
-        //    Player player4 = new Player();
-        //    player4.playerNumber = 4;
-        //    player4.playerColour = 4;
-        //}
-        //else if (playerNum.NumHumanPlayers == 3)
-        //{
-        //    Player player1 = new Player();
-        //    player1.playerNumber = 1;
-        //    player1.playerColour = 1;
-
-        //    Player player2 = new Player();
-        //    player2.playerNumber = 2;
-        //    player2.playerColour = 2;
-
-        //    Player player3 = new Player();
-        //    player3.playerNumber = 3;
-        //    player3.playerColour = 3;
-
-        //}
-        //else if (playerNum.NumHumanPlayers == 2)
-        //{
-        //    Player player1 = new Player();
-        //    player1.playerNumber = 1;
-        //    player1.playerColour = 1;
-
-        //    Player player2 = new Player();
-        //    player2.playerNumber = 2;
-        //    player2.playerColour = 2;
-
-        //}
-        //else if (playerNum.NumHumanPlayers == 1)
-        //{
-        //    Player player1 = new Player();
-        //    player1.playerNumber = 1;
-        //    player1.playerColour = 1;
-        //}
-
-
-        //if (playerNum.NumHumanPlayers == 4)
-        //{
-        //    AI player1 = new AI();
-        //    player1.playerNumber = 1;
-        //    player1.playerColour = 1;
-
-        //    Player player2 = new Player();
-        //    player2.playerNumber = 2;
-        //    player2.playerColour = 2;
-
-        //    Player player3 = new Player();
-        //    player3.playerNumber = 3;
-        //    player3.playerColour = 3;
-
-        //    Player player4 = new Player();
-        //    player4.playerNumber = 4;
-        //    player4.playerColour = 4;
-        //}
-        //else if (playerNum.NumHumanPlayers == 3)
-        //{
-        //    Player player1 = new Player();
-        //    player1.playerNumber = 1;
-        //    player1.playerColour = 1;
-
-        //    Player player2 = new Player();
-        //    player2.playerNumber = 2;
-        //    player2.playerColour = 2;
-
-        //    Player player3 = new Player();
-        //    player3.playerNumber = 3;
-        //    player3.playerColour = 3;
-
-        //}
-        //else if (playerNum.NumHumanPlayers == 2)
-        //{
-        //    Player player1 = new Player();
-        //    player1.playerNumber = 1;
-        //    player1.playerColour = 1;
-
-        //    Player player2 = new Player();
-        //    player2.playerNumber = 2;
-        //    player2.playerColour = 2;
-
-        //}
-        //else if (playerNum.NumHumanPlayers == 1)
-        //{
-        //    Player player1 = new Player();
-        //    player1.playerNumber = 1;
-        //    player1.playerColour = 1;
-        //}
-
-
-
-
-
-
-        //for (int i = 0; i < startMenu.TotalPlayerNum; i++)
-        //{
-
-        //    Player player1 = new Player();
-
-
-
-        //    players[i] = new Player();
-        //    players[i].playerNumber = i;
-        //    players[i].playerNumber++;
-        //    players[i].playerColour = i;
-        //    players[i].playerColour++;
-        //}
-        //for (int i = 0; i < CpuNum.NumCpuPlayers; i++)
-        //{
-        //    AIs[i] = new AI();
-        //    AIs[i].playerNumber = startMenu.TotalPlayerNum;
-        //    AIs[i].playerNumber += i;
-        //    AIs[i].playerNumber++;
-        //    AIs[i].playerColour = startMenu.TotalPlayerNum;
-        //    AIs[i].playerNumber += i;
-        //    AIs[i].playerColour++;
-        //}
-
-
-
-
-
         player1 = new Player();
         player1.playerNumber = 1;
         player1.playerColour = 1;
@@ -278,48 +138,42 @@ public class PlayerStateManager : MonoBehaviour
     {
         updateResources();
 
-        int numCPU = CpuNumScript.instance.NumCpuPlayers;
+        //int numCPU = CpuNumScript.instance.NumCpuPlayers;
 
 
-        if (numCPU == 1)
-        {
-            if (currentPlayerNumber == 4)
-            {
-                Debug.Log("CALLED");
-                player4.takeTurn();
-            }
-        }
-        else if (numCPU == 2)
-        {
-            if (currentPlayerNumber == 4)
-            {
-                Debug.Log("CALLED1");
-                player4.takeTurn();
-            }
-            if (currentPlayerNumber == 3)
-            {
-                Debug.Log("CALLED2");
-                player4.takeTurn();
-            }
-        }
-        else if (numCPU == 3)
-        {
-            if (currentPlayerNumber == 4)
-            {
-                Debug.Log("CALLED11");
-                player4.takeTurn();
-            }
-            else if (currentPlayerNumber == 4)
-            {
-                Debug.Log("CALLED22");
-                player4.takeTurn();
-            }
-            else if (numCPU == 4)
-            {
-                Debug.Log("CALLED33");
-                player4.takeTurn();
-            }
-        }
+        //if (numCPU == 1)
+        //{
+        //    if (currentPlayerNumber == 4)
+        //    {
+        //        player4.takeTurn();
+        //    }
+        //}
+        //else if (numCPU == 2)
+        //{
+        //    if (currentPlayerNumber == 4)
+        //    {
+        //        player4.takeTurn();
+        //    }
+        //    if (currentPlayerNumber == 3)
+        //    {
+        //        player4.takeTurn();
+        //    }
+        //}
+        //else if (numCPU == 3)
+        //{
+        //    if (currentPlayerNumber == 4)
+        //    {
+        //        player4.takeTurn();
+        //    }
+        //    else if (currentPlayerNumber == 4)
+        //    {
+        //        player4.takeTurn();
+        //    }
+        //    else if (numCPU == 4)
+        //    {
+        //        player4.takeTurn();
+        //    }
+        //}
 
 
         player1.totalResources = player1.currencyLumber + player1.currencyGrain + player1.currencyBrick + player1.currencyOre + player1.currencyWool;

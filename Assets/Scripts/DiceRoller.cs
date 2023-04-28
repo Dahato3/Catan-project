@@ -112,7 +112,6 @@ public class DiceRoller : MonoBehaviour
         if (diceTotal == 7)
         {
             halfResources();
-            
         }
         else
         {
